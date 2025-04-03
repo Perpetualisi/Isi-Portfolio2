@@ -10,6 +10,8 @@
   padding: 10px 0;
   left: -170px;
   top: -30px;
+  /* background: rgba(0, 0, 0, 0.3); */
+  /* backdrop-filter: blur(10px); */
 }
 .nav-menu {
   display: flex;
@@ -71,7 +73,7 @@
   .nav-mob-open {
     display: block;
     position: fixed;
-    right: 19px;
+    right: 5px;
     z-index: 1100;
   }
   .nav-mob-close {
