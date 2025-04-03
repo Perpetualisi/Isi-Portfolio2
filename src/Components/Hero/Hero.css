@@ -123,6 +123,9 @@
     margin-top: 40px;
     width: 280px;
     height: 280px;
+    /* z-index: 1000; */
+    padding: 40px 0;
+
   }
 
   .hero h1 {

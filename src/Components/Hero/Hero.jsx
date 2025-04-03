@@ -13,7 +13,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="hero">
+    <div id="hero" className="hero">
       <img src={profile} alt="Perpetual Okan" />
       <h1>
          <span>I'm Perpetual Okan</span>,<br />
