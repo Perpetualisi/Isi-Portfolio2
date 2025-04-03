@@ -5,7 +5,7 @@ import profile from "../../assets/profile.jpeg";
 const Hero = () => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/Frontend2 cv.pdf"; 
+    link.href = "/Frontend Dev cv.pdf"; 
     link.download = "Isi_Resume.pdf"; 
     document.body.appendChild(link);
     link.click();
