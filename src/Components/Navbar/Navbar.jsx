@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Navbar.css';
 import okan from '../../assets/okan.png';
 import underline from '../../assets/nav_underline.svg';
@@ -8,6 +8,7 @@ import menu_close from '../../assets/menu_close.svg';
 
 const Navbar = () => {
   const [menu, setMenu] = useState("home");
+  const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef();
 
   const openMenu = () => {
@@ -23,9 +24,18 @@ const Navbar = () => {
     closeMenu(); 
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className='navbar'>
-      <img src={okan} alt="Logo" />
+    <div className={`navbar ${isScrolled ? 'navbar-scroll' : ''}`}>
+      <img src={okan} alt="Logo" className='logo' /> 
       <img src={menu_open} onClick={openMenu} alt="Open Menu" className='nav-mob-open' />
       <ul ref={menuRef} className='nav-menu'>
         <img src={menu_close} onClick={closeMenu} alt="Close Menu" className="nav-mob-close" />
@@ -45,7 +55,7 @@ const Navbar = () => {
           <AnchorLink className='anchor-link' offset={50} href='#portfolio' onClick={() => handleLinkClick("portfolio")}>
             Portfolio
           </AnchorLink>
-          {menu === "porfolio" ? <img src={underline} alt='' /> : <></>}
+          {menu === "portfolio" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
           <AnchorLink className='anchor-link' offset={50} href='#services' onClick={() => handleLinkClick("services")}>

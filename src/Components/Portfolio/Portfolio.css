@@ -119,7 +119,7 @@
   
   .portfolio-item:hover {
     border-color: #ff00ff;
-    background-image: linear-gradient(45deg, #3f0028, #582300);
+    background-image: linear-gradient(45deg, #632a4e, #121110);
     transform: scale(1.05);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }

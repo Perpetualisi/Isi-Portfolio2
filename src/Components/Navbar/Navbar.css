@@ -18,7 +18,8 @@
   align-items: center;
   list-style: none;
   gap: 60px;
-  font-size: 15px;
+  font-size: 20px;
+  height: 10px;
 }
 .nav-connect {
   padding: 20px 40px;
