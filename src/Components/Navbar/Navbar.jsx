@@ -20,7 +20,7 @@ const Navbar = () => {
 
   const handleLinkClick = (section) => {
     setMenu(section);
-    closeMenu(); // Close the menu after selecting a section
+    closeMenu(); 
   };
 
   return (
@@ -42,6 +42,12 @@ const Navbar = () => {
           {menu === "about" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
+          <AnchorLink className='anchor-link' offset={50} href='#portfolio' onClick={() => handleLinkClick("portfolio")}>
+            Portfolio
+          </AnchorLink>
+          {menu === "porfolio" ? <img src={underline} alt='' /> : <></>}
+        </li>
+        <li>
           <AnchorLink className='anchor-link' offset={50} href='#services' onClick={() => handleLinkClick("services")}>
             Services
           </AnchorLink>
@@ -49,7 +55,7 @@ const Navbar = () => {
         </li>
         <li>
           <AnchorLink className='anchor-link' offset={50} href='#work' onClick={() => handleLinkClick("work")}>
-            Portfolio
+            Work
           </AnchorLink>
           {menu === "work" ? <img src={underline} alt='' /> : <></>}
         </li>

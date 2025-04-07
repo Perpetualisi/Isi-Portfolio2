@@ -12,7 +12,7 @@ const Mywork = () => {
       setCurrentIndex((prevIndex) =>
         prevIndex === mywork_data.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000); // Change slide every 3 seconds
+    }, 3000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -36,7 +36,7 @@ const Mywork = () => {
       </div>
 
       <div className="mywork-showmore">
-        {/* Link to About section */}
+        
         <a href="#services" className="anchor-link">
           <p>Show More</p>
         </a>

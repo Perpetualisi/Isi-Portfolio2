@@ -5,11 +5,14 @@
   justify-content: center;
   gap: 80px;
   position: relative;
-  /* margin: 80px 170px; */
+  padding: 0 20px; /* Added padding to prevent text from touching edges */
 }
+
 .about-title {
   position: relative;
+  text-align: center; /* Center the title */
 }
+
 .about-title h1 {
   padding: 0px 30px;
   font-size: 80px;
@@ -18,24 +21,24 @@
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-
 }
+
 .about-title img {
-  /* width: 100px; */
   position: absolute;
   bottom: 0;
   right: 0;
   z-index: -1;
 }
+
 .about-sections {
   display: flex;
   gap: 80px;
+  justify-content: center; /* Center the sections */
 }
+
 .about-sections img {
   width: 350px;
   height: 500px;
-  /* border-radius: 12px;  */
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
   object-fit: cover;
 }
@@ -45,6 +48,7 @@
   flex-direction: column;
   gap: 80px;
 }
+
 .about-para {
   display: flex;
   flex-direction: column;
@@ -52,24 +56,30 @@
   font-size: 24px;
   font-weight: 500;
   color: #fff;
+  padding: 0 20px; /* Added padding to prevent text from touching edges */
 }
+
 .about-skills {
   display: flex;
   flex-direction: column;
   gap: 20px;
   color: #fff;
+  padding: 0 20px; /* Added padding to prevent text from touching edges */
 }
+
 .about-skill {
   display: flex;
   gap: 50px;
   align-items: center;
   transition: 0.3s;
 }
+
 .about-skill p {
   min-width: 150px;
   font-size: 24px;
   font-weight: 500;
 }
+
 .about-skill hr {
   outline: none;
   border: none;
@@ -78,6 +88,7 @@
   border-radius: 50px;
   background: linear-gradient(254deg, #d42343 -5.09%, #b415ff 106.28%);
 }
+
 .about-achievements {
   display: flex;
   width: 100%;
@@ -85,6 +96,7 @@
   margin-bottom: 80px;
   color: #fff;
 }
+
 .about-achievement {
   display: flex;
   flex-direction: column;
@@ -92,6 +104,7 @@
   gap: 10px;
   transition: 0.5s;
 }
+
 .about-achievement h1 {
   font-size: 60px;
   font-weight: 700;
@@ -100,19 +113,23 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .about-achievement p {
   font-size: 22px;
   font-weight: 500;
 }
+
 .about-skill:hover {
   transform: scale(1.05);
   transition: 0.3s;
 }
+
 .about-achievement:hover {
   transform: scale(1.12);
   transition: 0.5s;
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
   .about {
     gap: 80px;
@@ -142,6 +159,7 @@
   .about-para {
     font-size: 18px;
     line-height: 32px;
+    padding: 0 20px; /* Added padding for smaller screens */
   }
   .about-skill {
     gap: 20px;

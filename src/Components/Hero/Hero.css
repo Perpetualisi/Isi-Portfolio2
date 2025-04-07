@@ -46,8 +46,8 @@
 .hero-action {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centered horizontally */
-  width: 100%; /* Full width to ensure center alignment */
+  justify-content: center; 
+  width: 100%; 
   gap: 25px;
   font-size: 24px;
   font-weight: 500;
@@ -61,7 +61,7 @@
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-align: center; /* Ensure text is centered within buttons */
+  text-align: center; 
 }
 
 .hero-connect {
@@ -89,7 +89,7 @@
   color: white;
   border: none;
 }
-/* Responsive Breakpoints */
+
 @media (max-width: 1200px) {
   .hero h1 {
     font-size: 60px;
