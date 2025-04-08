@@ -1,7 +1,7 @@
 import dental from '../assets/dental.jpg'
 import pamsb from '../assets/pamsb.jpg'
 import tasty from '../assets/tasty.jpg'
-import edusity from '../assets/edusity.png'
+import Edusity from '../assets/Edusity.png'
 import hotel from '../assets/hotel.jpg' // Ensure the correct path for the image
 import cook from '../assets/cook.jpg'
 
@@ -24,7 +24,7 @@ const mywork_data = [
     {
         w_no:4,
         w_name:"Web design",
-        w_img:edusity
+        w_img:Edusity
     },
     {
         w_no:5,
