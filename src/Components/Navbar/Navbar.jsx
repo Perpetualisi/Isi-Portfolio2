@@ -43,37 +43,37 @@ const Navbar = () => {
           <Link className='anchor-link' to="/" onClick={() => handleLinkClick("home")}>
             Home
           </Link>
-          {menu === "home" ? <img src={underline} alt='' /> : <></>}
+          {menu === "home" ? <img src={underline} alt='' /> : null}
         </li>
         <li>
           <Link className='anchor-link' to="/about" onClick={() => handleLinkClick("about")}>
             About me
           </Link>
-          {menu === "about" ? <img src={underline} alt='' /> : <></>}
+          {menu === "about" ? <img src={underline} alt='' /> : null}
         </li>
         <li>
           <Link className='anchor-link' to="/portfolio" onClick={() => handleLinkClick("portfolio")}>
             Portfolio
           </Link>
-          {menu === "portfolio" ? <img src={underline} alt='' /> : <></>}
+          {menu === "portfolio" ? <img src={underline} alt='' /> : null}
         </li>
         <li>
           <Link className='anchor-link' to="/services" onClick={() => handleLinkClick("services")}>
             Services
           </Link>
-          {menu === "services" ? <img src={underline} alt='' /> : <></>}
+          {menu === "services" ? <img src={underline} alt='' /> : null}
         </li>
         <li>
           <Link className='anchor-link' to="/work" onClick={() => handleLinkClick("work")}>
             Work
           </Link>
-          {menu === "work" ? <img src={underline} alt='' /> : <></>}
+          {menu === "work" ? <img src={underline} alt='' /> : null}
         </li>
         <li>
           <Link className='anchor-link' to="/contact" onClick={() => handleLinkClick("contact")}>
             Contact
           </Link>
-          {menu === "contact" ? <img src={underline} alt='' /> : <></>}
+          {menu === "contact" ? <img src={underline} alt='' /> : null}
         </li>
       </ul>
       <div className='nav-connect'>

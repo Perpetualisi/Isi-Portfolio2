@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "./Hero.css";
 import profile from "../../assets/profile.jpeg";
 
@@ -20,14 +21,16 @@ const Hero = () => {
         frontend developer based in Nigeria
       </h1>
       <p>
-        I am a frontend developer from  Nigeria, with two years of 
+        I am a frontend developer from Nigeria, with two years of 
         experience in building responsive and interactive web applications 
         using HTML, CSS, JavaScript, and React.
       </p>
-      <div className="hero-action" >
+      <div className="hero-action">
         <div className="hero-connect">
-          <a href="#contact">          Connect with Me
-          </a>
+          {/* Use Link from react-router-dom instead of a */}
+          <Link to="/contact" className="anchor-link">
+            Connect with Me
+          </Link>
         </div>
         <div className="hero-resume">
           <button onClick={handleDownload} className="resume-button">
