@@ -179,6 +179,12 @@
       font-size: clamp(1rem, 3vw, 1.3rem);
     }
   }
+  @media (max-width: 600px) {
+    .portfolio-container {
+      grid-template-columns: 1fr;
+    }
+  }
+  
   
   @media (max-width: 480px) {
     .portfolio {

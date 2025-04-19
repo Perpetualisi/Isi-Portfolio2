@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom'; 
 import './Navbar.css';
 import okan from '../../assets/okan.png';
 import underline from '../../assets/nav_underline.svg';
-import AnchorLink from 'react-anchor-link-smooth-scroll';
 import menu_open from '../../assets/menu_open.svg';
 import menu_close from '../../assets/menu_close.svg';
 
@@ -40,46 +40,46 @@ const Navbar = () => {
       <ul ref={menuRef} className='nav-menu'>
         <img src={menu_close} onClick={closeMenu} alt="Close Menu" className="nav-mob-close" />
         <li>
-          <AnchorLink className='anchor-link' href='#hero' onClick={() => handleLinkClick("home")}>
+          <Link className='anchor-link' to="/" onClick={() => handleLinkClick("home")}>
             Home
-          </AnchorLink>
+          </Link>
           {menu === "home" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
-          <AnchorLink className='anchor-link' offset={50} href='#about' onClick={() => handleLinkClick("about")}>
+          <Link className='anchor-link' to="/about" onClick={() => handleLinkClick("about")}>
             About me
-          </AnchorLink>
+          </Link>
           {menu === "about" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
-          <AnchorLink className='anchor-link' offset={50} href='#portfolio' onClick={() => handleLinkClick("portfolio")}>
+          <Link className='anchor-link' to="/portfolio" onClick={() => handleLinkClick("portfolio")}>
             Portfolio
-          </AnchorLink>
+          </Link>
           {menu === "portfolio" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
-          <AnchorLink className='anchor-link' offset={50} href='#services' onClick={() => handleLinkClick("services")}>
+          <Link className='anchor-link' to="/services" onClick={() => handleLinkClick("services")}>
             Services
-          </AnchorLink>
+          </Link>
           {menu === "services" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
-          <AnchorLink className='anchor-link' offset={50} href='#work' onClick={() => handleLinkClick("work")}>
+          <Link className='anchor-link' to="/work" onClick={() => handleLinkClick("work")}>
             Work
-          </AnchorLink>
+          </Link>
           {menu === "work" ? <img src={underline} alt='' /> : <></>}
         </li>
         <li>
-          <AnchorLink className='anchor-link' offset={50} href='#contact' onClick={() => handleLinkClick("contact")}>
+          <Link className='anchor-link' to="/contact" onClick={() => handleLinkClick("contact")}>
             Contact
-          </AnchorLink>
+          </Link>
           {menu === "contact" ? <img src={underline} alt='' /> : <></>}
         </li>
       </ul>
       <div className='nav-connect'>
-        <AnchorLink className='anchor-link' offset={50} href='#contact' onClick={() => handleLinkClick("contact")}>
+        <Link className='anchor-link' to="/contact" onClick={() => handleLinkClick("contact")}>
           Connect With Me
-        </AnchorLink>
+        </Link>
       </div>
     </div>
   );

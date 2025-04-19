@@ -5,7 +5,7 @@
   justify-content: center;
   gap: 80px;
   position: relative;
-  padding: 0 20px; /* Added padding to prevent text from touching edges */
+  padding:100px 20px 0 20px; /* Added padding to prevent text from touching edges */
 }
 
 .about-title {
