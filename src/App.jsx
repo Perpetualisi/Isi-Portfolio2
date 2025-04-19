@@ -8,7 +8,7 @@ import Mywork from './Components/Mywork/Mywork';
 import Contact from './Components/Contact/Contact';
 import Footer from './Components/Footer/Footer';
 import Portfolio from './Components/Portfolio/Portfolio';
-import './App.css';
+import './app.css';
 
 const App = () => {
   return (
