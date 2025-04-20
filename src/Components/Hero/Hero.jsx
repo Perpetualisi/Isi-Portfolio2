@@ -6,7 +6,7 @@ import profile from "../../assets/profile.jpeg";
 const Hero = () => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/Frontend Dev cv.pdf"; 
+    link.href = "/Perpetual_cv.pdf"; 
     link.download = "Isi_Resume.pdf"; 
     document.body.appendChild(link);
     link.click();
@@ -27,7 +27,7 @@ const Hero = () => {
       </p>
       <div className="hero-action">
         <div className="hero-connect">
-          {/* Use Link from react-router-dom instead of a */}
+          
           <Link to="/contact" className="anchor-link">
             Connect with Me
           </Link>
