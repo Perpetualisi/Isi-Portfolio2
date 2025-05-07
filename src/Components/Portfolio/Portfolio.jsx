@@ -1,7 +1,7 @@
 import React from "react";
 import "./Portfolio.css";
-import theme_pattern from "../../assets/theme_pattern.svg";  // Ensure correct file path
-import Portfolio_Data from "../../assets/portfolio_data";  // Ensure correct file path
+import theme_pattern from "../../assets/theme_pattern.svg";  
+import Portfolio_Data from "../../assets/portfolio_data"; 
 
 
 const Portfolio = () => {

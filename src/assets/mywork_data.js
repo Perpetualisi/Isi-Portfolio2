@@ -2,7 +2,7 @@ import dental from '../assets/dental.jpg'
 import pamsb from '../assets/pamsb.jpg'
 import tasty from '../assets/tasty.jpg'
 import Edusity from '../assets/Edusity.png'
-import hotel from '../assets/hotel.jpg' // Ensure the correct path for the image
+import hotel from '../assets/hotel.jpg' 
 import cook from '../assets/cook.jpg'
 
 const mywork_data = [
