@@ -1,12 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom"; 
 import "./Hero.css";
 import profile from "../../assets/profile.jpeg";
 
 const Hero = () => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/Perpetual_cv.pdf"; 
+    link.href = "/Perpetual_Resume.pdf"; 
     link.download = "Isi_Resume.pdf"; 
     document.body.appendChild(link);
     link.click();
