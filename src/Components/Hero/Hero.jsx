@@ -6,8 +6,8 @@ import profile from "../../assets/profile.jpeg";
 const Hero = () => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/Perpetual_Resume.pdf"; 
-    link.download = "Isi_Resume.pdf"; 
+    link.href = "/Perpetual_Resume1.pdf"; 
+    link.download = "Perpetual_Resume1.pdf"; 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
