@@ -8,11 +8,13 @@ import Mywork from './Components/Mywork/Mywork';
 import Contact from './Components/Contact/Contact';
 import Footer from './Components/Footer/Footer';
 import Portfolio from './Components/Portfolio/Portfolio';
+import ScrollToTop from './Components/ScrollToTop'; // 👈 import it
 import './app.css';
 
 const App = () => {
   return (
     <Router>
+      <ScrollToTop /> {/* 👈 this must be right after Router */}
       <Navbar />
       <Routes>
         <Route path="/" element={<Hero />} />

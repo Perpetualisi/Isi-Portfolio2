@@ -1,13 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import "./Hero.css";
 import profile from "../../assets/profile.jpeg";
 
 const Hero = () => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/Perpetual_Resume1.pdf"; 
-    link.download = "Perpetual_Resume1.pdf"; 
+    link.href = "/Perpetual_Resume1.pdf";
+    link.download = "Perpetual_Resume1.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -15,26 +15,26 @@ const Hero = () => {
 
   return (
     <div id="hero" className="hero">
-      <img src={profile} alt="Perpetual Okan" />
+      <img src={profile} alt="Okan Perpetual Isi" className="hero-profile" />
+      
       <h1>
-         <span>I'm Perpetual Okan</span>,<br />
+        <span>I'm Perpetual Okan</span>,<br />
         frontend developer based in Nigeria
       </h1>
+
       <p>
-        I am a frontend developer from Nigeria, with two years of 
-        experience in building responsive and interactive web applications 
-        using HTML, CSS, JavaScript, and React.
+        I am a frontend developer from Nigeria, with two years of experience in building responsive and interactive web applications using <strong>HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, and <strong>React</strong>.
       </p>
+
       <div className="hero-action">
         <div className="hero-connect">
-          
           <Link to="/contact" className="anchor-link">
             Connect with Me
           </Link>
         </div>
         <div className="hero-resume">
           <button onClick={handleDownload} className="resume-button">
-             My Resume
+            Download Resume
           </button>
         </div>
       </div>
