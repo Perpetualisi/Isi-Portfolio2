@@ -36,7 +36,7 @@
 .logo-text span {
   font-size: 1.8rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #8d734c, #e3dde6);
+  background: linear-gradient(90deg, #8a8585, #eae5ed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   cursor: pointer;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './Footer.css';
-import okan from '../../assets/okan.png';
 import user_icon from '../../assets/user_icon.svg';
 
 const Footer = () => {
@@ -24,7 +23,6 @@ const Footer = () => {
     <footer className='footer'>
       <div className="footer-top">
         <div className="footer-top-left">
-          <img src={okan} alt="Okan Perpetual" className="footer-logo" />
           <p>
             Hi! I’m <strong>Okan Perpetual</strong>, a frontend developer from Nigeria. 
             I build responsive and interactive web applications using modern web technologies.

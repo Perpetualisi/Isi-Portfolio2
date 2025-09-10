@@ -18,7 +18,7 @@
 .hero-avatar {
   width: 280px;
   height: 280px;
-  border-radius: 50%;          
+  border-radius: 20%;          
   object-fit: contain;         
   object-position: center top; 
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
