@@ -14,7 +14,8 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center; /* vertical centering */
+  align-items: flex-start; /* vertical centering */
+  margin-top: 50px;
 }
 
 .hero-avatar {
