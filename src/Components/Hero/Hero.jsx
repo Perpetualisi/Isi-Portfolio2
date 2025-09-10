@@ -15,12 +15,10 @@ const Hero = () => {
 
   return (
     <section id="hero" className="hero">
-      {/* Avatar */}
       <div className="hero-left">
         <img src={profile} alt="Perpetual Okan" className="hero-avatar" />
       </div>
 
-      {/* Text Content */}
       <div className="hero-right">
         <h1>
           Hi, I’m <span>Perpetual Okan</span>
