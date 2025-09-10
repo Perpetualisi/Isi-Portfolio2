@@ -1,26 +1,46 @@
 .navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(15px);
-  padding: 4px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4%;
   z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  transition: background 0.3s ease, padding 0.3s ease;
   border-radius: 0 0 20px 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease-in-out;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
 }
 
 .navbar-scroll {
-  background: rgba(15, 15, 15, 0.85);
+  background: rgba(15, 15, 15, 0.95);
+  padding: 8px 4%;
+}
+.nav-connect-mobile {
+  display: none;
 }
 
-.logo {
-  height: 50px;
+@media (max-width: 768px) {
+  .nav-connect {
+    display: none;
+  }
+  .nav-connect-mobile {
+    display: block;
+  }
+}
+
+/* Logo */
+.logo-text span {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #8d734c, #e3dde6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .nav-menu {
@@ -28,119 +48,86 @@
   align-items: center;
   list-style: none;
   gap: 50px;
-  font-size: 18px;
-}
-
-.nav-connect {
-  padding: 14px 28px;
-  border-radius: 30px;
-  background: linear-gradient(267deg, #da7c25, #b923e1);
-  font-size: 16px;
-  font-weight: 500;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.4s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  text-decoration: none;
-}
-
-.nav-connect:hover {
-  transform: scale(1.06);
+  transition: all 0.4s ease;
 }
 
 .nav-menu li {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
   position: relative;
-}
-
-.nav-menu li img {
-  width: 80px;
-  height: 6px;
-  margin: auto;
 }
 
 .anchor-link {
   text-decoration: none;
-  color: white;
+  color: #fff;
   font-weight: 500;
-  position: relative;
+  transition: color 0.3s ease;
 }
 
+.anchor-link.active,
 .anchor-link:hover {
   color: #da7c25;
 }
 
-.nav-mob-close,
-.nav-mob-open {
+/* Connect Button */
+.nav-connect,
+.nav-connect-mobile .connect-btn {
+  padding: 10px 28px;
+  border-radius: 30px;
+  background: linear-gradient(267deg, #da7c25, #b923e1);
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-connect:hover,
+.nav-connect-mobile .connect-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.nav-toggle {
   display: none;
+  cursor: pointer;
+  color: #fff;
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 10px 24px;
-    border-radius: 0 0 12px 12px;
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 260px;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 20px;
+    gap: 25px;
+    transition: right 0.4s ease;
+    z-index: 999;
+  }
+
+  .nav-menu.open {
+    right: 0;
+  }
+
+  .nav-menu li {
+    font-size: 20px;
   }
 
   .nav-connect {
     display: none;
   }
 
-  .nav-mob-open {
+  .nav-connect-mobile {
     display: block;
-    position: fixed;
-    right: 20px;
-    top: 20px;
-    z-index: 1100;
-    width: 30px;
-    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
   }
 
-  .nav-mob-close {
+  .nav-toggle {
     display: block;
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    width: 30px;
-    cursor: pointer;
   }
-
-  .nav-menu {
-    position: fixed;
-    flex-direction: column;
-    align-items: flex-start;
-    top: 0;
-    right: -450px;
-    background: rgba(0, 0, 0, 0.95);
-    width: 300px;
-    height: 100vh;
-    padding: 60px 30px;
-    gap: 30px;
-    transition: right 0.5s ease;
-    z-index: 2000;
-  }
-
-  .nav-menu li {
-    font-size: 22px;
-    padding-left: 0;
-    flex-direction: row;
-    gap: 10px;
-  }
-}
-.logo-text {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(90deg, #8d734c, #793b94);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  cursor: pointer;
-  margin-left: 1rem;
-  text-decoration: none;
-}
-
-.logo-text a {
-  text-decoration: none;
-  color: inherit;
 }

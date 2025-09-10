@@ -14,31 +14,35 @@ const Hero = () => {
   };
 
   return (
-    <div id="hero" className="hero">
-      <img src={profile} alt="Okan Perpetual Isi" className="hero-profile" />
-      
-      <h1>
-        <span>I'm Perpetual Okan</span>,<br />
-        frontend developer based in Nigeria
-      </h1>
+    <section id="hero" className="hero">
+      {/* Avatar */}
+      <div className="hero-left">
+        <img src={profile} alt="Perpetual Okan" className="hero-avatar" />
+      </div>
 
-      <p>
-        I am a frontend developer from Nigeria, with two years of experience in building responsive and interactive web applications using <strong>HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, and <strong>React</strong>.
-      </p>
+      {/* Text Content */}
+      <div className="hero-right">
+        <h1>
+          Hi, I’m <span>Perpetual Okan</span>
+          <br />
+          Frontend Developer
+        </h1>
+        <p>
+          I craft clean, responsive, and user-friendly web applications using 
+          <strong> HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, and <strong>React</strong>. 
+          I enjoy turning ideas into digital experiences that are both functional and visually appealing.
+        </p>
 
-      <div className="hero-action">
-        <div className="hero-connect">
-          <Link to="/contact" className="anchor-link">
+        <div className="hero-actions">
+          <Link to="/contact" className="hero-btn hero-connect">
             Connect with Me
           </Link>
-        </div>
-        <div className="hero-resume">
-          <button onClick={handleDownload} className="resume-button">
+          <button onClick={handleDownload} className="hero-btn hero-resume">
             Download Resume
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

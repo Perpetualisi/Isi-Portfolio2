@@ -1,82 +1,81 @@
 import React from "react";
 import "./About.css";
-import theme_pattern from "../../assets/theme_pattern.svg";
-import profile from "../../assets/profile.jpeg";
 
 const About = () => {
   return (
-    <div id="about" className="about">
+    <section id="about" className="about">
+      {/* Title */}
       <div className="about-title">
         <h1>About Me</h1>
-        <img src={theme_pattern} alt="" />
       </div>
-      <div className="about-sections">
-        <div className="about-left">
-          <img src={profile} alt="" />
+
+      {/* Content */}
+      <div className="about-content">
+        {/* Intro */}
+        <div className="about-text">
+          <p>
+            I’m <span>Okan Perpetual Isi</span>, a <strong>Frontend Developer</strong> 
+            dedicated to building <strong>responsive, user-friendly, and modern web applications</strong>.
+          </p>
+          <p>
+            I work primarily with <strong>HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, 
+            and <strong>React</strong>. I also explore modern frameworks and tools to deliver fast, scalable, 
+            and efficient solutions.
+          </p>
+          <p>
+            My focus is on writing clean code, designing smooth user experiences, 
+            and continuously improving my skills to create high-quality digital products.
+          </p>
         </div>
-        <div className="about-right">
-          <div className="about-para">
-            <p>
-              Hey there! I’m Okan Perpetual Isi, a frontend web developer with 2 years of experience. I love building clean, responsive, and user-friendly websites. I work with HTML, CSS, JavaScript, and React to bring ideas to life on the web.
-            </p>
-            <p>
-              I also enjoy learning new things and improving my skills every day. Whether it’s a landing page, a business site, or something creative, I’m here to make it happen.
-              Let’s build something amazing together!
-            </p>
-          </div>
-          <div className="about-skills">
-            <div className="about-skill">
-              <p>HTML & CSS</p>
-              <hr style={{ width: "100%" }} />
-            </div>
-            <div className="about-skill">
-              <p>React Js</p>
-              <hr style={{ width: "90%" }} />
-            </div>
-            <div className="about-skill">
-              <p>JavaScript</p>
-              <hr style={{ width: "80%" }} />
-            </div>
-            <div className="about-skill">
-              <p>Next Js</p>
-              <hr style={{ width: "50%" }} />
-            </div>
-            <div className="about-skill">
-              <p>Tailwind CSS</p>
-              <hr style={{ width: "60%" }} />
-            </div>
-            <div className="about-skill">
-              <p>WordPress</p>
-              <hr style={{ width: "70%" }} />
-            </div>
-            <div className="about-skill">
-              <p>Vite</p>
-              <hr style={{ width: "75%" }} />
-            </div>
-            <div className="about-skill">
-              <p>Git & GitHub</p>
-              <hr style={{ width: "85%" }} />
-            </div>
-          </div>
+
+        {/* Skills */}
+        <div className="about-skills">
+          <h2>Skills</h2>
+          <ul>
+            <li>
+              <span>HTML & CSS</span>
+              <div className="bar"><div style={{ width: "100%" }} /></div>
+            </li>
+            <li>
+              <span>React.js</span>
+              <div className="bar"><div style={{ width: "90%" }} /></div>
+            </li>
+            <li>
+              <span>JavaScript</span>
+              <div className="bar"><div style={{ width: "85%" }} /></div>
+            </li>
+            <li>
+              <span>Next.js</span>
+              <div className="bar"><div style={{ width: "70%" }} /></div>
+            </li>
+            <li>
+              <span>Tailwind CSS</span>
+              <div className="bar"><div style={{ width: "75%" }} /></div>
+            </li>
+            <li>
+              <span>Git & GitHub</span>
+              <div className="bar"><div style={{ width: "90%" }} /></div>
+            </li>
+          </ul>
         </div>
       </div>
+
+      {/* Achievements */}
       <div className="about-achievements">
-        <div className="about-achievement">
-          <h1>2</h1>
-          <p>YEARS OF EXPERIENCE</p>
-        </div>
-        <hr />
-        <div className="about-achievement">
+        <div className="achievement">
           <h1>15+</h1>
-          <p>PROJECTS COMPLETED</p>
+          <p>Projects Completed</p>
         </div>
-        <hr />
-        <div className="about-achievement">
-          <h1>15+</h1>
-          <p>HAPPY CLIENTS</p>
+        <div className="achievement">
+          <h1>10+</h1>
+          <p>Personal & Client Projects</p>
+        </div>
+        <div className="achievement">
+          <h1>Ongoing</h1>
+          <p>Learning & Growth</p>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

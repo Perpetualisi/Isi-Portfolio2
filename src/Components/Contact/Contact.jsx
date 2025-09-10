@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
-import './Contact.css'
-import theme_pattern from '../../assets/theme_pattern.svg'
-import mail_icon from '../../assets/mail_icon.svg'
-import location_icon from '../../assets/location_icon.svg'
-import call_icon from '../../assets/call_icon.svg'
+import React, { useState } from 'react';
+import './Contact.css';
+import mailIcon from '../../assets/mail_icon.svg';
+import locationIcon from '../../assets/location_icon.svg';
+import callIcon from '../../assets/call_icon.svg';
 
 const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
@@ -12,19 +11,15 @@ const Contact = () => {
     event.preventDefault();
     const formData = new FormData(event.target);
     formData.append("access_key", "f03b99d4-599d-460a-998d-62046420b9ba");
-    
+
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Object.fromEntries(formData))
       });
-      
+
       const res = await response.json();
-      
       if (res.success) {
         setSubmitStatus('success');
         event.target.reset();
@@ -37,80 +32,44 @@ const Contact = () => {
   };
 
   return (
-    <div id='contact' className='contact'>
-      <div className="contact-title">
-        <h1>Get in touch</h1>
-        <img src={theme_pattern} alt="Theme Pattern" />
-      </div>
-      
-      <div className="contact-section">
-        <div className="contact-left">
-          <h1>Let's talk</h1>
-          <p>I am currently available to take on new projects, so feel free to send me a message on anything that you want me to work on. You can contact anytime</p>
-          
-          <div className="contact-details">
-            <div className="contact-detail">
-              <img src={mail_icon} alt="Email" />
+    <section id='contact' className='contact'>
+      <h1 className='contact-title'>Get in Touch</h1>
+
+      <div className="contact-container">
+        <div className="contact-info">
+          <h2>Let's Connect</h2>
+          <p>
+            I’m open to new projects and collaborations. Reach out if you have a project in mind or just want to say hi!
+          </p>
+          <div className="contact-cards">
+            <div className="contact-card">
+              <img src={mailIcon} alt="Email" />
               <p>Perpetualokan0@gmail.com</p>
             </div>
-            <div className="contact-detail">
-              <img src={call_icon} alt="Phone" />
+            <div className="contact-card">
+              <img src={callIcon} alt="Phone" />
               <p>+234-810-355-837</p>
             </div>
-            <div className="contact-detail">
-              <img src={location_icon} alt="Location"/>
+            <div className="contact-card">
+              <img src={locationIcon} alt="Location" />
               <p>Nigeria</p>
             </div>
           </div>
         </div>
-        
-        <form onSubmit={onSubmit} className='contact-right'>
-          <label htmlFor="name">Your Name</label>
-          <input 
-            type="text" 
-            id="name"
-            placeholder='Enter your name' 
-            name='name' 
-            required 
-          />
-          
-          <label htmlFor="email">Your Email</label>
-          <input 
-            type="email" 
-            id="email"
-            placeholder='Enter your email' 
-            name='email' 
-            required 
-          />
-          
-          <label htmlFor="message">Write your message here</label>
-          <textarea 
-            id="message"
-            name="message" 
-            rows="8" 
-            placeholder='Enter your message'
-            required
-          ></textarea>
-          
-          {submitStatus === 'success' && (
-            <div className="submit-message success">
-              Message sent successfully!
-            </div>
-          )}
-          
-          {submitStatus === 'error' && (
-            <div className="submit-message error">
-              Failed to send message. Please try again.
-            </div>
-          )}
-          
-          <button type='submit' className='contact-submit'>
-            Submit now
-          </button>
+
+        <form className="contact-form" onSubmit={onSubmit}>
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
+
+          {submitStatus === 'success' && <p className="submit-success">Message sent successfully!</p>}
+          {submitStatus === 'error' && <p className="submit-error">Failed to send message. Please try again.</p>}
+
+          <button type="submit">Send Message</button>
         </form>
       </div>
-    </div>
-  )
-}
+    </section>
+  );
+};
 
-export default Contact
+export default Contact;
