@@ -1,12 +1,12 @@
 
 const Portfolio_Data = [
     {
-      title: "Ecommerce Website",
-      description: "Discover the ultimate shopping experience with our e-commerce website. Explore a wide range of products, enjoy seamless navigation, and shop with confidence.",
-      image: "/banner2.jpg",  
-      link: "https://my-ecommerce-nine-iota.vercel.app/",
-      demo: "https://my-ecommerce-nine-iota.vercel.app/",  
-      tags: ["React", "CSS", "Vite"],
+  title: "Conotex Website",
+  description: "Explore Conotex Integrated Services online. Learn about our ICT, security, and infrastructure solutions, and easily access our services and projects.",
+  image: "/av.jpg",
+  link: "https://www.conotextech.com/",
+  demo: "https://www.conotextech.com/",
+  tags: ["React", "CSS", "Vite"]
     },
     {
       title: "Edusity",
@@ -17,12 +17,12 @@ const Portfolio_Data = [
       tags: ["HTML", "CSS", "JavaScript"],  
     },
     {
-      title: "Ice Cream Shop",
-      description: "Welcome to our ice cream shop! Indulge in a delightful array of flavors, from classic vanilla to exotic mango. Treat yourself to a scoop of happiness today!",
-      image: "/toppings.jpg",  
-      link: "https://ice-cream-iota-peach.vercel.app/",
-      demo: "https://ice-cream-iota-peach.vercel.app/",  
-      tags: ["React", "CSS", "Vite"],  
+  title: "WearEiko Website",
+  description: "WearEiko is a fashion movement that blends African heritage with bold, modern design, empowering self-expression through style. Explore our collections and celebrate your unique style online.",
+  image: "/weareiko.jpg",
+  link: "https://www.weareiko.com/",
+  demo: "https://www.weareiko.com/",
+  tags: ["React", "CSS", "Vite"]
     },
 
   ];

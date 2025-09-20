@@ -1,7 +1,6 @@
-/* Hero.css */
 .hero {
   display: flex;
-  align-items: center; /* center vertically */
+  align-items: center; 
   justify-content: center;
   padding: 100px 10%;
   gap: 60px;
@@ -14,14 +13,14 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* vertical centering */
+  align-items: flex-start; 
   margin-top: 50px;
 }
 
 .hero-avatar {
   width: 300px;
   height: 350px;
-  border-radius: 15px; /* reduced radius */
+  border-radius: 15px; 
   object-fit: cover;
   object-position: center;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
@@ -97,7 +96,6 @@
   transform: scale(1.05);
 }
 
-/* ===== Responsive ===== */
 @media (max-width: 992px) {
   .hero {
     flex-direction: column;
@@ -106,7 +104,7 @@
   }
 
   .hero-left {
-    margin-top: 50px; /* space from top */
+    margin-top: 50px; 
     margin-bottom: 30px;
   }
 

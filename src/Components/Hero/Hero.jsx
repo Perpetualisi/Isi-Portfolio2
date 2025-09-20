@@ -25,10 +25,12 @@ const Hero = () => {
           <br />
           Frontend Developer
         </h1>
+
         <p>
-          I craft clean, responsive, and user-friendly web applications using 
-          <strong> HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, and <strong>React</strong>. 
-          I enjoy turning ideas into digital experiences that are both functional and visually appealing.
+          I craft clean, responsive, and user-friendly web applications that deliver seamless experiences. 
+          I enjoy transforming ideas into digital products that are intuitive, visually appealing, 
+          and engaging for users. My focus is on building solutions that make an impact 
+          and help businesses and individuals achieve their goals.
         </p>
 
         <div className="hero-actions">

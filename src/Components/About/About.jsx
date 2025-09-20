@@ -14,17 +14,13 @@ const About = () => {
         {/* Intro */}
         <div className="about-text">
           <p>
-            I’m <span>Okan Perpetual Isi</span>, a <strong>Frontend Developer</strong> 
-            dedicated to building <strong>responsive, user-friendly, and modern web applications</strong>.
+            I’m <span>Okan Perpetual Isi</span>, a Frontend Developer focused on creating web applications that are intuitive, reliable, and visually appealing. I specialize in delivering solutions that make digital interactions smooth and efficient for users.
           </p>
           <p>
-            I work primarily with <strong>HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, 
-            and <strong>React</strong>. I also explore modern frameworks and tools to deliver fast, scalable, 
-            and efficient solutions.
+            My work revolves around transforming ideas into practical and scalable digital solutions. I take a structured approach to design and development, ensuring that every project is both functional and user-friendly. I aim to provide experiences that meet business objectives while delighting users.
           </p>
           <p>
-            My focus is on writing clean code, designing smooth user experiences, 
-            and continuously improving my skills to create high-quality digital products.
+            I am committed to continuous learning and staying updated with the latest trends and best practices in web development. By combining attention to detail, thoughtful design, and efficient implementation, I strive to deliver high-quality applications that are maintainable, accessible, and effective.
           </p>
         </div>
 
@@ -68,7 +64,7 @@ const About = () => {
         </div>
         <div className="achievement">
           <h1>10+</h1>
-          <p>Personal & Client Projects</p>
+          <p>Client & Personal Projects</p>
         </div>
         <div className="achievement">
           <h1>Ongoing</h1>
