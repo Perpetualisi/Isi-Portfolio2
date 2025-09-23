@@ -26,7 +26,7 @@ const Navbar = () => {
       {/* Logo */}
       <div className="logo">
         <Link to="/" onClick={() => handleLinkClick("home")}>
-          <img src="/logoc.png" alt="OKAN Logo" className="logo-img" />
+          <img src="/logo-okan.png" alt="OKAN Logo" className="logo-img" />
         </Link>
       </div>
 
