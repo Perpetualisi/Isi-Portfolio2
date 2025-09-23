@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const handleLinkClick = (section) => {
     setMenu(section);
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -19,14 +19,14 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = ["home", "about", "portfolio",  "contact"];
+  const navItems = ["home", "about", "portfolio", "contact"];
 
   return (
     <nav className={`navbar ${isScrolled ? "navbar-scroll" : ""}`}>
       {/* Logo */}
-      <div className="logo-text">
+      <div className="logo">
         <Link to="/" onClick={() => handleLinkClick("home")}>
-          <span>OKAN</span>
+          <img src="/logoc.png" alt="OKAN Logo" className="logo-img" />
         </Link>
       </div>
 
@@ -43,7 +43,8 @@ const Navbar = () => {
             </Link>
           </li>
         ))}
-        {/* Mobile Connect Button */}
+
+        {/* Mobile Connect Button (hidden on desktop by CSS) */}
         <div className="nav-connect-mobile">
           <Link
             to="/contact"
@@ -55,6 +56,7 @@ const Navbar = () => {
         </div>
       </ul>
 
+      {/* Desktop Connect Button (hidden on mobile by CSS) */}
       <div className="nav-connect">
         <Link
           className="connect-btn"
@@ -65,6 +67,7 @@ const Navbar = () => {
         </Link>
       </div>
 
+      {/* Mobile Toggle (Hamburger / Close) */}
       <div className="nav-toggle" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
       </div>
