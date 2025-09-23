@@ -1,12 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Hero.css";
-import profile from "../../assets/profile.jpeg";
 
 const Hero = () => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/Perpetual_Resume1.pdf";
+    link.href = "/Perpetual_Resume1.pdf"; // Place PDF in public folder
     link.download = "Perpetual_Resume1.pdf";
     document.body.appendChild(link);
     link.click();
@@ -16,7 +15,11 @@ const Hero = () => {
   return (
     <section id="hero" className="hero">
       <div className="hero-left">
-        <img src={profile} alt="Perpetual Okan" className="hero-avatar" />
+        <img
+          src="/profile.jpeg" // Moved to public folder
+          alt="Perpetual Okan"
+          className="hero-avatar"
+        />
       </div>
 
       <div className="hero-right">
