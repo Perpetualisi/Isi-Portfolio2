@@ -51,8 +51,7 @@ const Navbar = () => {
             className="connect-btn"
             onClick={() => handleLinkClick("contact")}
           >
-            Connect With Me
-          </Link>
+            Let’s Connect         </Link>
         </div>
       </ul>
 
@@ -63,8 +62,7 @@ const Navbar = () => {
           to="/contact"
           onClick={() => handleLinkClick("contact")}
         >
-          Connect With Me
-        </Link>
+             Let’s Connect        </Link>
       </div>
 
       {/* Mobile Toggle (Hamburger / Close) */}
