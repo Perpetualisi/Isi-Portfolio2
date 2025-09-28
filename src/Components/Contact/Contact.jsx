@@ -36,36 +36,38 @@ const Contact = () => {
       <h1 className='contact-title'>Get in Touch</h1>
 
       <div className="contact-container">
+        {/* Contact Info */}
         <div className="contact-info">
           <h2>Let's Connect</h2>
           <p>
             I’m open to new projects and collaborations. Reach out if you have a project in mind or just want to say hi!
           </p>
           <div className="contact-cards">
-            <div className="contact-card">
-              <img src={mailIcon} alt="Email" />
+            <div className="contact-card" aria-label="Email">
+              <img src={mailIcon} alt="Email Icon" />
               <p>Perpetualokan0@gmail.com</p>
             </div>
-            <div className="contact-card">
-              <img src={callIcon} alt="Phone" />
+            <div className="contact-card" aria-label="Phone">
+              <img src={callIcon} alt="Phone Icon" />
               <p>+234-810-355-837</p>
             </div>
-            <div className="contact-card">
-              <img src={locationIcon} alt="Location" />
+            <div className="contact-card" aria-label="Location">
+              <img src={locationIcon} alt="Location Icon" />
               <p>Nigeria</p>
             </div>
           </div>
         </div>
 
+        {/* Contact Form */}
         <form className="contact-form" onSubmit={onSubmit}>
           <input type="text" name="name" placeholder="Your Name" required />
           <input type="email" name="email" placeholder="Your Email" required />
           <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
 
-          {submitStatus === 'success' && <p className="submit-success">Message sent successfully!</p>}
-          {submitStatus === 'error' && <p className="submit-error">Failed to send message. Please try again.</p>}
+          {submitStatus === 'success' && <p className="submit-success">✅ Message sent successfully!</p>}
+          {submitStatus === 'error' && <p className="submit-error">❌ Failed to send message. Please try again.</p>}
 
-          <button type="submit">Send Message</button>
+          <button type="submit" aria-label="Send Message">Send Message</button>
         </form>
       </div>
     </section>

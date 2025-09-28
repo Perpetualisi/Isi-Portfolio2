@@ -34,7 +34,7 @@
    Logo
 ============================== */
 .logo-img {
-  height: 100px; /* desktop */
+  height: 80px; /* desktop */
   width: auto;
   object-fit: contain;
   display: block;

@@ -1,6 +1,6 @@
 .hero {
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   padding: 100px 10%;
   gap: 60px;
@@ -9,28 +9,31 @@
   color: white;
 }
 
+/* Left Section */
 .hero-left {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start; 
+  align-items: flex-start;
   margin-top: 50px;
 }
 
 .hero-avatar {
   width: 300px;
   height: 350px;
-  border-radius: 15px; 
+  border-radius: 15px;
   object-fit: cover;
   object-position: center;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hero-avatar:hover {
   transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(180, 21, 255, 0.4);
 }
 
+/* Right Section */
 .hero-right {
   flex: 2;
   max-width: 600px;
@@ -56,6 +59,7 @@
   color: #ddd;
 }
 
+/* Actions */
 .hero-actions {
   display: flex;
   gap: 20px;
@@ -66,24 +70,26 @@
   padding: 14px 30px;
   border-radius: 30px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   text-align: center;
 }
 
-.hero-connect {
-  background: linear-gradient(264deg, #df8908 -5.09%, #b415ff 106.28%);
+/* Primary CTA → View Projects */
+.hero-projects {
+  background: linear-gradient(90deg, #b415ff 0%, #df8908 100%);
   color: white;
   border: none;
 }
 
-.hero-connect:hover {
-  transform: scale(1.05);
+.hero-projects:hover {
+  transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 18px rgba(223, 137, 8, 0.4);
 }
 
+/* Secondary CTA → Resume */
 .hero-resume {
   border: 2px solid #fff;
   background: none;
@@ -93,9 +99,10 @@
 .hero-resume:hover {
   border-color: #b415ff;
   color: #b415ff;
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.05);
 }
 
+/* Responsive */
 @media (max-width: 992px) {
   .hero {
     flex-direction: column;
@@ -104,7 +111,7 @@
   }
 
   .hero-left {
-    margin-top: 50px; 
+    margin-top: 50px;
     margin-bottom: 30px;
   }
 

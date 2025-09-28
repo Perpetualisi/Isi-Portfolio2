@@ -6,17 +6,12 @@ const Footer = () => {
   const [email, setEmail] = useState('');
 
   const handleSubscribe = () => {
-    if (email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (emailRegex.test(email)) {
-        alert('Subscribed successfully!');
-        setEmail('');
-      } else {
-        alert('Please enter a valid email address');
-      }
-    } else {
-      alert('Please enter an email address');
-    }
+    if (!email) return alert('Please enter an email address');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return alert('Please enter a valid email address');
+
+    alert('Subscribed successfully!');
+    setEmail('');
   };
 
   return (
@@ -33,15 +28,17 @@ const Footer = () => {
           <div className="footer-email-input">
             <img src={user_icon} alt="User Icon" />
             <input 
-              type="email" 
+              type="email"
               placeholder='Enter your email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email input for newsletter subscription"
             />
           </div>
           <button 
             className="footer-subscribe"
             onClick={handleSubscribe}
+            aria-label="Subscribe to newsletter"
           >
             Subscribe
           </button>
