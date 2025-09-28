@@ -33,12 +33,16 @@ const About = () => {
               <div className="bar"><div style={{ width: "100%" }} /></div>
             </li>
             <li>
+              <span>JavaScript</span>
+              <div className="bar"><div style={{ width: "85%" }} /></div>
+            </li>
+            <li>
               <span>React.js</span>
               <div className="bar"><div style={{ width: "90%" }} /></div>
             </li>
             <li>
-              <span>JavaScript</span>
-              <div className="bar"><div style={{ width: "85%" }} /></div>
+              <span>Node.js</span>
+              <div className="bar"><div style={{ width: "75%" }} /></div>
             </li>
             <li>
               <span>Next.js</span>
