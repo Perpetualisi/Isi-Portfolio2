@@ -7,7 +7,7 @@ const Portfolio = () => {
     <section id="portfolio" className="portfolio">
       {/* Title */}
       <div className="portfolio-title">
-        <h1>My Portfolio</h1>
+        <h1>Featured Projects</h1>
       </div>
 
       {/* Projects Grid */}
@@ -20,7 +20,15 @@ const Portfolio = () => {
 
             <div className="portfolio-content">
               <h3>{project.title}</h3>
-              <p>{project.description}</p>
+              <p>
+                {project.description}  
+                {project.backend && (
+                  <span> <strong>Backend:</strong> {project.backend}</span>
+                )}
+                {project.api && (
+                  <span> <strong>API:</strong> {project.api}</span>
+                )}
+              </p>
 
               <div className="portfolio-tags">
                 {project.tags.map((tag, idx) => (
@@ -30,7 +38,7 @@ const Portfolio = () => {
 
               <div className="portfolio-links">
                 <a href={project.link} target="_blank" rel="noopener noreferrer" className="view-btn">
-                  View Project
+                  View Code
                 </a>
                 {project.demo && (
                   <a href={project.demo} target="_blank" rel="noopener noreferrer" className="demo-btn">

@@ -40,7 +40,7 @@ const Contact = () => {
         <div className="contact-info">
           <h2>Let's Connect</h2>
           <p>
-            I’m open to new projects and collaborations. Reach out if you have a project in mind or just want to say hi!
+            I’m open to new projects, collaborations, and opportunities in Full-Stack development. Whether it’s building APIs, integrating backend systems, or crafting seamless user experiences, I’m excited to collaborate and deliver end-to-end solutions.
           </p>
           <div className="contact-cards">
             <div className="contact-card" aria-label="Email">

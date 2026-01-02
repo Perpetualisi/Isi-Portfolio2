@@ -19,8 +19,9 @@ const Footer = () => {
       <div className="footer-top">
         <div className="footer-top-left">
           <p>
-            Hi! I’m <strong>Okan Perpetual</strong>, a frontend developer from Nigeria. 
-            I build responsive and interactive web applications using modern web technologies.
+            Hi! I’m <strong>Okan Perpetual</strong>, a <strong>Full-Stack Developer</strong> from Nigeria. 
+            I build responsive web applications and end-to-end solutions using <strong>React.js, Node.js, APIs, and WordPress</strong>. 
+            My focus is on creating seamless user experiences with reliable backend systems and scalable architectures.
           </p>
         </div>
 
