@@ -1,4 +1,5 @@
 :root {
+  --navbar-height: 6rem; /* Adjust to match your navbar height */
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -11,6 +12,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+/* Sections spacing for fixed navbar */
+section {
+  scroll-margin-top: var(--navbar-height); /* for anchor links */
+  padding-top: calc(var(--navbar-height) + 2rem); /* visual spacing from top */
+  padding-bottom: 4rem;
+}
+
+/* Headings spacing */
+h1, h2, h3, h4, h5, h6 {
+  scroll-margin-top: var(--navbar-height); /* anchor links scroll safety */
+  margin-top: 1.5rem; /* larger spacing so headings aren’t cut */
+}
+
+/* Links */
 a {
   font-weight: 500;
   color: #646cff;
@@ -21,19 +44,7 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #1a1a1a;
-  overflow-x: hidden;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
+/* Buttons */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -55,6 +66,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light mode overrides */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

@@ -1,75 +1,113 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
-import "./Navbar.css";
+
+const navItems = [
+  { name: "home", href: "/" },
+  { name: "about", href: "/about" },
+  { name: "portfolio", href: "/portfolio" },
+  { name: "contact", href: "/contact" },
+];
 
 const Navbar = () => {
-  const [menu, setMenu] = useState("home");
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [active, setActive] = useState("home");
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLinkClick = (section) => {
-    setMenu(section);
-    setIsOpen(false);
+  const handleLinkClick = (name) => {
+    setActive(name);
+    setIsOpen(false); // Close mobile menu
   };
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navItems = ["home", "about", "portfolio", "contact"];
-
   return (
-    <nav className={`navbar ${isScrolled ? "navbar-scroll" : ""}`}>
-      {/* Logo */}
-      <div className="logo">
+    <header className="fixed top-0 left-0 w-full z-50 bg-black shadow-md">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo */}
         <Link to="/" onClick={() => handleLinkClick("home")}>
-          <img src="/logo-okan.png" alt="OKAN Logo" className="logo-img" />
+          <img src="/logo-okan.png" alt="Logo" className="h-10 md:h-14" />
         </Link>
-      </div>
 
-      {/* Navigation Links */}
-      <ul className={`nav-menu ${isOpen ? "open" : ""}`}>
-        {navItems.map((item) => (
-          <li key={item}>
+        {/* Desktop Menu */}
+        <nav className="hidden md:flex items-center space-x-6">
+          {navItems.map((item) => (
             <Link
-              className={`anchor-link ${menu === item ? "active" : ""}`}
-              to={item === "home" ? "/" : `/${item}`}
-              onClick={() => handleLinkClick(item)}
+              key={item.name}
+              to={item.href}
+              onClick={() => handleLinkClick(item.name)}
+              className={`relative font-medium text-gray-100 hover:text-gray-300 transition-colors duration-300 ${
+                active === item.name ? "text-indigo-400" : ""
+              }`}
             >
-              {item.charAt(0).toUpperCase() + item.slice(1)}
+              {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+              <span
+                className={`absolute left-0 -bottom-1 h-[2px] bg-indigo-400 transition-all duration-300 ${
+                  active === item.name ? "w-full" : "w-0"
+                }`}
+              />
             </Link>
-          </li>
-        ))}
+          ))}
 
-        {/* Mobile Connect Button (hidden on desktop by CSS) */}
-        <div className="nav-connect-mobile">
           <Link
             to="/contact"
-            className="connect-btn"
-            onClick={() => handleLinkClick("contact")}
+            className="ml-4 px-4 py-2 rounded-full bg-gray-800 text-gray-100 font-semibold shadow hover:bg-gray-700 hover:scale-105 transform transition"
           >
-            Let’s Connect         </Link>
+            Let’s Connect
+          </Link>
+        </nav>
+
+        {/* Mobile Hamburger Button */}
+        <div className="md:hidden relative">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 rounded bg-black text-gray-100 focus:outline-none z-50"
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
         </div>
-      </ul>
-
-      {/* Desktop Connect Button (hidden on mobile by CSS) */}
-      <div className="nav-connect">
-        <Link
-          className="connect-btn"
-          to="/contact"
-          onClick={() => handleLinkClick("contact")}
-        >
-             Let’s Connect        </Link>
       </div>
 
-      {/* Mobile Toggle (Hamburger / Close) */}
-      <div className="nav-toggle" onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-40 md:hidden transform transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div
+          className="absolute inset-0 bg-black bg-opacity-70"
+          onClick={() => setIsOpen(false)}
+        />
+        <div className="relative bg-black w-full h-full flex flex-col items-center justify-center space-y-8 p-6">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.href}
+              onClick={() => handleLinkClick(item.name)}
+              className={`text-2xl font-medium text-gray-100 capitalize hover:text-gray-300 transition-colors duration-300 ${
+                active === item.name ? "text-indigo-400" : ""
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+
+          <Link
+            to="/contact"
+            onClick={() => handleLinkClick("contact")}
+            className="mt-4 px-5 py-2 rounded-full bg-gray-800 text-gray-100 font-semibold shadow hover:bg-gray-700 hover:scale-105 transform transition"
+          >
+            Let’s Connect
+          </Link>
+
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-4 right-4 p-2 bg-black rounded text-gray-100 focus:outline-none"
+            aria-label="Close Menu"
+          >
+            <FiX size={24} />
+          </button>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
