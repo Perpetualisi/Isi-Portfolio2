@@ -21,7 +21,7 @@ A modern, responsive portfolio website built with **React** and **CSS**. This pr
 ## 🛠️ Tech Stack
 
 - React.js
-- Plain CSS
+- Tailwind CSS
 - Vite
 - Git & GitHub
 - Vercel (Deployment)
