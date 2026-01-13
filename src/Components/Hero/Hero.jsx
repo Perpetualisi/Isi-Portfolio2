@@ -37,10 +37,11 @@ const Hero = () => {
         </h1>
 
         <p className="text-gray-300 mb-8 text-base sm:text-lg md:text-lg leading-relaxed">
-          I build clean, responsive, and scalable web applications across the
-          full stack. From intuitive user interfaces to reliable backend logic
-          and API integrations, I enjoy transforming ideas into complete digital
-          products that deliver great user experiences and real-world impact.
+          I build websites and web apps that are responsive, easy to use, and
+          work well on any device. I work on both the frontend and backend to
+          turn ideas into real digital products. I enjoy creating clean
+          interfaces, writing backend logic, and connecting APIs to make apps
+          interactive and useful.
         </p>
 
         <div className="flex flex-col sm:flex-col md:flex-row gap-4 justify-center md:justify-start">
@@ -52,7 +53,7 @@ const Hero = () => {
             View Projects
           </Link>
 
-          {/* Secondary CTA → Resume (Black Background) */}
+          {/* Secondary CTA → Resume */}
           <button
             onClick={handleDownload}
             className="px-7 py-3 rounded-full font-semibold bg-black border-2 border-gray-300 text-gray-300 transition-all duration-300 ease-in-out hover:text-purple-600 hover:border-purple-600 hover:scale-105 hover:-translate-y-1"

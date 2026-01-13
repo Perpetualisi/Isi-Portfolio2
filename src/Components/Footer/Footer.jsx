@@ -20,9 +20,7 @@ const Footer = () => {
         {/* Left */}
         <div className="flex-1 text-gray-300">
           <p>
-            Hi! I’m <strong>Okan Perpetual</strong>, a <strong>Full-Stack Developer</strong> from Nigeria. 
-            I build responsive web applications and end-to-end solutions using <strong>React.js, Node.js, APIs, and WordPress</strong>. 
-            My focus is on creating seamless user experiences with reliable backend systems and scalable architectures.
+            Hi! I’m <strong>Okan Perpetual</strong>, a <strong>Full-Stack Developer</strong> from Nigeria. I build responsive websites and web apps using <strong>React.js, Node.js, and APIs</strong>, focusing on smooth user experiences and clean backend code.
           </p>
         </div>
 
