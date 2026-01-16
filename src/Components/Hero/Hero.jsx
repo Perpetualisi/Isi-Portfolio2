@@ -19,7 +19,7 @@ const Hero = () => {
       {/* Left Section */}
       <div className="flex justify-center items-start md:items-center flex-1 mt-8 md:mt-0">
         <img
-          src="/profile.jpeg"
+          src="/profile4.jpeg"
           alt="Perpetual Okan"
           className="w-48 h-60 sm:w-52 sm:h-64 md:w-72 md:h-80 rounded-xl object-cover object-center shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-[0_10px_30px_rgba(180,21,255,0.4)]"
         />
