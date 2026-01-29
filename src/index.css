@@ -79,3 +79,23 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* Prevent horizontal scroll and bottom spacing issues */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure all sections take full width */
+section {
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Fix for mobile Safari bottom spacing */
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+}

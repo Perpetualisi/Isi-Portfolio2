@@ -1,104 +1,124 @@
 import React from "react";
+import { motion } from "framer-motion";
+import { FiCode, FiLayers, FiTerminal, FiCpu } from "react-icons/fi";
 
-const skills = [
-  { name: "HTML & CSS", level: "100%" },
-  { name: "JavaScript (ES6+)", level: "90%" },
-  { name: "TypeScript", level: "85%" },
-  { name: "React.js", level: "95%" },
-  { name: "Tailwind CSS", level: "95%" },
-  { name: "Node.js", level: "85%" },
-  { name: "Next.js", level: "75%" },
-  { name: "REST APIs & Integration", level: "85%" },
-  { name: "Git & GitHub", level: "90%" },
-  { name: "WordPress (Learning)", level: "40%" },
+const SKILL_CATEGORIES = [
+  {
+    title: "Frontend Mastery",
+    icon: <FiLayers className="text-zinc-500" />,
+    skills: ["React.js", "TypeScript", "Tailwind CSS", "HTML & CSS", "JavaScript"],
+  },
+  {
+    title: "Backend & Core",
+    icon: <FiCpu className="text-zinc-500" />,
+    skills: ["Node.js", "REST APIs", "PostgreSQL", "System Logic"],
+  },
+  {
+    title: "Workflow & Tools",
+    icon: <FiTerminal className="text-zinc-500" />,
+    skills: ["Git & GitHub", "Docker", "CI/CD", "WordPress"],
+  },
 ];
 
 const achievements = [
-  { count: "15+", label: "Projects Completed" },
-  { count: "10+", label: "Client & Personal Projects" },
-  { count: "Ongoing", label: "Learning & Growth" },
+  { count: "15+", label: "Products Delivered", detail: "Concept to deployment" },
+  { count: "100%", label: "Responsive Ratio", detail: "All device optimization" },
+  { count: "05+", label: "Global Partners", detail: "Technical execution" },
 ];
 
 const About = () => {
   return (
-    <section
-      id="about"
-      className="bg-black text-white px-5 py-20 md:px-10 lg:px-24 text-center"
-    >
-      {/* Title */}
-      <div className="mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-100">
-          About Me
-        </h1>
-      </div>
-
-      {/* About Text */}
-      <div className="max-w-3xl mx-auto space-y-4 text-left text-gray-300">
-        <p>
-          I’m{" "}
-          <span className="text-yellow-500 font-semibold">
-            Okan Perpetual Isi
-          </span>
-          , a <strong>Full-Stack Developer</strong>. I build responsive
-          websites and web applications that work smoothly across all
-          devices. I handle both frontend and backend development to turn
-          ideas into real digital products.
-        </p>
-
-        <p>
-          I create clean and user-friendly interfaces using{" "}
-          <strong>
-            React.js, Tailwind CSS, HTML, CSS, and TypeScript
-          </strong>{" "}
-          and develop backend services with <strong>Node.js</strong>. I
-          also integrate REST APIs to make applications dynamic and
-          interactive.
-        </p>
-
-        <p>
-          I enjoy learning new technologies and following best practices
-          to keep my code clean, efficient, and easy to maintain. I’m
-          currently learning <strong>WordPress</strong> to expand my skill
-          set.
-        </p>
-      </div>
-
-      {/* Skills Section */}
-      <div className="mt-12 max-w-3xl mx-auto text-left">
-        <h2 className="text-2xl md:text-3xl font-semibold text-gray-400 mb-6">
-          Skills
-        </h2>
-
-        <ul className="space-y-4">
-          {skills.map((skill) => (
-            <li key={skill.name}>
-              <span className="block font-medium mb-1 text-gray-300">
-                {skill.name}
-              </span>
-              <div className="h-2 w-full bg-gray-800 rounded overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-yellow-500 to-purple-500 transition-all duration-500"
-                  style={{ width: skill.level }}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Achievements */}
-      <div className="mt-16 flex flex-wrap justify-center gap-8">
-        {achievements.map((item) => (
-          <div
-            key={item.label}
-            className="bg-gray-900 p-8 rounded-xl text-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg"
+    <section id="about" className="bg-[#000000] text-white py-32 px-6 sm:px-12 lg:px-24 border-t border-zinc-900">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Simple Straight Heading */}
+        <div className="mb-20">
+          <motion.h2 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-6xl font-light tracking-tighter"
           >
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-yellow-500 to-purple-500 bg-clip-text text-transparent mb-2">
-              {item.count}
-            </h1>
-            <p className="text-gray-400">{item.label}</p>
+            A little about me
+          </motion.h2>
+          <div className="mt-6 w-16 h-[1px] bg-zinc-800" />
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-20 items-start">
+          
+          {/* Bio Section */}
+          <div className="space-y-12">
+            <div className="space-y-8">
+              <p className="text-zinc-200 leading-relaxed text-xl md:text-2xl font-light">
+                I’m <span className="text-white font-normal underline decoration-zinc-800 underline-offset-8">Okan Perpetual Isi</span>, a Full-Stack Developer.
+              </p>
+              
+              <div className="space-y-6 text-zinc-500 text-base leading-relaxed font-light max-w-xl">
+                <p>
+                  I build responsive websites and web applications that work smoothly across all devices. I handle both frontend and backend development to turn ideas into real digital products.
+                </p>
+                <p>
+                  I create clean and user-friendly interfaces using <span className="text-zinc-300">React.js, Tailwind CSS, HTML, CSS, and TypeScript</span> and develop backend services with <span className="text-zinc-300">Node.js</span>. I also integrate REST APIs to make applications dynamic and interactive.
+                </p>
+                <p>
+                  I enjoy learning new technologies and following best practices to keep my code clean, efficient, and easy to maintain.
+                </p>
+              </div>
+            </div>
+
+            {/* Achievement Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-zinc-900 border border-zinc-900">
+              {achievements.map((item, i) => (
+                <div key={i} className="p-8 bg-black hover:bg-zinc-950 transition-all">
+                  <h4 className="text-4xl font-light text-white mb-2 tracking-tighter">{item.count}</h4>
+                  <p className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold mb-3">{item.label}</p>
+                  <p className="text-zinc-600 text-[11px] leading-tight font-light">{item.detail}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+
+          {/* Technical Arsenal */}
+          <div className="bg-[#050505] border border-zinc-900 p-10 md:p-14 rounded-sm">
+            <h3 className="text-[10px] font-bold mb-12 uppercase tracking-[0.6em] text-zinc-600 flex items-center gap-4">
+              <span className="w-12 h-[1px] bg-zinc-800" />
+              Technical Arsenal
+            </h3>
+            
+            <div className="space-y-12">
+              {SKILL_CATEGORIES.map((cat, idx) => (
+                <div key={idx} className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    {cat.icon}
+                    <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-[0.2em]">
+                      {cat.title}
+                    </h4>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {cat.skills.map((skill) => (
+                      <span 
+                        key={skill}
+                        className="px-4 py-2 bg-zinc-950 border border-zinc-900 rounded-sm text-[11px] font-mono text-zinc-500 hover:text-white hover:border-zinc-400 transition-all duration-500"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-16 pt-8 border-t border-zinc-900">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-zinc-600 flex items-center gap-3">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-800 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-600"></span>
+                </span>
+                Currently learning: <span className="text-zinc-300">WordPress</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
