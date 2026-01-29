@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { FiMenu, FiX, FiArrowRight, FiTerminal } from "react-icons/fi";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { FiMenu, FiX, FiArrowRight } from "react-icons/fi";
 
-const NAV_ITEMS = [
+// Data moved outside to prevent re-renders and keep component clean
+const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "Portfolio", href: "/portfolio" },
@@ -11,127 +12,125 @@ const NAV_ITEMS = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { pathname } = useLocation();
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  // Optimized scroll handler with useCallback
+  const handleScroll = useCallback(() => {
+    const offset = window.scrollY;
+    setIsScrolled(offset > 50);
   }, []);
 
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
   }, [isOpen]);
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 ${
-        scrolled 
-          ? "bg-black/90 backdrop-blur-md py-4 border-b border-zinc-900" 
+      role="banner"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        isScrolled 
+          ? "bg-black/80 backdrop-blur-xl py-4 border-b border-white/5" 
           : "bg-transparent py-8"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-8 md:px-12 flex justify-between items-center">
+      <nav className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center" aria-label="Main Navigation">
         
-        {/* PURE IMAGE LOGO */}
-        <Link to="/" className="relative z-[70] block">
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 md:w-12 md:h-12 overflow-hidden"
-          >
-            <img 
-              src="/logo-okan.png" 
-              alt="Perpetual Okan"
-              className="w-full h-full object-contain brightness-[1.1] contrast-[1.1]"
-              loading="eager"
-            />
-          </motion.div>
+        {/* LOGO: Clean, semantic, and performant */}
+        <Link to="/" className="relative z-[70] transition-transform hover:scale-105 active:scale-95">
+          <img 
+            src="/logo-okan.png" 
+            alt="Perpetual Okan Logo"
+            className="w-10 h-10 md:w-12 md:h-12 object-contain"
+            loading="eager"
+          />
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-16">
-          <ul className="flex items-center gap-12">
-            {NAV_ITEMS.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <li key={item.name} className="relative">
+        {/* DESKTOP NAV */}
+        <div className="hidden md:flex items-center gap-12">
+          <LayoutGroup>
+            <ul className="flex items-center gap-10">
+              {NAV_LINKS.map(({ name, href }) => {
+                const isActive = pathname === href;
+                return (
+                  <li key={href} className="relative group">
+                    <Link
+                      to={href}
+                      className={`text-[11px] uppercase tracking-[0.3em] font-semibold transition-colors ${
+                        isActive ? "text-white" : "text-zinc-500 hover:text-zinc-200"
+                      }`}
+                    >
+                      {name}
+                    </Link>
+                    {isActive && (
+                      <motion.span 
+                        layoutId="nav-underline"
+                        className="absolute -bottom-2 left-0 w-full h-[1px] bg-indigo-500" // Use your accent color here
+                      />
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </LayoutGroup>
+
+          <Link
+            to="/contact"
+            className="group overflow-hidden relative px-8 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              Let's Talk <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </span>
+          </Link>
+        </div>
+
+        {/* MOBILE TOGGLE */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-label="Toggle Menu"
+          className="md:hidden relative z-[70] p-3 bg-white text-black transition-transform active:scale-90"
+        >
+          {isOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+        </button>
+      </nav>
+
+      {/* MOBILE OVERLAY */}
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 h-screen w-full bg-zinc-950 z-[60] flex flex-col justify-center px-10"
+          >
+            <div className="space-y-8">
+              <p className="text-zinc-600 font-mono text-[10px] uppercase tracking-[1em] border-b border-zinc-900 pb-4">Navigation</p>
+              {[...NAV_LINKS, { name: "Contact", href: "/contact" }].map((item, idx) => (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + idx * 0.1 }}
+                >
                   <Link
                     to={item.href}
-                    className={`text-[10px] uppercase tracking-[0.4em] font-medium transition-all duration-500 ${
-                      isActive ? "text-white" : "text-zinc-500 hover:text-zinc-200"
+                    onClick={() => setIsOpen(false)}
+                    className={`text-6xl font-light tracking-tighter block ${
+                      pathname === item.href ? "text-indigo-500" : "text-zinc-200"
                     }`}
                   >
                     {item.name}
                   </Link>
-                  {isActive && (
-                    <motion.div 
-                      layoutId="nav-line"
-                      className="absolute -bottom-1 left-0 w-full h-[1px] bg-white"
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-
-          <Link
-            to="/contact"
-            className="group flex items-center gap-3 px-6 py-2.5 border border-zinc-800 bg-zinc-900/40 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-500"
-          >
-            Contact
-            <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </nav>
-
-        {/* MOBILE TOGGLE: High Visibility White/Black contrast */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden relative z-[70] flex items-center justify-center w-12 h-12 bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.1)] active:scale-90 transition-all"
-        >
-          {isOpen ? <FiX size={24} strokeWidth={3} /> : <FiMenu size={24} strokeWidth={3} />}
-        </button>
-      </div>
-
-      {/* Mobile Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 h-screen w-full bg-black z-[60] flex flex-col p-12 justify-center"
-          >
-            <div className="flex flex-col gap-8">
-              <p className="text-zinc-800 font-mono text-[10px] uppercase tracking-[0.8em] mb-4">Indices</p>
-              {[...NAV_ITEMS, { name: "Contact", href: "/contact" }].map((item, idx) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                  >
-                    <Link
-                      to={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`text-5xl font-extralight tracking-tighter block transition-all duration-500 ${
-                        isActive ? "text-white italic translate-x-4" : "text-zinc-800 hover:text-zinc-500"
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-            
-            <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end border-t border-zinc-900 pt-8">
-               <FiTerminal className="text-zinc-800 text-xl" />
-               <p className="text-[9px] text-zinc-800 uppercase tracking-widest italic">P. Okan • 2026</p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}
