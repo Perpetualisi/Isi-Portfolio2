@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FiGithub, FiExternalLink } from "react-icons/fi";
+import { FiCode, FiGithub, FiExternalLink } from "react-icons/fi";
 import Portfolio_Data from "../../assets/portfolio_data";
 
 const ProjectCard = ({ project, index }) => (
@@ -11,7 +11,7 @@ const ProjectCard = ({ project, index }) => (
     transition={{ duration: 0.6, delay: index * 0.1 }}
     className="group relative bg-[#0a0a0a] border border-zinc-800 rounded-lg overflow-hidden transition-all duration-500 hover:border-zinc-400 hover:shadow-[0_0_40px_rgba(255,255,255,0.07)]"
   >
-    {/* Image Container - High Clarity */}
+    {/* Image Container */}
     <div className="relative h-64 overflow-hidden border-b border-zinc-800">
       <img
         src={project.image}
@@ -19,10 +19,13 @@ const ProjectCard = ({ project, index }) => (
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
       />
       
-      {/* High-contrast Tech Badges */}
+      {/* Tech Tags */}
       <div className="absolute top-4 left-4 flex flex-wrap gap-2">
         {project.tags.slice(0, 3).map((tag) => (
-          <span key={tag} className="px-3 py-1 bg-white text-black text-[9px] uppercase tracking-widest font-bold rounded-sm shadow-xl">
+          <span
+            key={tag}
+            className="px-3 py-1 bg-white text-black text-[9px] uppercase tracking-widest font-bold rounded-sm shadow-xl"
+          >
             {tag}
           </span>
         ))}
@@ -31,7 +34,7 @@ const ProjectCard = ({ project, index }) => (
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-30" />
     </div>
 
-    {/* Content Section */}
+    {/* Content */}
     <div className="p-8">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-xl font-semibold text-white tracking-tight">
@@ -44,7 +47,6 @@ const ProjectCard = ({ project, index }) => (
         {project.description}
       </p>
 
-      {/* Buttons - High Visibility */}
       <div className="flex items-center gap-6 pt-4 border-t border-zinc-800">
         <a
           href={project.link}
@@ -72,22 +74,37 @@ const ProjectCard = ({ project, index }) => (
 
 const Portfolio = () => {
   return (
-    <section id="portfolio" className="bg-[#000000] text-white py-32 px-6 md:px-12 lg:px-24 border-t border-zinc-900">
+    <section
+      id="portfolio"
+      className="bg-[#000000] text-white py-32 px-6 md:px-12 lg:px-24 border-t border-zinc-900"
+    >
       <div className="max-w-7xl mx-auto">
         
-        {/* Header Section: Bold & Bright */}
+        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-baseline mb-20 gap-8">
           <div className="max-w-2xl">
-            <h2 className="text-white font-bold text-xs uppercase tracking-[0.5em] mb-6 flex items-center gap-4 text-zinc-500">
-              <span className="w-8 h-[1px] bg-zinc-700" />
-              Portfolio
-            </h2>
+            {/* Badge-style heading */}
+            <div className="mb-6 flex items-center gap-3">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-sm"
+              >
+                <FiCode className="text-zinc-500 text-sm" />
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-500">
+                  Portfolio
+                </span>
+              </motion.div>
+            </div>
+
             <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white">
-              Featured <span className="text-zinc-600">Projects.</span>
+              Featured <span className="text-zinc-600">Projects</span>
             </h1>
           </div>
+
           <p className="text-zinc-400 text-sm max-w-[300px] font-medium leading-relaxed border-l border-zinc-800 pl-6">
-            Converting complex logic into seamless digital experiences through modern engineering.
+            Turning complex logic into **scalable and seamless digital experiences** with modern engineering practices.
           </p>
         </div>
 
@@ -98,13 +115,13 @@ const Portfolio = () => {
           ))}
         </div>
 
-        {/* High-Impact CTA */}
+        {/* CTA */}
         <div className="mt-32 text-center">
-          <motion.a 
+          <motion.a
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            href="https://github.com/Perpetualisi/" 
-            target="_blank" 
+            href="https://github.com/Perpetualisi/"
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-4 px-12 py-6 bg-white text-black font-black text-xs uppercase tracking-[0.4em] hover:bg-zinc-200 transition-all rounded-sm shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
           >
@@ -117,3 +134,4 @@ const Portfolio = () => {
 };
 
 export default Portfolio;
+

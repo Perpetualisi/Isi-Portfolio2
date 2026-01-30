@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiMail, FiPhone, FiMapPin, FiArrowUpRight, FiLoader } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin, FiArrowUpRight, FiCode, FiLoader } from "react-icons/fi";
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,9 +47,23 @@ const Contact = () => {
         {/* Heading */}
         <header className="mb-16">
           <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-600 flex items-center gap-4 mb-4">
-              <span className="w-12 h-[1px] bg-zinc-800" /> Contact
-            </h2>
+            
+            {/* Badge-style heading */}
+            <div className="mb-6 flex items-center gap-3">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-sm"
+              >
+                <FiCode className="text-zinc-500 text-sm" />
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-500">
+                  Contact
+                </span>
+              </motion.div>
+            </div>
+
+            {/* Subtitle */}
             <h1 className="text-3xl md:text-5xl font-light tracking-tight">
               Let's start a <span className="text-zinc-500 italic">conversation.</span>
             </h1>
@@ -85,8 +99,12 @@ const Contact = () => {
           </div>
 
           {/* Form */}
-          <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-            className="bg-zinc-900 border border-zinc-900 p-8 md:p-12 rounded-sm shadow-[0_0_50px_rgba(255,255,255,0.02)]">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="bg-zinc-900 border border-zinc-900 p-8 md:p-12 rounded-sm shadow-[0_0_50px_rgba(255,255,255,0.02)]"
+          >
             <form onSubmit={onSubmit} className="space-y-6">
 
               <div className="grid md:grid-cols-2 gap-6">

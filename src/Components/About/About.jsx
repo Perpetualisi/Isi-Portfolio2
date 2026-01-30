@@ -11,37 +11,42 @@ const SKILL_CATEGORIES = [
   {
     title: "Backend & Core",
     icon: <FiCpu className="text-zinc-500" />,
-    skills: ["Node.js", "REST APIs", "PostgreSQL", "System Logic"],
+    skills: ["Node.js", "REST APIs", "PostgreSQL", "System Architecture", "Microservices"],
   },
   {
     title: "Workflow & Tools",
     icon: <FiTerminal className="text-zinc-500" />,
-    skills: ["Git & GitHub", "Docker", "CI/CD", "WordPress"],
+    skills: ["Git & GitHub", "Docker", "CI/CD", "WordPress", "Cloud Integrations"],
   },
 ];
 
 const achievements = [
-  { count: "15+", label: "Products Delivered", detail: "Concept to deployment" },
-  { count: "100%", label: "Responsive Ratio", detail: "All device optimization" },
-  { count: "05+", label: "Global Partners", detail: "Technical execution" },
+  { count: "15+", label: "Projects Delivered", detail: "Concept to production-grade apps" },
+  { count: "100%", label: "Responsive Ratio", detail: "Optimized for all devices" },
+  { count: "05+", label: "Global Partners", detail: "Collaborations with international teams" },
 ];
 
 const About = () => {
   return (
-    <section id="about" className="bg-[#000000] text-white py-32 px-6 sm:px-12 lg:px-24 border-t border-zinc-900">
+    <section
+      id="about"
+      className="bg-[#000000] text-white py-32 px-6 sm:px-12 lg:px-24 border-t border-zinc-900"
+    >
       <div className="max-w-7xl mx-auto">
         
-        {/* Simple Straight Heading */}
-        <div className="mb-20">
-          <motion.h2 
+        {/* Heading */}
+        <div className="mb-12 flex items-center gap-3">
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-light tracking-tighter"
+            className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-sm"
           >
-            A little about me
-          </motion.h2>
-          <div className="mt-6 w-16 h-[1px] bg-zinc-800" />
+            <FiCode className="text-zinc-500 text-sm" />
+            <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-500">
+              About Me
+            </span>
+          </motion.div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-20 items-start">
@@ -50,18 +55,18 @@ const About = () => {
           <div className="space-y-12">
             <div className="space-y-8">
               <p className="text-zinc-200 leading-relaxed text-xl md:text-2xl font-light">
-                I’m <span className="text-white font-normal underline decoration-zinc-800 underline-offset-8">Okan Perpetual Isi</span>, a Full-Stack Developer.
+                I’m <span className="text-white font-normal underline decoration-zinc-800 underline-offset-8">Okan Perpetual Isi</span>, a Senior Full-Stack Developer with extensive experience in building scalable, high-performance web applications.
               </p>
               
               <div className="space-y-6 text-zinc-500 text-base leading-relaxed font-light max-w-xl">
                 <p>
-                  I build responsive websites and web applications that work smoothly across all devices. I handle both frontend and backend development to turn ideas into real digital products.
+                  I craft responsive websites and web applications that perform seamlessly across all devices. I handle both frontend and backend development to turn ideas into production-ready digital products.
                 </p>
                 <p>
-                  I create clean and user-friendly interfaces using <span className="text-zinc-300">React.js, Tailwind CSS, HTML, CSS, and TypeScript</span> and develop backend services with <span className="text-zinc-300">Node.js</span>. I also integrate REST APIs to make applications dynamic and interactive.
+                  On the frontend, I build clean and user-friendly interfaces with <span className="text-zinc-300">React.js, TypeScript, Tailwind CSS, HTML & CSS</span>. On the backend, I develop robust services using <span className="text-zinc-300">Node.js, REST APIs, and PostgreSQL</span>, integrating scalable architectures and cloud solutions.
                 </p>
                 <p>
-                  I enjoy learning new technologies and following best practices to keep my code clean, efficient, and easy to maintain.
+                  I am passionate about writing clean, maintainable code, following best practices, and mentoring teams to deliver impactful projects.
                 </p>
               </div>
             </div>
@@ -114,7 +119,7 @@ const About = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-800 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-600"></span>
                 </span>
-                Currently learning: <span className="text-zinc-300">WordPress</span>
+                Currently exploring: <span className="text-zinc-300">Cloud Architecture & WordPress</span>
               </p>
             </div>
           </div>
