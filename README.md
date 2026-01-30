@@ -1,63 +1,44 @@
 
+---
 
-## 📦 Project Overview
+# 🧑‍💻 About Me
 
-A modern, responsive portfolio website built with **React** and **CSS**. This project showcases my recent works, services, and contact information as a frontend developer.
+Hi! I’m **Okan Perpetual Isi**, a frontend developer based in **Lagos, Nigeria**.
 
-## 🚀 Live Demo
+I build **fast, modern, and user-friendly websites** using React, Tailwind CSS, and Vite.
 
-🔗 [View Live Site](https://isi-portfolio2.vercel.app/)
-
-## 📌 Features
-
-- ⚡ Fully responsive design
-- 🎨 Clean and modern UI
-- 🖼️ Image slider for projects
-- 📜 Smooth scroll navigation
-- 💡 Organized folder structure
-- 💬 Contact section with info
-- 🔄 Auto-sliding latest work section
-
-## 🛠️ Tech Stack
-
-- React.js
-- Tailwind CSS
-- Vite
-- Git & GitHub
-- Vercel (Deployment)
-
-## 📁 Project Structure
-
-```
-Isi-Portfolio2/
-│
-├── public/                 # Static files
-├── src/
-│   ├── assets/             # Images & data files
-│   ├── Components/         # Reusable components (Navbar, Hero, MyWork, etc.)
-│   ├── App.jsx             # Root component
-│   └── main.jsx            # React entry point
-│
-├── package.json
-└── README.md
-```
-
-## 🧑‍💻 Author
-
-**Okan Perpetual Isi**  
-Frontend Developer  
-📍 Lagos, Nigeria  
-📧 perpetualokan0@gmail.com  
-📞 +234-810-355-8837  
-
-## 📸 Screenshots
-
-| Homepage | Projects |
-|----------|----------|
-| ![Home](public/Hotelluxe.jpg) | ![Projects](public/cookk.jpg) |
+📧 Email: perpetualokan0@gmail.com  
+📞 Phone: +234-810-355-8837  
 
 ---
 
-## 🧾 License
+# 📸 Screenshots
 
-This project is open-source and available under the [MIT License](LICENSE).
+| Homepage | Projects |
+|----------|----------|
+| ![Home](public/Hotelluxe.jpg) | ![Projects](public/cookk.jpg) |  
+
+---
+
+# 📁 Projects
+
+### 1️⃣ Conotex Website
+- **Tech:** React, Tailwind CSS, Vite  
+- **Description:** Explore Conotex Integrated Services online. Check their ICT, security, and infrastructure solutions, and access their projects easily.  
+- 🔗 [Live Demo](https://www.conotextech.com/) | 🔗 [Source](https://www.conotextech.com/)
+
+### 2️⃣ Edusity
+- **Tech:** HTML, CSS, JavaScript  
+- **Description:** A modern online education platform that helps students learn and grow with interactive content.  
+- 🔗 [Live Demo](https://okan-perpetual-isi.vercel.app/) | 🔗 [Source](https://okan-perpetual-isi.vercel.app/)
+
+### 3️⃣ WearEiko Website
+- **Tech:** React, Tailwind CSS, Vite  
+- **Description:** A fashion website blending African heritage with modern design. Explore collections and celebrate your unique style online.  
+- 🔗 [Live Demo](https://www.weareiko.com/) | 🔗 [Source](https://www.weareiko.com/)
+
+---
+
+# 🧾 License
+
+This project is open-source under the [MIT License](LICENSE).

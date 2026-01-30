@@ -55,7 +55,7 @@ const About = () => {
           <div className="space-y-12">
             <div className="space-y-8">
               <p className="text-zinc-200 leading-relaxed text-xl md:text-2xl font-light">
-                I’m <span className="text-white font-normal underline decoration-zinc-800 underline-offset-8">Okan Perpetual Isi</span>, a Senior Full-Stack Developer with extensive experience in building scalable, high-performance web applications.
+                I’m <span className="text-white font-normal underline decoration-zinc-800 underline-offset-8">Okan Perpetual Isi</span>, a Full-Stack Developer with extensive experience in building scalable, high-performance web applications.
               </p>
               
               <div className="space-y-6 text-zinc-500 text-base leading-relaxed font-light max-w-xl">

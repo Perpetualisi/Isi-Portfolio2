@@ -6,7 +6,7 @@ const Portfolio_Data = [
   image: "/av.jpg",
   link: "https://www.conotextech.com/",
   demo: "https://www.conotextech.com/",
-  tags: ["React", "CSS", "Vite"]
+  tags: ["React", "TAILWIND CSS", "Vite"]
     },
     {
       title: "Edusity",
@@ -14,7 +14,7 @@ const Portfolio_Data = [
       image: "/edusity.png",  
       link: "https://okan-perpetual-isi.vercel.app/",
       demo: "https://okan-perpetual-isi.vercel.app/",  
-      tags: ["HTML", "CSS", "JavaScript"],  
+      tags: ["React", "CSS", "Vite"],  
     },
     {
   title: "WearEiko Website",
@@ -22,7 +22,7 @@ const Portfolio_Data = [
   image: "/weareiko.jpg",
   link: "https://www.weareiko.com/",
   demo: "https://www.weareiko.com/",
-  tags: ["React", "CSS", "Vite"]
+  tags: ["React", "TAILWIND CSS", "Vite"]
     },
 
   ];
