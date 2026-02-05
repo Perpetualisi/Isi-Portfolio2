@@ -1,12 +1,30 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { FiArrowRight, FiDownload, FiTerminal, FiDatabase, FiLayout } from "react-icons/fi";
+import { FiArrowRight, FiDownload, FiTerminal, FiDatabase, FiLayout, FiClock } from "react-icons/fi";
 
 const Hero = () => {
   const containerRef = useRef(null);
   const { scrollY } = useScroll();
   
+  // Real-time Clock Logic for 24/7 Impression
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Formats time (e.g., 14:05:02 PM) - Adjust 'en-US' or timeZone as needed
+  const formattedTime = time.toLocaleTimeString('en-US', { 
+    hour12: true, 
+    hour: '2-digit', 
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
   // Refined parallax for a premium feel
   const yImageValue = useTransform(scrollY, [0, 500], [0, -50]);
   const yImage = useSpring(yImageValue, { stiffness: 60, damping: 20 });
@@ -24,10 +42,9 @@ const Hero = () => {
   return (
     <section
       ref={containerRef}
-      /* Pure black background applied here */
       className="relative min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-24 pt-32 pb-16 bg-[#000000] overflow-hidden"
     >
-      {/* Background: Subtle Technical Grid with lower opacity for pure black depth */}
+      {/* Background: Subtle Technical Grid */}
       <motion.div style={{ opacity }} className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
       </motion.div>
@@ -41,32 +58,38 @@ const Hero = () => {
             className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 w-full"
           >
             <div className="relative w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[440px]">
-              {/* Subtle ambient light to "brighten" the area against pure black */}
               <div className="absolute -inset-10 bg-zinc-800/10 blur-[120px] rounded-full" />
               
               <div className="relative z-10 p-2 bg-zinc-900/30 backdrop-blur-md border border-white/5 rounded-3xl shadow-2xl">
                 <img
                   src="/profile41.jpeg"
                   alt="Perpetual Okan"
-                  /* Brightness and Contrast boosters */
                   className="w-full aspect-[4/5] rounded-2xl object-cover object-top brightness-[1.25] contrast-[1.1] saturate-[1.1] transition-all duration-500"
                   loading="eager"
                 />
                 
-                {/* Technical Floating Badge */}
+                {/* Technical Floating Badge with Live Time */}
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.6 }}
-                  className="absolute -bottom-6 -left-6 p-4 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl hidden sm:block"
+                  className="absolute -bottom-6 -left-6 p-5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] hidden sm:block min-w-[180px]"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-zinc-900 rounded-lg">
-                      <FiTerminal className="text-zinc-400" />
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="p-2 bg-zinc-900 rounded-lg">
+                        <FiClock className="text-zinc-400 text-sm" />
+                      </div>
+                      <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-600"></span>
+                      </span>
                     </div>
                     <div>
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Status</p>
-                      <p className="text-xs text-zinc-200 font-mono">Available 2026</p>
+                      <p className="text-[9px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-0.5">System Status: Online</p>
+                      <p className="text-xs text-zinc-200 font-mono font-medium tracking-tighter">
+                        {formattedTime}
+                      </p>
                     </div>
                   </div>
                 </motion.div>
@@ -90,7 +113,6 @@ const Hero = () => {
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  /* whitespace-nowrap and responsive font size ensure the one-line look */
                   className="text-4xl sm:text-6xl xl:text-7xl font-medium tracking-tight text-white leading-[1.1] whitespace-nowrap"
                 >
                   Hi, I’m <span className="text-zinc-500 italic">Perpetual Okan</span>
