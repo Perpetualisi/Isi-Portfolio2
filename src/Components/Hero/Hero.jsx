@@ -36,8 +36,12 @@ const Hero = () => {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-24 pt-32 pb-16 bg-[#000000] overflow-hidden"
+      /* - Changed: pt-64 (Mobile) and lg:pt-56 (Desktop) to bring everything down.
+         - Changed: Removed 'items-center' to ensure padding pushes content from the top.
+      */
+      className="relative min-h-screen flex justify-center px-6 md:px-12 lg:px-24 pt-64 md:pt-72 lg:pt-56 pb-24 bg-[#000000] overflow-hidden"
     >
+      {/* Background Grid */}
       <motion.div style={{ opacity }} className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
       </motion.div>
@@ -61,7 +65,7 @@ const Hero = () => {
                   loading="eager"
                 />
                 
-                {/* Responsive Badge: Slim on mobile, Full on Desktop */}
+                {/* Status Badge */}
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

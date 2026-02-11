@@ -40,15 +40,16 @@ const CinematicParagraph = ({ children, className = "", delay = 0 }) => {
     <motion.p
       ref={ref}
       className={className}
-      initial={{ opacity: 0.3 }}
+      initial={{ opacity: 0.1, y: 10 }}
       animate={{ 
         opacity: isInView ? 1 : 0.3,
+        y: isInView ? 0 : 10,
         scale: isInView ? 1 : 0.98,
       }}
       transition={{ 
-        duration: 0.6,
+        duration: 0.8,
         delay: delay,
-        ease: "easeOut"
+        ease: [0.16, 1, 0.3, 1]
       }}
     >
       {children}
@@ -61,7 +62,7 @@ const CinematicSection = ({ children, className = "", delay = 0 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: false, 
-    amount: 0.3,
+    amount: 0.2,
     margin: "-50px"
   });
 
@@ -69,13 +70,13 @@ const CinematicSection = ({ children, className = "", delay = 0 }) => {
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0.3 }}
+      initial={{ opacity: 0.2, y: 20 }}
       animate={{ 
-        opacity: isInView ? 1 : 0.3,
-        y: isInView ? 0 : 10,
+        opacity: isInView ? 1 : 0.2,
+        y: isInView ? 0 : 20,
       }}
       transition={{ 
-        duration: 0.7,
+        duration: 0.8,
         delay: delay,
         ease: "easeOut"
       }}
@@ -89,17 +90,18 @@ const About = () => {
   return (
     <section
       id="about"
-      className="bg-[#000000] text-white py-32 px-6 sm:px-12 lg:px-24 border-t border-zinc-900 relative"
+      /* Added pt-48 for clearance and scroll-mt-20 for navbar offset */
+      className="bg-[#000000] text-white pt-48 pb-32 px-6 sm:px-12 lg:px-24 border-t border-zinc-900 relative scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto">
         
         {/* Heading */}
         <motion.div
-          className="mb-12 flex items-center gap-3"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          className="mb-16 flex items-center gap-3"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-sm">
             <FiCode className="text-zinc-500 text-sm" />
@@ -114,37 +116,32 @@ const About = () => {
           {/* Bio Section */}
           <div className="space-y-12">
             <div className="space-y-8">
-              <CinematicParagraph className="text-zinc-200 leading-relaxed text-xl md:text-2xl font-light">
-                I'm a Full-Stack Developer with hands-on experience building and maintaining web applications using React.js, TypeScript, JavaScript, Tailwind CSS, Bootstrap, HTML, and CSS, alongside backend technologies such as Node.js, REST APIs, and WordPress.
+              <CinematicParagraph className="text-zinc-200 leading-relaxed text-xl md:text-3xl font-light tracking-tight">
+                I'm a Full-Stack Developer with hands-on experience building web applications using <span className="text-white font-medium">React.js</span>, <span className="text-white font-medium">TypeScript</span>, and <span className="text-white font-medium">Node.js</span>.
               </CinematicParagraph>
               
-              <div className="space-y-6 text-zinc-500 text-base leading-relaxed font-light max-w-xl">
+              <div className="space-y-6 text-zinc-500 text-base md:text-lg leading-relaxed font-light max-w-xl">
                 <CinematicParagraph delay={0.1}>
-                  I specialize in creating clean, responsive, and user-friendly interfaces, while also developing and integrating backend logic that supports scalable, real-world applications. I work comfortably with WordPress CMS, customizing themes, managing content, and extending functionality through plugins and API integrations to meet business and storytelling goals.
+                  I specialize in creating clean, responsive, and user-friendly interfaces, while also developing and integrating backend logic that supports scalable, real-world applications.
                 </CinematicParagraph>
                 
                 <CinematicParagraph delay={0.15}>
-                  On the backend, I build and consume RESTful APIs, handle data flow between frontend and server, and integrate third-party services such as analytics, forms, and authentication tools. I focus on performance, accessibility, and maintainability, ensuring websites and applications are reliable and easy to manage.
+                  On the backend, I build and consume RESTful APIs, handle data flow between frontend and server, and integrate third-party services such as analytics and authentication tools.
                 </CinematicParagraph>
                 
                 <CinematicParagraph delay={0.2}>
-                  I collaborate closely with designers, marketers, and non-technical stakeholders to translate ideas into functional digital solutions. I also use AI-assisted development tools to speed up development, debug issues efficiently, and improve code quality—while maintaining full understanding and ownership of every project.
-                </CinematicParagraph>
-                
-                <CinematicParagraph delay={0.25}>
-                  I'm continuously improving my skills across the full stack and I'm interested in opportunities involving WordPress development, API-driven applications, and Node.js-based systems, especially within teams building impactful, purpose-driven products.
+                  I collaborate closely with stakeholders to translate ideas into functional digital solutions, utilizing AI-assisted tools to improve efficiency while maintaining full ownership of the code.
                 </CinematicParagraph>
               </div>
             </div>
 
             {/* Achievement Grid */}
-            <CinematicSection className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-zinc-900 border border-zinc-900">
+            <CinematicSection className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-zinc-900 border border-zinc-900 overflow-hidden rounded-sm">
               {achievements.map((item, i) => (
                 <motion.div
                   key={i}
                   className="p-8 bg-black hover:bg-zinc-950 transition-all cursor-default"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
+                  whileHover={{ backgroundColor: "#050505" }}
                 >
                   <h4 className="text-4xl font-light text-white mb-2 tracking-tighter">{item.count}</h4>
                   <p className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold mb-3">{item.label}</p>
@@ -155,7 +152,7 @@ const About = () => {
           </div>
 
           {/* Technical Arsenal */}
-          <CinematicSection className="bg-[#050505] border border-zinc-900 p-10 md:p-14 rounded-sm">
+          <CinematicSection className="bg-[#050505] border border-zinc-900 p-10 md:p-14 rounded-sm sticky top-32">
             <h3 className="text-[10px] font-bold mb-12 uppercase tracking-[0.6em] text-zinc-600 flex items-center gap-4">
               <span className="w-12 h-[1px] bg-zinc-800" />
               Tech Stack & Tools
@@ -182,8 +179,7 @@ const About = () => {
                       <motion.span
                         key={skill}
                         className="px-4 py-2 bg-zinc-950 border border-zinc-900 rounded-sm text-[11px] font-mono text-zinc-500 hover:text-white hover:border-zinc-400 transition-all duration-500 cursor-default"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.2 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                       >
                         {skill}
                       </motion.span>
@@ -197,15 +193,14 @@ const About = () => {
               className="mt-16 pt-8 border-t border-zinc-900"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ once: false }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+              transition={{ delay: 0.5 }}
             >
               <p className="text-[10px] uppercase tracking-[0.4em] text-zinc-600 flex items-center gap-3">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-800 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-600"></span>
                 </span>
-                Open to: <span className="text-zinc-300">Full-time, Contract & Remote Opportunities</span>
+                Open to: <span className="text-zinc-300">Full-time & Remote</span>
               </p>
             </motion.div>
           </CinematicSection>
