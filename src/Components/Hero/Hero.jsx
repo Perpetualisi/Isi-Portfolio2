@@ -36,11 +36,6 @@ const Hero = () => {
   return (
     <section
       ref={containerRef}
-      /* UPDATED CLASSES:
-         1. lg:justify-start -> Stops the "dead center" force on desktop.
-         2. lg:pt-52 -> Gives a massive, clean gap from the navbar on large screens.
-         3. pt-52 md:pt-60 -> Keeps mobile and tablet spacing consistent.
-      */
       className="relative min-h-screen flex flex-col justify-start lg:justify-start px-6 md:px-12 lg:px-24 pt-52 md:pt-60 lg:pt-52 pb-16 bg-[#000000] overflow-hidden"
     >
       {/* Background Grid */}
@@ -101,7 +96,8 @@ const Hero = () => {
               </motion.div>
 
               <div className="space-y-4">
-                <motion.h1 className="text-4xl sm:text-6xl xl:text-7xl font-medium tracking-tight text-white leading-[1.1]">
+                {/* MODIFIED: whitespace-nowrap and adjusted text sizes ensure one line */}
+                <motion.h1 className="text-[1.75rem] xs:text-4xl sm:text-6xl xl:text-7xl font-medium tracking-tight text-white leading-[1.1] whitespace-nowrap">
                   Hi, I’m <span className="text-zinc-500 italic">Perpetual Okan</span>
                 </motion.h1>
                 <h2 className="text-2xl md:text-3xl font-light text-zinc-400">Full-Stack Developer</h2>
@@ -118,7 +114,12 @@ const Hero = () => {
                   Explore Work <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
-              <button onClick={handleDownload} className="group flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-200 font-bold text-xs uppercase tracking-[0.2em] transition-all">
+              
+              {/* MODIFIED: Matches black background, subtle border, and transitions for a clean look */}
+              <button 
+                onClick={handleDownload} 
+                className="group w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-transparent border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-400 font-bold text-xs uppercase tracking-[0.2em] transition-all rounded-sm"
+              >
                 <FiDownload className="group-hover:-translate-y-1 transition-transform" /> Get Resume
               </button>
             </div>
