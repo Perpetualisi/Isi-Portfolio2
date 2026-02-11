@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo } from "react"; // Added useMemo here
 import { motion, useInView } from "framer-motion";
 import { FiCode, FiGithub, FiExternalLink, FiArrowUpRight } from "react-icons/fi";
 import Portfolio_Data from "../../assets/portfolio_data";
@@ -114,7 +114,7 @@ const TechTags = ({ tags }) => {
   );
 };
 
-const ProjectLinks = ({ githubUrl, demoUrl, title }) => (
+const ProjectLinks = ({ githubUrl, demoUrl }) => (
   <div className="flex items-center justify-between gap-3 mt-auto pt-5 border-t border-zinc-800/50">
     {githubUrl && (
       <a
@@ -164,7 +164,7 @@ const ProjectCard = React.memo(({ project }) => {
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-start gap-3 mb-3">
-          <h3 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">
+          <h3 className="text-lg font-bold text-white group-hover:text-white transition-colors duration-300">
             {project.title}
           </h3>
           <FiArrowUpRight className="text-zinc-600 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1" size={18} />
@@ -172,7 +172,7 @@ const ProjectCard = React.memo(({ project }) => {
         <p className="text-zinc-400 text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
           {project.description}
         </p>
-        <ProjectLinks githubUrl={project.link} demoUrl={project.demo} title={project.title} />
+        <ProjectLinks githubUrl={project.link} demoUrl={project.demo} />
       </div>
     </motion.article>
   );
@@ -197,14 +197,14 @@ const Portfolio = () => {
       <div className="max-w-7xl mx-auto">
         <h1 id="portfolio-heading" className="sr-only">Portfolio - Featured Projects</h1>
 
-        {/* HEADER SECTION - Added larger margin-top for clearance */}
-        <header className="pt-24 md:pt-32 mb-16 md:mb-20 space-y-6">
+        {/* HEADER SECTION - Reduced pt-24/32 to pt-12/16 to bring it upwards */}
+        <header className="pt-12 md:pt-16 mb-12 md:mb-16 space-y-6">
           <motion.div
             variants={headerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="flex items-center gap-2 text-indigo-500"
+            className="flex items-center gap-2 text-zinc-500"
           >
             <FiCode size={20} />
             <span className="text-xs font-black uppercase tracking-[0.3em]">Selected Works</span>
@@ -227,7 +227,7 @@ const Portfolio = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="max-w-xs text-zinc-500 text-sm italic border-l-2 border-indigo-500 pl-4"
+              className="max-w-xs text-zinc-500 text-sm italic border-l-2 border-zinc-800 pl-4"
             >
               <p>"Engineering isn't just about code; it's about creating intuitive digital architecture."</p>
             </motion.blockquote>
@@ -264,8 +264,7 @@ const Portfolio = () => {
 
       <style jsx>{`
         .portfolio-section {
-          /* Adjust this to the height of your navbar */
-          scroll-margin-top: 80px; 
+          scroll-margin-top: 100px; 
         }
 
         .outline-text {

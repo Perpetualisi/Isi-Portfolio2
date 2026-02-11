@@ -36,10 +36,12 @@ const Hero = () => {
   return (
     <section
       ref={containerRef}
-      /* - Changed pt-40 to pt-52 for a more generous gap from the navbar.
-         - Changed md:pt-48 to md:pt-60 for consistent scaling on tablets.
+      /* UPDATED CLASSES:
+         1. lg:justify-start -> Stops the "dead center" force on desktop.
+         2. lg:pt-52 -> Gives a massive, clean gap from the navbar on large screens.
+         3. pt-52 md:pt-60 -> Keeps mobile and tablet spacing consistent.
       */
-      className="relative min-h-screen flex flex-col justify-start lg:justify-center px-6 md:px-12 lg:px-24 pt-52 md:pt-60 lg:pt-0 pb-16 bg-[#000000] overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-start lg:justify-start px-6 md:px-12 lg:px-24 pt-52 md:pt-60 lg:pt-52 pb-16 bg-[#000000] overflow-hidden"
     >
       {/* Background Grid */}
       <motion.div style={{ opacity }} className="absolute inset-0 pointer-events-none">
