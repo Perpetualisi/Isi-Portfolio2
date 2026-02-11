@@ -36,10 +36,10 @@ const Hero = () => {
   return (
     <section
       ref={containerRef}
-      /* - Changed: pt-64 (Mobile) and lg:pt-56 (Desktop) to bring everything down.
-         - Changed: Removed 'items-center' to ensure padding pushes content from the top.
+      /* - Changed pt-40 to pt-52 for a more generous gap from the navbar.
+         - Changed md:pt-48 to md:pt-60 for consistent scaling on tablets.
       */
-      className="relative min-h-screen flex justify-center px-6 md:px-12 lg:px-24 pt-64 md:pt-72 lg:pt-56 pb-24 bg-[#000000] overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-start lg:justify-center px-6 md:px-12 lg:px-24 pt-52 md:pt-60 lg:pt-0 pb-16 bg-[#000000] overflow-hidden"
     >
       {/* Background Grid */}
       <motion.div style={{ opacity }} className="absolute inset-0 pointer-events-none">
@@ -54,7 +54,7 @@ const Hero = () => {
             style={{ y: yImage }}
             className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 w-full"
           >
-            <div className="relative w-full max-w-[280px] sm:max-w-[380px] lg:max-w-[440px]">
+            <div className="relative w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[440px]">
               <div className="absolute -inset-10 bg-zinc-800/10 blur-[120px] rounded-full" />
               
               <div className="relative z-10 p-2 bg-zinc-900/30 backdrop-blur-md border border-white/5 rounded-3xl shadow-2xl">
@@ -70,7 +70,7 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 sm:left-[-24px] sm:translate-x-0 p-2 sm:p-4 bg-zinc-950/90 backdrop-blur-xl border border-zinc-800 rounded-xl shadow-2xl flex items-center gap-3 min-w-[160px] sm:min-w-[200px]"
+                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 sm:left-[-24px] sm:translate-x-0 p-2 sm:p-4 bg-zinc-950/90 backdrop-blur-xl border border-zinc-800 rounded-xl shadow-2xl flex items-center gap-3 min-w-[150px] sm:min-w-[200px]"
                 >
                   <div className="relative flex items-center justify-center">
                     <div className="p-1.5 bg-zinc-900 rounded-md">
@@ -99,7 +99,7 @@ const Hero = () => {
               </motion.div>
 
               <div className="space-y-4">
-                <motion.h1 className="text-4xl sm:text-6xl xl:text-7xl font-medium tracking-tight text-white leading-[1.1] md:whitespace-nowrap">
+                <motion.h1 className="text-4xl sm:text-6xl xl:text-7xl font-medium tracking-tight text-white leading-[1.1]">
                   Hi, I’m <span className="text-zinc-500 italic">Perpetual Okan</span>
                 </motion.h1>
                 <h2 className="text-2xl md:text-3xl font-light text-zinc-400">Full-Stack Developer</h2>
@@ -110,13 +110,13 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-8 justify-center lg:justify-start pt-4">
-              <Link to="/portfolio" className="group w-full sm:w-auto px-10 py-4 bg-zinc-100 text-black font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-white transition-all">
+            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 justify-center lg:justify-start pt-4">
+              <Link to="/portfolio" className="group w-full sm:w-auto px-10 py-4 bg-zinc-100 text-black font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-white transition-all text-center">
                 <span className="flex items-center justify-center gap-2">
                   Explore Work <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
-              <button onClick={handleDownload} className="group flex items-center gap-2 text-zinc-500 hover:text-zinc-200 font-bold text-xs uppercase tracking-[0.2em] transition-all">
+              <button onClick={handleDownload} className="group flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-200 font-bold text-xs uppercase tracking-[0.2em] transition-all">
                 <FiDownload className="group-hover:-translate-y-1 transition-transform" /> Get Resume
               </button>
             </div>
