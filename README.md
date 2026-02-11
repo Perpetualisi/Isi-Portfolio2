@@ -28,7 +28,7 @@ I build **fast, modern, and user-friendly websites** using React, Tailwind CSS, 
 - 🔗 [Live Demo](https://www.conotextech.com/) | 🔗 [Source](https://www.conotextech.com/)
 
 ### 2️⃣ Edusity
-- **Tech:** HTML, CSS, JavaScript  
+- **Tech:** HTML, Tailwind CSS, JavaScript  
 - **Description:** A modern online education platform that helps students learn and grow with interactive content.  
 - 🔗 [Live Demo](https://okan-perpetual-isi.vercel.app/) | 🔗 [Source](https://okan-perpetual-isi.vercel.app/)
 

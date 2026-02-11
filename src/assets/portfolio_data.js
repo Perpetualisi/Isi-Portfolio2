@@ -14,7 +14,7 @@ const Portfolio_Data = [
       image: "/edusity.png",  
       link: "https://okan-perpetual-isi.vercel.app/",
       demo: "https://okan-perpetual-isi.vercel.app/",  
-      tags: ["React", "CSS", "Vite"],  
+      tags: ["React", "TAILWIND CSS", "Vite"],  
     },
     {
   title: "WearEiko Website",
