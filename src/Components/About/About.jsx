@@ -7,79 +7,58 @@ const SKILL_CATEGORIES = [
   {
     title: "Frontend Development",
     icon: <FiLayers className="text-zinc-500" />,
-    skills: ["React.js", "TypeScript", "JavaScript (ES6+)", "Tailwind CSS", "Bootstrap", "HTML", "CSS"],
+    skills: ["React.js", "JavaScript (ES6+)", "HTML", "CSS", "Tailwind CSS"],
   },
   {
-    title: "Backend & APIs",
+    title: "Backend & CMS",
     icon: <FiCpu className="text-zinc-500" />,
-    skills: ["Node.js", "REST APIs", "WordPress", "CMS Management"],
+    skills: ["Node.js", "REST APIs", "Express.js", "WordPress", "CMS Management"],
   },
   {
     title: "Tools & Workflow",
     icon: <FiTerminal className="text-zinc-500" />,
-    skills: ["Git", "API Integration", "Third-party Services"],
+    skills: ["Git", "GitHub", "Postman", "Docker", "VS Code", "Debugging", "API Integration"],
   },
 ];
 
 const achievements = [
   { count: "15+", label: "Projects Delivered", detail: "Concept to production-grade apps" },
   { count: "100%", label: "Responsive Ratio", detail: "Optimized for all devices" },
-  { count: "05+", label: "Global Partners", detail: "Collaborations with international teams" },
+  { count: "CMS", label: "Expertise", detail: "WordPress theme customization" },
 ];
 
-// Cinematic paragraph component that brightens on scroll
 const CinematicParagraph = ({ children, className = "", delay = 0 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { 
-    once: false, 
-    amount: 0.5,
-    margin: "-100px"
-  });
+  const isInView = useInView(ref, { once: false, amount: 0.5, margin: "-100px" });
 
   return (
     <motion.p
       ref={ref}
       className={className}
       initial={{ opacity: 0.1, y: 10 }}
-      animate={{ 
+      animate={{
         opacity: isInView ? 1 : 0.3,
         y: isInView ? 0 : 10,
         scale: isInView ? 1 : 0.98,
       }}
-      transition={{ 
-        duration: 0.8,
-        delay: delay,
-        ease: [0.16, 1, 0.3, 1]
-      }}
+      transition={{ duration: 0.8, delay: delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
     </motion.p>
   );
 };
 
-// Cinematic section component
 const CinematicSection = ({ children, className = "", delay = 0 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { 
-    once: false, 
-    amount: 0.2,
-    margin: "-50px"
-  });
+  const isInView = useInView(ref, { once: false, amount: 0.2, margin: "-50px" });
 
   return (
     <motion.div
       ref={ref}
       className={className}
       initial={{ opacity: 0.2, y: 20 }}
-      animate={{ 
-        opacity: isInView ? 1 : 0.2,
-        y: isInView ? 0 : 20,
-      }}
-      transition={{ 
-        duration: 0.8,
-        delay: delay,
-        ease: "easeOut"
-      }}
+      animate={{ opacity: isInView ? 1 : 0.2, y: isInView ? 0 : 20 }}
+      transition={{ duration: 0.8, delay: delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -90,11 +69,9 @@ const About = () => {
   return (
     <section
       id="about"
-      /* Added pt-48 for clearance and scroll-mt-20 for navbar offset */
       className="bg-[#000000] text-white pt-48 pb-32 px-6 sm:px-12 lg:px-24 border-t border-zinc-900 relative scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto">
-        
         {/* Heading */}
         <motion.div
           className="mb-16 flex items-center gap-3"
@@ -112,25 +89,28 @@ const About = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-20 items-start">
-          
           {/* Bio Section */}
           <div className="space-y-12">
             <div className="space-y-8">
-              <CinematicParagraph className="text-zinc-200 leading-relaxed text-xl md:text-3xl font-light tracking-tight">
-                I'm a Full-Stack Developer with hands-on experience building web applications using <span className="text-white font-medium">React.js</span>, <span className="text-white font-medium">TypeScript</span>, and <span className="text-white font-medium">Node.js</span>.
+              <CinematicParagraph className="text-zinc-200 leading-relaxed text-xl md:text-2xl font-light tracking-tight">
+                I’m a <span className="text-white font-medium">Full-Stack Developer</span> with experience building web applications using <span className="text-white font-medium">React.js, JavaScript, HTML, CSS</span>, alongside backend technologies such as <span className="text-white font-medium">Node.js, REST APIs, and WordPress.</span>
               </CinematicParagraph>
-              
+
               <div className="space-y-6 text-zinc-500 text-base md:text-lg leading-relaxed font-light max-w-xl">
                 <CinematicParagraph delay={0.1}>
-                  I specialize in creating clean, responsive, and user-friendly interfaces, while also developing and integrating backend logic that supports scalable, real-world applications.
+                  I specialize in creating clean, responsive, and user-friendly interfaces, while also developing and integrating backend logic that supports scalable, real-world applications. I work with WordPress CMS, customizing themes, managing content, and extending functionality through plugins and API integrations.
                 </CinematicParagraph>
-                
+
                 <CinematicParagraph delay={0.15}>
-                  On the backend, I build and consume RESTful APIs, handle data flow between frontend and server, and integrate third-party services such as analytics and authentication tools.
+                  On the backend, I build and consume RESTful APIs, handle data flow between frontend and server, and integrate third-party services such as analytics, forms, and authentication tools. I focus on performance, accessibility, and maintainability, ensuring websites and applications are reliable and easy to manage.
                 </CinematicParagraph>
-                
+
                 <CinematicParagraph delay={0.2}>
-                  I collaborate closely with stakeholders to translate ideas into functional digital solutions, utilizing AI-assisted tools to improve efficiency while maintaining full ownership of the code.
+                  I collaborate closely with designers, marketers, and non-technical stakeholders to translate ideas into functional digital solutions. I use industry-standard development tools to streamline workflow, debug efficiently, and maintain high code quality.
+                </CinematicParagraph>
+
+                <CinematicParagraph delay={0.25} className="text-zinc-400 italic">
+                  I continuously improve my skills across the full stack and am interested in opportunities involving WordPress development, API-driven applications, and Node.js-based systems.
                 </CinematicParagraph>
               </div>
             </div>
@@ -157,7 +137,7 @@ const About = () => {
               <span className="w-12 h-[1px] bg-zinc-800" />
               Tech Stack & Tools
             </h3>
-            
+
             <div className="space-y-12">
               {SKILL_CATEGORIES.map((category, idx) => (
                 <motion.div
@@ -200,7 +180,7 @@ const About = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-800 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-600"></span>
                 </span>
-                Open to: <span className="text-zinc-300">Full-time & Remote</span>
+                Open to: <span className="text-zinc-300">Full-time, Contract, and Remote</span>
               </p>
             </motion.div>
           </CinematicSection>
