@@ -3,7 +3,7 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { FiCode, FiLayers, FiTerminal, FiCpu, FiZap, FiTrendingUp, FiAward } from "react-icons/fi";
 
 // ============================================================================
-// SKILL CATEGORIES DATA
+// DATA STRUCTURES
 // ============================================================================
 const SKILL_CATEGORIES = [
   {
@@ -44,6 +44,9 @@ const achievements = [
   },
 ];
 
+// ============================================================================
+// HELPER COMPONENTS
+// ============================================================================
 const CinematicParagraph = ({ children, className = "", delay = 0 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5, margin: "-100px" });
@@ -90,7 +93,7 @@ const SectionHeader = () => {
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [40, -40]); // Reduced parallax travel
+  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
   return (
@@ -130,7 +133,6 @@ const SectionHeader = () => {
         </div>
       </div>
       
-      {/* Tightened the divider spacing */}
       <motion.div 
         initial={{ scaleX: 0 }}
         animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
@@ -187,6 +189,9 @@ const SkillCard = ({ skill, index }) => {
   );
 };
 
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 const About = () => {
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -200,7 +205,7 @@ const About = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="relative bg-black text-white pt-24 pb-24 px-6 sm:px-12 lg:px-24 border-t border-zinc-900/50 scroll-mt-20 overflow-hidden"
+      className="relative bg-black text-white pt-40 pb-24 px-6 sm:px-12 lg:px-24 border-t border-zinc-900/50 scroll-mt-32 overflow-hidden"
     >
       <motion.div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ opacity: backgroundOpacity }}>
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-zinc-900/30 rounded-full blur-[120px]" />
@@ -209,7 +214,6 @@ const About = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <SectionHeader />
 
-        {/* Reduced gap from 20/24 to 12/16 */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <div className="space-y-12">
             <div className="space-y-6">
@@ -250,7 +254,7 @@ const About = () => {
           </div>
 
           <CinematicSection 
-            className="relative bg-zinc-950/50 border border-zinc-900 p-8 md:p-10 rounded-3xl backdrop-blur-xl lg:sticky lg:top-24 overflow-hidden"
+            className="relative bg-zinc-950/50 border border-zinc-900 p-8 md:p-10 rounded-3xl backdrop-blur-xl lg:sticky lg:top-32 overflow-hidden"
           >
             <div className="relative">
               <div className="mb-10">
