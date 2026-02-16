@@ -1,287 +1,322 @@
-import React, { useRef, useMemo } from "react"; // Added useMemo here
-import { motion, useInView } from "framer-motion";
-import { FiCode, FiGithub, FiExternalLink, FiArrowUpRight } from "react-icons/fi";
+import React, { useRef, useMemo } from "react";
+import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { FiGithub, FiArrowUpRight, FiLayers, FiExternalLink } from "react-icons/fi";
 import Portfolio_Data from "../../assets/portfolio_data";
 
 // ============================================================================
-// CONSTANTS & CONFIGURATION
+// ENHANCED 3D TILT CARD WITH CINEMATIC EFFECTS
 // ============================================================================
-
-const ANIMATION_CONFIG = {
-  easings: {
-    smooth: [0.16, 1, 0.3, 1],
-    spring: { type: "spring", stiffness: 100, damping: 15 },
-  },
-  durations: {
-    default: 0.6,
-    slow: 0.8,
-  },
-};
-
-const MAX_VISIBLE_TAGS = 3;
-const INTERSECTION_THRESHOLD = 0.2;
-
-// ============================================================================
-// ANIMATION VARIANTS
-// ============================================================================
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.15,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.98 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: ANIMATION_CONFIG.durations.slow,
-      ease: ANIMATION_CONFIG.easings.smooth,
-    },
-  },
-};
-
-const headerVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: ANIMATION_CONFIG.durations.default },
-  },
-};
-
-const titleVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: ANIMATION_CONFIG.durations.default,
-      ease: ANIMATION_CONFIG.easings.smooth,
-    },
-  },
-};
-
-// ============================================================================
-// SUB-COMPONENTS
-// ============================================================================
-
-const ProjectImage = ({ image, title }) => (
-  <div className="relative aspect-video overflow-hidden bg-zinc-900">
-    <motion.img
-      src={image}
-      alt={`${title} preview`}
-      className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
-      style={{ filter: "grayscale(0.2)" }}
-      whileHover={{ filter: "grayscale(0)" }}
-      loading="lazy"
-      decoding="async"
-    />
-    <div
-      className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/40 to-transparent pointer-events-none"
-      aria-hidden="true"
-    />
-  </div>
-);
-
-const TechTags = ({ tags }) => {
-  const visibleTags = useMemo(() => tags.slice(0, MAX_VISIBLE_TAGS), [tags]);
-  return (
-    <div className="absolute bottom-4 left-4 flex flex-wrap gap-2" role="list">
-      {visibleTags.map((tag) => (
-        <span
-          key={tag}
-          role="listitem"
-          className="px-2.5 py-1 text-[9px] uppercase tracking-wider font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-md shadow-lg"
-        >
-          {tag}
-        </span>
-      ))}
-      {tags.length > MAX_VISIBLE_TAGS && (
-        <span className="px-2.5 py-1 text-[9px] uppercase tracking-wider font-bold bg-white/5 backdrop-blur-md border border-white/10 text-zinc-400 rounded-md">
-          +{tags.length - MAX_VISIBLE_TAGS}
-        </span>
-      )}
-    </div>
-  );
-};
-
-const ProjectLinks = ({ githubUrl, demoUrl }) => (
-  <div className="flex items-center justify-between gap-3 mt-auto pt-5 border-t border-zinc-800/50">
-    {githubUrl && (
-      <a
-        href={githubUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 text-[10px] uppercase font-bold text-zinc-500 hover:text-white transition-colors duration-200"
-      >
-        <FiGithub size={14} />
-        <span>Source</span>
-      </a>
-    )}
-    {demoUrl && (
-      <a
-        href={demoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group/btn relative overflow-hidden px-4 py-2 rounded-lg bg-white text-black text-[10px] font-black uppercase tracking-wider transition-all duration-200 hover:bg-zinc-100 active:scale-95"
-      >
-        <span className="relative z-10 flex items-center gap-1.5">
-          Live Demo <FiExternalLink size={12} />
-        </span>
-      </a>
-    )}
-  </div>
-);
-
-const ProjectCard = React.memo(({ project }) => {
+const ProjectCard = React.memo(({ project, index }) => {
   const cardRef = useRef(null);
-  const isInView = useInView(cardRef, { once: false, amount: INTERSECTION_THRESHOLD });
+  const isInView = useInView(cardRef, { once: true, margin: "-100px" });
+  
+  // Motion values for tracking mouse position
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  // Smooth springs for buttery motion
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+
+  // Map mouse position to 3D rotation and effects
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["17deg", "-17deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-17deg", "17deg"]);
+  const shineX = useTransform(mouseXSpring, [-0.5, 0.5], ["0%", "100%"]);
+  const shineY = useTransform(mouseYSpring, [-0.5, 0.5], ["0%", "100%"]);
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
-    <motion.article
+    <motion.div
       ref={cardRef}
-      variants={cardVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-      animate={{
-        filter: isInView ? "brightness(1) grayscale(0%)" : "brightness(0.6) grayscale(30%)",
+      initial={{ opacity: 0, y: 60 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ 
+        rotateX, 
+        rotateY, 
+        transformStyle: "preserve-3d",
+        perspective: "1000px"
       }}
-      className="group relative flex flex-col bg-zinc-950 border border-zinc-800/80 rounded-xl overflow-hidden hover:border-zinc-600 transition-all duration-500"
+      className="relative group h-[450px] w-full cursor-pointer"
     >
-      <div className="relative">
-        <ProjectImage image={project.image} title={project.title} />
-        <TechTags tags={project.tags} />
-      </div>
-      <div className="p-6 flex flex-col flex-grow">
-        <div className="flex justify-between items-start gap-3 mb-3">
-          <h3 className="text-lg font-bold text-white group-hover:text-white transition-colors duration-300">
-            {project.title}
-          </h3>
-          <FiArrowUpRight className="text-zinc-600 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1" size={18} />
+      {/* MAIN CARD CONTAINER */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/90 via-zinc-900/60 to-black/90 border border-zinc-800/50 rounded-3xl overflow-hidden backdrop-blur-xl transition-all duration-500 group-hover:border-zinc-600/60 group-hover:shadow-2xl group-hover:shadow-zinc-950/50">
+        
+        {/* ANIMATED BORDER GLOW */}
+        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+          <div className="absolute inset-[-2px] bg-gradient-to-r from-zinc-500/20 via-zinc-400/20 to-zinc-500/20 rounded-3xl blur-sm" />
         </div>
-        <p className="text-zinc-400 text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
-          {project.description}
-        </p>
-        <ProjectLinks githubUrl={project.link} demoUrl={project.demo} />
+
+        {/* BACKGROUND IMAGE WITH ENHANCED PARALLAX */}
+        <motion.div 
+          className="absolute inset-0 z-0"
+          style={{ 
+            transform: "translateZ(-40px) scale(1.15)",
+            transformStyle: "preserve-3d"
+          }}
+        >
+          <motion.img 
+            src={project.image} 
+            alt={project.title}
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.08]" 
+            style={{ opacity: 0.7 }}
+            whileHover={{ opacity: 0.85 }}
+          />
+          
+          {/* SOPHISTICATED GRADIENT OVERLAY */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/60" />
+          
+          {/* NOISE TEXTURE FOR FILM GRAIN EFFECT */}
+          <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" 
+               style={{ 
+                 backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E\")",
+                 backgroundSize: "200px 200px"
+               }} 
+          />
+        </motion.div>
+
+        {/* DYNAMIC SPECULAR SHINE */}
+        <motion.div 
+          className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{
+            background: `radial-gradient(circle 300px at ${shineX} ${shineY}, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 30%, transparent 70%)`
+          }}
+        />
+
+        {/* CONTENT LAYER (3D ELEVATED) */}
+        <div 
+          className="relative z-20 h-full p-8 flex flex-col justify-between" 
+          style={{ transform: "translateZ(60px)", transformStyle: "preserve-3d" }}
+        >
+          {/* TOP SECTION - PROJECT NUMBER */}
+          <div className="flex justify-between items-start">
+            <motion.div 
+              className="text-zinc-600 font-mono text-xs tracking-widest"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              #{String(index + 1).padStart(2, '0')}
+            </motion.div>
+            
+            {/* HOVER ACTION ICON */}
+            <motion.div 
+              className="bg-white text-black p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 shadow-2xl"
+              style={{ transform: "translateZ(20px)" }}
+              whileHover={{ scale: 1.1, rotate: 45 }}
+            >
+              <FiExternalLink size={18} strokeWidth={2.5} />
+            </motion.div>
+          </div>
+
+          {/* BOTTOM SECTION - PROJECT INFO */}
+          <div>
+            {/* TECHNOLOGY TAGS */}
+            <div className="flex gap-2 mb-4 flex-wrap">
+              {project.tags?.slice(0, 3).map((tag, i) => (
+                <motion.span 
+                  key={tag}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="text-[9px] font-bold tracking-[0.15em] uppercase px-3 py-1.5 bg-white/5 text-zinc-300 backdrop-blur-md border border-white/10 rounded-full hover:bg-white/10 hover:border-white/20 transition-all"
+                >
+                  {tag}
+                </motion.span>
+              ))}
+            </div>
+
+            {/* PROJECT TITLE */}
+            <motion.h3 
+              className="text-3xl font-black text-white tracking-tight mb-3 drop-shadow-2xl leading-tight"
+              style={{ transform: "translateZ(30px)" }}
+            >
+              {project.title}
+            </motion.h3>
+
+            {/* PROJECT DESCRIPTION */}
+            <motion.p 
+              className="text-zinc-300 text-sm leading-relaxed max-w-[90%] line-clamp-2 drop-shadow-lg"
+              style={{ transform: "translateZ(20px)" }}
+            >
+              {project.description}
+            </motion.p>
+
+            {/* BOTTOM ACCENT LINE */}
+            <motion.div 
+              className="w-0 h-0.5 bg-gradient-to-r from-zinc-500 to-transparent mt-6 group-hover:w-32 transition-all duration-700"
+            />
+          </div>
+        </div>
+
+        {/* CORNER ACCENT */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
       </div>
-    </motion.article>
+
+      {/* FLOATING SHADOW */}
+      <div className="absolute inset-0 -z-10 bg-black/40 blur-2xl scale-95 opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-3xl" />
+    </motion.div>
   );
 });
+
+ProjectCard.displayName = "ProjectCard";
+
+// ============================================================================
+// SECTION HEADER WITH ANIMATIONS
+// ============================================================================
+const SectionHeader = () => {
+  const headerRef = useRef(null);
+  const isInView = useInView(headerRef, { once: true });
+
+  return (
+    <header ref={headerRef} className="mb-28 relative">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
+        {/* LEFT SIDE - TITLE */}
+        <div className="space-y-6 relative">
+          {/* EYEBROW */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-3 text-zinc-500"
+          >
+            <div className="w-8 h-[1px] bg-zinc-700" />
+            <FiLayers size={16} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Portfolio</span>
+          </motion.div>
+
+          {/* MAIN TITLE */}
+          <div className="relative">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-6xl md:text-7xl font-black tracking-tighter leading-[0.9] relative z-10"
+            >
+              SELECTED
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-400 to-zinc-700">
+                PROJECTS
+              </span>
+            </motion.h2>
+            
+            {/* BACKGROUND NUMBER */}
+            <div className="absolute -top-4 -left-4 text-[140px] font-black text-zinc-950 opacity-50 select-none leading-none pointer-events-none hidden md:block">
+              06
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE - DESCRIPTION */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="max-w-[340px] space-y-4"
+        >
+          <p className="text-zinc-500 text-sm leading-relaxed">
+            A curated collection of high-performance interactive experiences, 
+            focusing on 3D interfaces and immersive digital architecture.
+          </p>
+          <div className="flex items-center gap-2 text-zinc-700 text-xs">
+            <div className="w-1 h-1 rounded-full bg-zinc-700 animate-pulse" />
+            <span className="font-mono uppercase tracking-wider">2024 — Present</span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* DECORATIVE LINE */}
+      <motion.div 
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+        transition={{ duration: 1.2, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-zinc-800 via-zinc-700 to-transparent origin-left"
+      />
+    </header>
+  );
+};
 
 // ============================================================================
 // MAIN PORTFOLIO COMPONENT
 // ============================================================================
-
 const Portfolio = () => {
-  const validProjects = useMemo(
-    () => Portfolio_Data.filter(p => p && p.title && p.description && p.image && Array.isArray(p.tags)),
-    []
-  );
+  const validProjects = useMemo(() => Portfolio_Data.slice(0, 6), []);
+  const footerRef = useRef(null);
+  const isFooterInView = useInView(footerRef, { once: true });
 
   return (
-    <section
-      id="portfolio"
-      aria-labelledby="portfolio-heading"
-      className="portfolio-section relative bg-black text-white px-6 overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto">
-        <h1 id="portfolio-heading" className="sr-only">Portfolio - Featured Projects</h1>
+    <section className="relative bg-black text-white py-32 px-6 overflow-hidden">
+      {/* AMBIENT BACKGROUND EFFECTS */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-zinc-900/30 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-zinc-800/20 rounded-full blur-[150px]" />
+      </div>
 
-        {/* HEADER SECTION - Reduced pt-24/32 to pt-12/16 to bring it upwards */}
-        <header className="pt-12 md:pt-16 mb-12 md:mb-16 space-y-6">
-          <motion.div
-            variants={headerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="flex items-center gap-2 text-zinc-500"
-          >
-            <FiCode size={20} />
-            <span className="text-xs font-black uppercase tracking-[0.3em]">Selected Works</span>
-          </motion.div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        
+        {/* HEADER */}
+        <SectionHeader />
 
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <motion.h2
-              variants={titleVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9]"
-            >
-              Featured<br />
-              <span className="text-zinc-800 outline-text">Projects</span>
-            </motion.h2>
-
-            <motion.blockquote
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="max-w-xs text-zinc-500 text-sm italic border-l-2 border-zinc-800 pl-4"
-            >
-              <p>"Engineering isn't just about code; it's about creating intuitive digital architecture."</p>
-            </motion.blockquote>
-          </div>
-        </header>
-
-        {/* GRID SECTION */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 xl:gap-10"
-        >
-          {validProjects.map((project, index) => (
-            <ProjectCard key={project.id || index} project={project} />
+        {/* PROJECTS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10" style={{ perspective: "2000px" }}>
+          {validProjects.map((project, i) => (
+            <ProjectCard key={project.id || i} project={project} index={i} />
           ))}
-        </motion.div>
+        </div>
 
         {/* FOOTER CTA */}
-        <footer className="py-20 md:py-32 text-center">
-          <motion.a
-            href="https://github.com/Perpetualisi/"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ y: -5 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-4 px-10 py-5 bg-zinc-900 border border-zinc-800 hover:border-zinc-400 rounded-full text-xs font-bold uppercase tracking-widest transition-all"
+        <footer ref={footerRef} className="mt-48 text-center space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isFooterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-6"
           >
-            Explore Archive <FiGithub size={18} />
-          </motion.a>
+            <div className="inline-block">
+              <motion.a 
+                href="https://github.com/Perpetualisi/"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ letterSpacing: "0.5em", scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-zinc-600 hover:text-white transition-all duration-500 group px-8 py-4 border border-zinc-800 rounded-full hover:border-zinc-600 hover:bg-zinc-900/50"
+              >
+                <FiGithub className="group-hover:rotate-12 transition-transform duration-500" />
+                <span>View Full Archive</span>
+                <FiArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500" />
+              </motion.a>
+            </div>
+
+            {/* BOTTOM DECORATION */}
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={isFooterInView ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="w-32 h-[1px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent mx-auto"
+            />
+          </motion.div>
         </footer>
       </div>
 
+      {/* GLOBAL STYLES */}
       <style jsx>{`
-        .portfolio-section {
-          scroll-margin-top: 100px; 
-        }
-
-        .outline-text {
-          -webkit-text-stroke: 1px #27272a;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border-width: 0;
+        section { 
+          perspective: 2000px;
+          perspective-origin: center center;
         }
       `}</style>
     </section>

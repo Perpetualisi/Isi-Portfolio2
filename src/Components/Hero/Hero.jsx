@@ -1,14 +1,13 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
-import { FiArrowRight, FiDownload, FiClock, FiDatabase, FiLayout } from "react-icons/fi";
+import { FiArrowRight, FiDownload, FiClock, FiCode, FiLayers, FiCheckCircle } from "react-icons/fi";
 
 const Hero = () => {
   const containerRef = useRef(null);
   const { scrollY } = useScroll();
   const [time, setTime] = useState(new Date());
 
-  // Mouse tracking for the spotlight effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -30,15 +29,13 @@ const Hero = () => {
     second: '2-digit'
   });
 
-  // Cinematic Parallax & Fade
-  const yImageValue = useTransform(scrollY, [0, 500], [0, -80]);
+  const yImageValue = useTransform(scrollY, [0, 500], [0, -100]);
   const yImage = useSpring(yImageValue, { stiffness: 100, damping: 30 });
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
-  // Dynamic Spotlight background - Switched to a warm orange/gold for color
   const spotlightBg = useTransform(
     [mouseX, mouseY],
-    ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(255,165,0,0.08), transparent 80%)`
+    ([x, y]) => `radial-gradient(800px circle at ${x}px ${y}px, rgba(255,165,0,0.1), transparent 80%)`
   );
 
   const handleDownload = () => {
@@ -54,26 +51,20 @@ const Hero = () => {
     <section
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 pt-40 pb-20 bg-[#000000] overflow-hidden select-none"
+      // UPDATED: Increased top padding from pt-32 to pt-44 for more navbar clearance
+      className="relative min-h-screen flex flex-col justify-center px-4 md:px-12 lg:px-24 pt-44 pb-20 bg-[#000000] overflow-hidden select-none"
     >
-      {/* CINEMATIC BACKGROUND LAYER */}
+      {/* BACKGROUND LAYER */}
       <motion.div style={{ opacity }} className="absolute inset-0 pointer-events-none">
         <motion.div className="absolute inset-0 z-0" style={{ background: spotlightBg }} />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-50" />
-        
-        {/* Colorful Scanning Line */}
-        <motion.div 
-          animate={{ y: ["0vh", "100vh"] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="w-full h-[1px] bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"
-        />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40" />
       </motion.div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-20">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
           
           {/* CONTENT AREA */}
-          <div className="flex-[1.5] text-center lg:text-left space-y-10 order-2 lg:order-1">
+          <div className="w-full lg:flex-[1.3] text-center lg:text-left space-y-8 order-2 lg:order-1">
             <div className="space-y-6">
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -88,15 +79,17 @@ const Hero = () => {
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-[2.2rem] xs:text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tighter text-white leading-[1.1] whitespace-nowrap"
+                  className="text-[1.5rem] xs:text-[2rem] sm:text-5xl md:text-6xl xl:text-7xl font-bold tracking-tighter text-white leading-tight"
                 >
-                  Hi, I’m <span className="text-zinc-400 italic font-light outline-text">Perpetual Okan</span>
+                  <span className="inline">Hi, I’m </span>
+                  <br className="hidden sm:block" />
+                  <span className="text-zinc-400 italic font-light outline-text inline">Perpetual Okan</span>
                 </motion.h1>
                 <motion.h2 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-2xl md:text-3xl font-light text-zinc-300 tracking-tight"
+                  className="text-lg md:text-3xl font-light text-zinc-300 tracking-tight"
                 >
                   Full-Stack Developer
                 </motion.h2>
@@ -104,7 +97,7 @@ const Hero = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light"
+                  className="text-sm md:text-lg text-zinc-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light px-2 sm:px-0"
                 >
                   I build websites and web apps that are responsive, easy to use, and work well on any device. 
                   I work on both the frontend and backend to turn ideas into real digital products.
@@ -112,61 +105,86 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start pt-4">
-              <Link 
-                to="/portfolio" 
-                className="group relative w-full sm:w-auto px-10 py-4 bg-white text-black font-black text-[11px] uppercase tracking-[0.2em] rounded-sm transition-all duration-300 hover:scale-105 active:scale-95 text-center shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+            {/* BUTTONS AREA */}
+            <div className="space-y-10">
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-2 px-4 sm:px-0">
+                <Link 
+                  to="/portfolio" 
+                  className="group relative w-full sm:w-auto px-8 py-4 bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-sm transition-all duration-300 active:scale-95 text-center shadow-lg"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    Explore Work <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+                
+                <button 
+                  onClick={handleDownload} 
+                  className="group w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-zinc-800 text-zinc-400 font-bold text-[10px] uppercase tracking-[0.2em] transition-all rounded-sm backdrop-blur-sm"
+                >
+                  <FiDownload /> Get Resume
+                </button>
+              </div>
+
+              {/* EXPERTISE STRIP */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-row flex-wrap justify-center lg:justify-start gap-6 sm:gap-10 py-6 border-t border-zinc-900/50"
               >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  Explore Work <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-              
-              <button 
-                onClick={handleDownload} 
-                className="group w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-zinc-800 text-zinc-400 hover:text-white hover:border-orange-500/50 font-bold text-[11px] uppercase tracking-[0.2em] transition-all rounded-sm backdrop-blur-sm"
-              >
-                <FiDownload className="group-hover:-translate-y-1 transition-transform" /> Get Resume
-              </button>
+                <div className="flex items-center gap-3">
+                  <FiLayers className="text-orange-500 text-sm sm:text-base" />
+                  <div className="flex flex-col text-left">
+                    <span className="text-lg sm:text-xl font-bold text-white leading-none">15+</span>
+                    <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-zinc-500 font-bold">Projects</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FiCode className="text-orange-500 text-sm sm:text-base" />
+                  <div className="flex flex-col text-left">
+                    <span className="text-xl sm:text-xl font-bold text-white leading-none">React</span>
+                    <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-zinc-500 font-bold">Expert</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FiCheckCircle className="text-orange-500 text-sm sm:text-base" />
+                  <div className="flex flex-col text-left">
+                    <span className="text-lg sm:text-xl font-bold text-white leading-none">Full-Stack</span>
+                    <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-zinc-500 font-bold">Specialist</span>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
 
-          {/* IMAGE AREA - BRIGHT & COLORFUL */}
+          {/* IMAGE AREA */}
           <motion.div 
             style={{ y: yImage }}
-            className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 w-full"
+            className="w-full flex-1 flex justify-center lg:justify-end order-1 lg:order-2 px-4 sm:px-0"
           >
-            <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[500px]">
-              {/* Colorful vibrant glow behind image */}
-              <div className="absolute -inset-10 bg-orange-600/20 blur-[100px] rounded-full animate-pulse" />
-              <div className="absolute -inset-20 bg-blue-600/10 blur-[130px] rounded-full" />
+            <div className="relative w-full max-w-[300px] xs:max-w-[380px] sm:max-w-[480px] lg:max-w-[580px]">
+              <div className="absolute -inset-10 bg-orange-600/10 blur-[80px] rounded-full animate-pulse" />
               
-              <div className="relative z-10 p-2 sm:p-3 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/20 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-visible">
-                
-                {/* Image: Removed Grayscale, increased saturation and vibrancy */}
+              <div className="relative z-10 p-2 sm:p-4 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/20 rounded-[2rem] sm:rounded-[3rem] shadow-2xl">
                 <img
                   src="/profile41.jpeg"
                   alt="Perpetual Okan"
-                  className="w-full aspect-[4/5] rounded-[2rem] object-cover saturate-[1.2] brightness-105 contrast-[1.05] shadow-inner transition-all duration-700"
+                  className="w-full aspect-[4/5] rounded-[1.8rem] sm:rounded-[2.5rem] object-cover saturate-[1.1] brightness-105"
                 />
                 
-                {/* Repositioned Status Badge */}
+                {/* SYSTEM LIVE BADGE */}
                 <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
-                  className="absolute -bottom-6 -right-4 sm:-right-8 p-4 bg-zinc-900/95 backdrop-blur-3xl border border-zinc-700 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[180px]"
+                  className="absolute -bottom-6 right-0 sm:-right-8 p-3 sm:p-5 bg-zinc-900/95 backdrop-blur-3xl border border-zinc-700 rounded-2xl sm:rounded-3xl shadow-2xl flex items-center gap-3 sm:gap-5 min-w-[150px] sm:min-w-[200px]"
                 >
-                  <div className="relative h-10 w-10 bg-orange-500/20 rounded-xl flex items-center justify-center border border-orange-500/30">
-                    <FiClock className="text-orange-500 text-sm animate-pulse" />
-                    <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                    </span>
+                  <div className="relative h-8 w-8 sm:h-12 sm:w-12 bg-orange-500/20 rounded-xl flex items-center justify-center border border-orange-500/30">
+                    <FiClock className="text-orange-500 text-xs sm:text-lg animate-pulse" />
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="text-[9px] text-orange-500/70 uppercase font-black tracking-widest leading-none mb-1">System Live</span>
-                    <span className="text-sm text-zinc-100 font-mono font-bold tracking-tighter">{formattedTime}</span>
+                    <span className="text-[8px] sm:text-[10px] text-orange-500/70 uppercase font-black tracking-widest leading-none mb-1">System Live</span>
+                    <span className="text-xs sm:text-base text-zinc-100 font-mono font-bold">{formattedTime}</span>
                   </div>
                 </motion.div>
               </div>
