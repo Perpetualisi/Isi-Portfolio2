@@ -1,101 +1,199 @@
+/* ─── FONT IMPORTS ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,600,700&display=swap');
+
+/* ─── CSS VARIABLES ────────────────────────────────────────────────────────── */
 :root {
-  --navbar-height: 6rem; /* Adjust to match your navbar height */
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  /* Navbar */
+  --navbar-height: 5rem;
+  --section-offset: calc(var(--navbar-height) + 3rem); /* breathing room below navbar */
+
+  /* Brand colours */
+  --orange:   #F97316;
+  --orange-d: #EA580C;
+  --orange-l: #FB923C;
+  --bg:       #040406;
+  --card:     #0c0c10;
+  --text:     #ffffff;
+  --muted:    rgba(255,255,255,0.45);
+  --faint:    rgba(255,255,255,0.14);
+  --border:   rgba(249,115,22,0.15);
+  --border-b: rgba(255,255,255,0.07);
+
+  /* Typography */
+  font-family: 'Space Mono', 'Courier New', monospace;
+  line-height: 1.6;
   font-weight: 400;
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark;
+  color: var(--text);
+  background-color: var(--bg);
+
+  /* Rendering */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #1a1a1a;
-  overflow-x: hidden;
-}
-
-/* Sections spacing for fixed navbar */
-section {
-  scroll-margin-top: var(--navbar-height); /* for anchor links */
-  padding-top: calc(var(--navbar-height) + 2rem); /* visual spacing from top */
-  padding-bottom: 4rem;
-}
-
-/* Headings spacing */
-h1, h2, h3, h4, h5, h6 {
-  scroll-margin-top: var(--navbar-height); /* anchor links scroll safety */
-  margin-top: 1.5rem; /* larger spacing so headings aren’t cut */
-}
-
-/* Links */
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-/* Buttons */
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Light mode overrides */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-/* Prevent horizontal scroll and bottom spacing issues */
-html, body {
-  overflow-x: hidden;
-  width: 100%;
+/* ─── RESET & BASE ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Ensure all sections take full width */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg);
+  overflow-x: hidden;
+  color: var(--text);
+}
+
+/* Mobile Safari bottom bar fix */
+@supports (-webkit-touch-callout: none) {
+  body { min-height: -webkit-fill-available; }
+}
+
+/* ─── SECTION SPACING ──────────────────────────────────────────────────────── */
+/* Every section gets enough top padding so content never hides behind navbar.
+   Individual sections can override this with their own padding-top.        */
 section {
   width: 100%;
   max-width: 100vw;
+  scroll-margin-top: var(--navbar-height);
+  padding-top: var(--section-offset);
+  padding-bottom: 5rem;
+  position: relative;
 }
 
-/* Fix for mobile Safari bottom spacing */
-@supports (-webkit-touch-callout: none) {
-  body {
-    min-height: -webkit-fill-available;
+/* Hero is full-viewport — it manages its own internal padding */
+section#hero,
+section.hero-section,
+.hero-section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ─── HEADINGS ─────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Clash Display', 'Segoe UI', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  scroll-margin-top: var(--navbar-height);
+  color: var(--text);
+}
+
+/* ─── LINKS ────────────────────────────────────────────────────────────────── */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover { color: var(--orange-l); }
+
+/* ─── BUTTONS ──────────────────────────────────────────────────────────────── */
+button {
+  font-family: 'Space Mono', monospace;
+  font-size: inherit;
+  font-weight: 700;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  transition: all 0.25s ease;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+/* ─── INPUTS & TEXTAREAS ───────────────────────────────────────────────────── */
+input, textarea, select {
+  font-family: 'Space Mono', monospace;
+  font-size: inherit;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint);
+  font-family: 'Space Mono', monospace;
+}
+
+textarea { resize: none; }
+
+/* ─── IMAGES ───────────────────────────────────────────────────────────────── */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ─── SCROLLBAR ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 4px; }
+::-webkit-scrollbar-track        { background: var(--bg); }
+::-webkit-scrollbar-thumb        { background: rgba(249,115,22,0.35); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--orange); }
+
+/* ─── SELECTION ────────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(249,115,22,0.25);
+  color: #fff;
+}
+
+/* ─── UTILITY CLASSES ──────────────────────────────────────────────────────── */
+
+/* Smooth section entry — used by Framer Motion parent containers */
+.section-wrapper {
+  padding-top: var(--section-offset);
+}
+
+/* Orange dot pulse animation used site-wide */
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* Ping animation for availability badge */
+@keyframes glow-ping {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Smooth spin for loading states */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── MOBILE OVERRIDES ─────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  :root {
+    --navbar-height: 4.5rem;
+    --section-offset: calc(var(--navbar-height) + 2.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --navbar-height: 4rem;
+    --section-offset: calc(var(--navbar-height) + 2rem);
+  }
+
+  section {
+    padding-top: var(--section-offset);
+    padding-bottom: 4rem;
   }
 }
