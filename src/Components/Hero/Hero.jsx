@@ -132,7 +132,7 @@ function Typewriter() {
   }, [displayed, phase, roleIdx]);
 
   return (
-    <span style={{ color: T.orangeG }}>
+    <span style={{ color: T.text }}>
       {displayed}
       <motion.span
         animate={{ opacity: [1, 0] }}
@@ -238,7 +238,7 @@ function ProfileCard3D({ time, isMobile }) {
     if (r) { mx.set((e.clientX - r.left) / r.width - 0.5); my.set((e.clientY - r.top) / r.height - 0.5); }
   }
 
-  const cardW = isMobile ? 200 : 380;
+  const cardW = isMobile ? 248 : 380;
 
   return (
     <div style={{ position: "relative" }}>
@@ -469,8 +469,8 @@ export default function Hero() {
         position: "relative", minHeight: "100vh",
         display: "flex", flexDirection: "column", justifyContent: "center",
         background: T.bg, overflow: "hidden",
-        paddingTop:    isMobile ? "calc(var(--navbar-height, 70px) + 2rem)" : "calc(var(--navbar-height, 70px) + 5rem)",
-        paddingBottom: isMobile ? "4.5rem" : "5.5rem",
+        paddingTop:    isMobile ? "calc(var(--navbar-height, 70px) + 5rem)" : "calc(var(--navbar-height, 70px) + 8rem)",
+        paddingBottom: isMobile ? "6rem" : "7rem",
         paddingLeft: "6%", paddingRight: "6%",
       }}
     >
