@@ -4,38 +4,37 @@
 
 /* ─── CSS VARIABLES ────────────────────────────────────────────────────────── */
 :root {
-  /* Navbar */
-  --navbar-height: 5rem;
-  --section-offset: calc(var(--navbar-height) + 3rem); /* breathing room below navbar */
+  --navbar-height:   5rem;
+  --section-offset:  calc(var(--navbar-height) + 3rem);
 
-  /* Brand colours */
-  --orange:   #F97316;
-  --orange-d: #EA580C;
-  --orange-l: #FB923C;
-  --bg:       #040406;
-  --card:     #0c0c10;
-  --text:     #ffffff;
-  --muted:    rgba(255,255,255,0.45);
-  --faint:    rgba(255,255,255,0.14);
-  --border:   rgba(249,115,22,0.15);
-  --border-b: rgba(255,255,255,0.07);
+  --orange:   #E8622A;
+  --orange-d: #C94E1A;
+  --orange-l: #F0845A;
+  --gold:     #D4923A;
+  --bg:       #010103;
+  --card:     #07070d;
+  --text:     #F2EEF8;
+  --muted:    rgba(242,238,248,0.40);
+  --faint:    rgba(242,238,248,0.10);
+  --border:   rgba(232,98,42,0.16);
+  --border-b: rgba(255,255,255,0.055);
 
-  /* Typography */
   font-family: 'Space Mono', 'Courier New', monospace;
   line-height: 1.6;
   font-weight: 400;
   color-scheme: dark;
   color: var(--text);
+
+  /* Page background — the Three.js canvas sits over this */
   background-color: var(--bg);
 
-  /* Rendering */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── RESET & BASE ─────────────────────────────────────────────────────────── */
+/* ─── RESET ────────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -57,14 +56,26 @@ body {
   color: var(--text);
 }
 
-/* Mobile Safari bottom bar fix */
 @supports (-webkit-touch-callout: none) {
   body { min-height: -webkit-fill-available; }
 }
 
-/* ─── SECTION SPACING ──────────────────────────────────────────────────────── */
-/* Every section gets enough top padding so content never hides behind navbar.
-   Individual sections can override this with their own padding-top.        */
+/* ─── GLOBAL THREE.JS CANVAS INTEGRATION ──────────────────────────────────── */
+/*
+   The GlobalThreeBackground canvas is position:fixed, z-index:0.
+   Every section needs:
+     1. background: transparent  — so the canvas shows through
+     2. position: relative       — already set by section rule below
+     3. z-index: 2               — main wraps sections at z:2, above canvas
+
+   Each section already sets its own background inline in JSX (rgba dark values).
+   These inline backgrounds should use semi-transparent dark values, not solid
+   #010103, so the 3D scene bleeds through slightly.
+
+   The two rules below override any solid background set on <section> elements
+   and ensure content stacking works correctly.
+*/
+
 section {
   width: 100%;
   max-width: 100vw;
@@ -72,9 +83,11 @@ section {
   padding-top: var(--section-offset);
   padding-bottom: 5rem;
   position: relative;
+  /* Let the global canvas show — sections use rgba() backgrounds in JSX */
+  background: transparent;
 }
 
-/* Hero is full-viewport — it manages its own internal padding */
+/* Hero manages its own padding and has the heavy Three.js scene */
 section#hero,
 section.hero-section,
 .hero-section {
@@ -98,7 +111,6 @@ a {
   text-decoration: none;
   transition: color 0.2s ease;
 }
-
 a:hover { color: var(--orange-l); }
 
 /* ─── BUTTONS ──────────────────────────────────────────────────────────────── */
@@ -112,13 +124,12 @@ button {
   color: inherit;
   transition: all 0.25s ease;
 }
-
 button:focus-visible {
   outline: 2px solid var(--orange);
   outline-offset: 3px;
 }
 
-/* ─── INPUTS & TEXTAREAS ───────────────────────────────────────────────────── */
+/* ─── INPUTS ───────────────────────────────────────────────────────────────── */
 input, textarea, select {
   font-family: 'Space Mono', monospace;
   font-size: inherit;
@@ -127,13 +138,11 @@ input, textarea, select {
   border: none;
   outline: none;
 }
-
 input::placeholder,
 textarea::placeholder {
   color: var(--faint);
   font-family: 'Space Mono', monospace;
 }
-
 textarea { resize: none; }
 
 /* ─── IMAGES ───────────────────────────────────────────────────────────────── */
@@ -146,54 +155,54 @@ img, video {
 /* ─── SCROLLBAR ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 4px; }
 ::-webkit-scrollbar-track        { background: var(--bg); }
-::-webkit-scrollbar-thumb        { background: rgba(249,115,22,0.35); border-radius: 100px; }
+::-webkit-scrollbar-thumb        { background: rgba(232,98,42,0.35); border-radius: 100px; }
 ::-webkit-scrollbar-thumb:hover  { background: var(--orange); }
 
 /* ─── SELECTION ────────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(249,115,22,0.25);
+  background: rgba(232,98,42,0.25);
   color: #fff;
 }
 
-/* ─── UTILITY CLASSES ──────────────────────────────────────────────────────── */
-
-/* Smooth section entry — used by Framer Motion parent containers */
-.section-wrapper {
-  padding-top: var(--section-offset);
-}
-
-/* Orange dot pulse animation used site-wide */
+/* ─── KEYFRAMES ────────────────────────────────────────────────────────────── */
 @keyframes dot-pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.35; }
 }
-
-/* Ping animation for availability badge */
 @keyframes glow-ping {
   75%, 100% { transform: scale(2.2); opacity: 0; }
 }
-
-/* Smooth spin for loading states */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* ─── MOBILE OVERRIDES ─────────────────────────────────────────────────────── */
+/* ─── RESPONSIVE ───────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   :root {
-    --navbar-height: 4.5rem;
+    --navbar-height:  4.5rem;
     --section-offset: calc(var(--navbar-height) + 2.5rem);
   }
 }
-
 @media (max-width: 640px) {
   :root {
-    --navbar-height: 4rem;
+    --navbar-height:  4rem;
     --section-offset: calc(var(--navbar-height) + 2rem);
   }
-
   section {
-    padding-top: var(--section-offset);
     padding-bottom: 4rem;
   }
 }
+
+/* ─── ONE-TIME JSX MIGRATION NOTE ─────────────────────────────────────────────
+   Each section component sets `background: T.bg` or `background: "#010103"` on
+   the <section> style prop. To let the global Three.js canvas bleed through,
+   change those to a semi-transparent value, e.g.:
+
+     About.jsx   →  background: "rgba(1,1,3,0.82)"
+     Portfolio.jsx → background: "rgba(1,1,3,0.78)"
+     Contact.jsx  → background: "rgba(4,4,6,0.80)"
+
+   The Hero section background can stay solid (#010103) — it has its own
+   heavy Three.js scene and the global canvas would double up underneath it.
+   Add  data-no-global-three  to the Hero section to remind yourself.
+────────────────────────────────────────────────────────────────────────────── */
