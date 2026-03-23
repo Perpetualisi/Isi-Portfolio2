@@ -16,33 +16,55 @@ const T = {
 };
 
 /* ══════════════════════════════════════════════════
-   ✏️  EDIT YOUR INFO HERE
+   ✏️  PROFILE INFO
 ══════════════════════════════════════════════════ */
 const MY_PROFILE = `
 Name: Perpetual Okan
-Role: 3D Web Developer & Full-Stack Engineer
+Gender: Female (use she/her pronouns)
+Role: 3D Web Developer and Full-Stack Engineer
 Experience: 4+ years
-Skills: Three.js, WebGL, React, Next.js, Node.js, TypeScript, Tailwind CSS
-Strengths: Building immersive 3D web experiences, performant full-stack apps, clean UI/UX
-Projects: 15+ shipped projects including 3D web experiences and SaaS dashboards
-Available: Yes, open to freelance and full-time opportunities
+Location: Lagos, Nigeria
+Email: Perpetualokan0@gmail.com
 GitHub: github.com/Perpetualisi
-Based in Lagos, Nigeria
+
+Skills: Three.js, WebGL, React, Next.js, Node.js, TypeScript, Tailwind CSS
+
+Real projects she has built:
+- ConotexTech (conotextech.com) — a tech company website based in the USA
+- We Are Ikeiko (weareikeiko.com) — a fashion house website
+- Ice Cream website (ice-cream-iota-peach.vercel.app) — a fun ice cream brand site
+- Perfume website (verra-mu.vercel.app) — a luxury perfume brand site
+- 15+ total projects shipped across different industries
+
+What she loves:
+- Turning ideas into beautiful, interactive websites
+- Building 3D web experiences that feel alive
+- Working with fashion, lifestyle, and creative brands
+- Clean, fast, mobile-friendly designs
+- Collaborating with founders and startups
+
+Availability: Open to freelance projects and full-time roles
+Contact: Perpetualokan0@gmail.com
 `;
 
-const CHAT_SYSTEM = `You are an AI assistant for Perpetual Okan's portfolio website.
-Answer questions about Perpetual only. Be friendly, concise, and helpful.
-About Perpetual: ${MY_PROFILE}
+const CHAT_SYSTEM = `You are an AI assistant on Perpetual Okan's portfolio website.
+Only answer questions about Perpetual. Be warm, friendly, and use simple easy words.
+Use she/her pronouns when talking about Perpetual.
+
+Here is everything about her:
+${MY_PROFILE}
+
 Rules:
-- Keep answers short (2-3 sentences max)
-- Only answer questions about Perpetual or web development
-- If asked anything unrelated, say "I can only answer questions about Perpetual!"
-- Never make up information not listed above`;
+- Use simple, clear words — no complicated tech jargon unless asked
+- Keep answers short, 2 to 3 sentences
+- Sound friendly and human, not robotic
+- If someone asks something you don't know, say: "You can reach Perpetual directly at Perpetualokan0@gmail.com!"
+- Never make up anything not listed above`;
 
 const CHAT_SUGGESTIONS = [
-  "What's your tech stack?",
-  "Are you open to work?",
-  "Tell me about your projects",
+  "What kind of work do you do?",
+  "Can I see your projects?",
+  "Are you available to hire?",
 ];
 
 const PITCH_TONES = [
@@ -52,7 +74,6 @@ const PITCH_TONES = [
   { id: "creative",     label: "Creative"     },
 ];
 
-/* ── Helpers ── */
 function useCopy() {
   const [copied, setCopied] = useState(false);
   const copy = (text) => {
@@ -108,7 +129,7 @@ async function callGroq(messages, system, maxTokens = 200) {
    PANEL: Chat
 ══════════════════════════════════════════════════ */
 function ChatPanel() {
-  const [msgs,     setMsgs]     = useState([{ role: "assistant", content: "Hey! 👋 Ask me anything about Perpetual — skills, projects, or availability!" }]);
+  const [msgs,     setMsgs]     = useState([{ role: "assistant", content: "Hey! 👋 I'm Perpetual's AI assistant. Ask me anything — her work, projects, or if she's available to hire!" }]);
   const [input,    setInput]    = useState("");
   const [loading,  setLoading]  = useState(false);
   const [showSugg, setShowSugg] = useState(true);
@@ -137,9 +158,7 @@ function ChatPanel() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Messages */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "14px", display: "flex", flexDirection: "column", gap: 10 }}
-        className="ai-msgs">
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px", display: "flex", flexDirection: "column", gap: 10 }} className="ai-msgs">
         {msgs.map((m, i) => (
           <motion.div key={i}
             initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
@@ -165,7 +184,6 @@ function ChatPanel() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Suggestions */}
       <AnimatePresence>
         {showSugg && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
@@ -177,12 +195,11 @@ function ChatPanel() {
         )}
       </AnimatePresence>
 
-      {/* Input */}
       <div style={{ padding: "10px 14px", borderTop: `1px solid ${T.border}`, display: "flex", gap: 8, alignItems: "center", background: "rgba(0,0,0,0.3)", flexShrink: 0 }}>
         <input ref={inputRef} className="ai-input" value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && send()}
-          placeholder="Ask anything about me..." />
+          placeholder="Ask me anything..." />
         <button onClick={() => send()} className="ai-send-btn"
           style={{ background: input.trim() ? `linear-gradient(135deg,${T.orange},${T.orangeD})` : "rgba(255,255,255,0.05)" }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill={input.trim() ? "#fff" : "rgba(242,238,248,0.2)"}>
@@ -217,9 +234,16 @@ function PitchPanel() {
     if (!company.trim() || !role.trim()) { setError("Please fill in both fields."); return; }
     setStep("loading"); setError("");
 
-    const system = `You are writing a short, punchy "hire me" pitch for a developer.
-Profile: ${MY_PROFILE}
-Rules: Write in first person as Perpetual. Max 120 words. Tone: ${tone}. No bullet points. End with a clear call to action. Make it specific to the company and role.`;
+    const system = `You are writing a short "hire me" pitch for Perpetual Okan, a female developer.
+Use she/her pronouns. Write in first person as Perpetual.
+Her profile: ${MY_PROFILE}
+Rules:
+- Max 120 words
+- Simple, clear words — easy to read
+- Tone: ${tone}
+- No bullet points — one flowing paragraph
+- End with a clear next step like "let's talk" or "reach out"
+- Make it specific to the company and role`;
 
     try {
       const result = await callGroq([{ role: "user", content: `Write a hire me pitch for:\nCompany: ${company}\nRole: ${role}` }], system, 220);
@@ -240,7 +264,7 @@ Rules: Write in first person as Perpetual. Max 120 words. Tone: ${tone}. No bull
           <motion.div key="form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: T.muted, lineHeight: 1.7, margin: 0 }}>
-              Enter a company and role — I'll write a custom pitch in seconds.
+              Enter a company and role — I'll write a custom pitch for you in seconds.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <label className="ai-label">Company name</label>
@@ -248,7 +272,7 @@ Rules: Write in first person as Perpetual. Max 120 words. Tone: ${tone}. No bull
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <label className="ai-label">Role / position</label>
-              <input className="ai-input ai-input-box" value={role} onChange={e => setRole(e.target.value)} placeholder="e.g. Senior Frontend Engineer..." onKeyDown={e => { if (e.key === "Enter" && company) generate(); }} />
+              <input className="ai-input ai-input-box" value={role} onChange={e => setRole(e.target.value)} placeholder="e.g. Frontend Developer..." onKeyDown={e => { if (e.key === "Enter" && company) generate(); }} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <label className="ai-label">Tone</label>
@@ -269,7 +293,7 @@ Rules: Write in first person as Perpetual. Max 120 words. Tone: ${tone}. No bull
             <div style={{ width: 44, height: 44, borderRadius: "50%", border: `2px solid rgba(232,98,42,0.15)`, borderTop: `2px solid ${T.orange}`, animation: "ai-spin 0.9s linear infinite" }} />
             <div style={{ textAlign: "center" }}>
               <TypingDots />
-              <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, color: T.muted, marginTop: 8 }}>Crafting your pitch for {company}...</p>
+              <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, color: T.muted, marginTop: 8 }}>Writing your pitch for {company}...</p>
             </div>
           </motion.div>
         )}
@@ -290,7 +314,7 @@ Rules: Write in first person as Perpetual. Max 120 words. Tone: ${tone}. No bull
               </button>
               <button className="ai-action" onClick={reset}
                 style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${T.borderB}`, color: T.muted }}>
-                Try Another
+                Try Again
               </button>
             </div>
             <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 9, color: "rgba(242,238,248,0.18)", textAlign: "center", margin: 0 }}>Generated by Groq · Llama 3 70B</p>
@@ -306,12 +330,11 @@ Rules: Write in first person as Perpetual. Max 120 words. Tone: ${tone}. No bull
 ══════════════════════════════════════════════════ */
 export default function AIWidget() {
   const [menuOpen,  setMenuOpen]  = useState(false);
-  const [activeTab, setActiveTab] = useState(null); // null | "chat" | "pitch"
+  const [activeTab, setActiveTab] = useState(null);
 
-  const openTab = (tab) => { setActiveTab(tab); setMenuOpen(false); };
-  const closeAll = () => { setMenuOpen(false); setActiveTab(null); };
-
-  const isOpen = menuOpen || activeTab !== null;
+  const openTab  = (tab) => { setActiveTab(tab); setMenuOpen(false); };
+  const closeAll = ()    => { setMenuOpen(false); setActiveTab(null); };
+  const isOpen   = menuOpen || activeTab !== null;
 
   return (
     <>
@@ -329,10 +352,7 @@ export default function AIWidget() {
           transition: border-color 0.2s;
           -webkit-appearance: none;
         }
-        .ai-input-box {
-          border-radius: 10px;
-          width: 100%;
-        }
+        .ai-input-box { border-radius: 10px; width: 100%; }
         .ai-input:focus { border-color: rgba(232,98,42,0.45); }
         .ai-input::placeholder { color: rgba(242,238,248,0.2); }
         .ai-label {
@@ -390,11 +410,10 @@ export default function AIWidget() {
         @keyframes ai-spin { to { transform: rotate(360deg); } }
       `}</style>
 
-      {/* ── Mini option buttons (fan up when menu open) ── */}
+      {/* ── Fan menu buttons ── */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Chat option */}
             <motion.button
               initial={{ opacity: 0, y: 0, scale: 0.7 }}
               animate={{ opacity: 1, y: -116, scale: 1 }}
@@ -419,7 +438,6 @@ export default function AIWidget() {
               Ask Me
             </motion.button>
 
-            {/* Pitch option */}
             <motion.button
               initial={{ opacity: 0, y: 0, scale: 0.7 }}
               animate={{ opacity: 1, y: -64, scale: 1 }}
@@ -449,10 +467,7 @@ export default function AIWidget() {
 
       {/* ── Main FAB ── */}
       <motion.button
-        onClick={() => {
-          if (activeTab) { closeAll(); return; }
-          setMenuOpen(o => !o);
-        }}
+        onClick={() => { if (activeTab) { closeAll(); return; } setMenuOpen(o => !o); }}
         whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.94 }}
         style={{
           position: "fixed", bottom: 28, right: 28, zIndex: 1002,
@@ -523,7 +538,7 @@ export default function AIWidget() {
               display: "flex", flexDirection: "column",
             }}
           >
-            {/* Panel header */}
+            {/* Header */}
             <div style={{ padding: "14px 18px", borderBottom: `1px solid ${T.border}`, background: "rgba(232,98,42,0.04)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
               <div style={{ width: 34, height: 34, borderRadius: "50%", flexShrink: 0, background: "rgba(232,98,42,0.15)", border: `1px solid rgba(232,98,42,0.35)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {activeTab === "chat" ? (
@@ -549,7 +564,7 @@ export default function AIWidget() {
               </div>
             </div>
 
-            {/* Panel body */}
+            {/* Body */}
             <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
               {activeTab === "chat"  && <ChatPanel />}
               {activeTab === "pitch" && <PitchPanel />}
