@@ -81,7 +81,6 @@ export default function HireMeWidget() {
       setError("Please fill in both company name and role.");
       return;
     }
-
     setStep("loading");
     setError("");
 
@@ -117,11 +116,10 @@ Rules:
       });
 
       if (!res.ok) throw new Error(`Groq error ${res.status}`);
-
       const data = await res.json();
       setPitch(data.choices[0]?.message?.content?.trim() || "");
       setStep("result");
-    } catch (err) {
+    } catch {
       setError("Something went wrong. Please try again.");
       setStep("form");
     }
@@ -146,11 +144,12 @@ Rules:
           border-radius: 10px;
           padding: 10px 14px;
           font-family: 'Space Mono', monospace;
-          font-size: 11px;
+          font-size: 16px;
           color: ${T.text};
           outline: none;
           transition: border-color 0.2s;
           letter-spacing: 0.04em;
+          -webkit-appearance: none;
         }
         .hm-input:focus { border-color: rgba(232,98,42,0.45); }
         .hm-input::placeholder { color: rgba(242,238,248,0.2); }
@@ -172,6 +171,7 @@ Rules:
           font-size: 10px; font-weight: 700;
           letter-spacing: 0.2em; text-transform: uppercase;
           transition: all 0.2s; margin-top: 4px;
+          -webkit-appearance: none;
         }
         .hm-generate.ready {
           background: linear-gradient(135deg, ${T.orange}, ${T.orangeD});
@@ -192,6 +192,7 @@ Rules:
           flex: 1; padding: 9px 0; border-radius: 10px; cursor: pointer;
           font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
           letter-spacing: 0.18em; text-transform: uppercase; transition: all 0.2s;
+          -webkit-appearance: none;
         }
         .hm-action:hover { transform: scale(1.02); }
         .hm-action:active { transform: scale(0.97); }
@@ -252,7 +253,8 @@ Rules:
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed", bottom: 88, right: 28, zIndex: 999,
-              width: 340, borderRadius: 20, background: T.card,
+              width: "min(340px, calc(100vw - 32px))",
+              borderRadius: 20, background: T.card,
               border: `1px solid ${T.border}`,
               boxShadow: "0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,98,42,0.08)",
               overflow: "hidden", transformOrigin: "bottom right",
@@ -293,7 +295,7 @@ Rules:
 
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(232,98,42,0.65)" }}>Company name</label>
-                      <input className="hm-input" value={company} onChange={e => setCompany(e.target.value)} placeholder="e.g. Google, Stripe, your startup..." onKeyDown={e => { if (e.key === "Enter" && role) generate(); }} />
+                      <input className="hm-input" value={company} onChange={e => setCompany(e.target.value)} placeholder="e.g. Google, Stripe..." onKeyDown={e => { if (e.key === "Enter" && role) generate(); }} />
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>

@@ -125,11 +125,12 @@ export default function ChatWidget() {
           border-radius: 100px;
           padding: 9px 16px;
           font-family: 'Space Mono', monospace;
-          font-size: 11px;
+          font-size: 16px;
           color: ${T.text};
           outline: none;
           transition: border-color 0.2s;
           letter-spacing: 0.03em;
+          -webkit-appearance: none;
         }
         .cw-input:focus { border-color: rgba(232,98,42,0.45); }
         .cw-input::placeholder { color: rgba(242,238,248,0.18); }
@@ -145,6 +146,7 @@ export default function ChatWidget() {
           transition: all 0.15s;
           white-space: nowrap;
           letter-spacing: 0.04em;
+          -webkit-appearance: none;
         }
         .cw-sugg:hover {
           background: rgba(232,98,42,0.12);
@@ -181,7 +183,6 @@ export default function ChatWidget() {
           />
         )}
 
-        {/* Unread dot */}
         {!open && msgs.length === 1 && (
           <motion.div
             animate={{ scale: [1, 1.3, 1] }}
@@ -226,7 +227,8 @@ export default function ChatWidget() {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed", bottom: 88, left: 28, zIndex: 999,
-              width: 340, borderRadius: 20, background: T.card,
+              width: "min(340px, calc(100vw - 32px))",
+              borderRadius: 20, background: T.card,
               border: `1px solid ${T.border}`,
               boxShadow: "0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,98,42,0.06)",
               overflow: "hidden", transformOrigin: "bottom left",
@@ -252,7 +254,7 @@ export default function ChatWidget() {
             </div>
 
             {/* Messages */}
-            <div className="cw-msgs" style={{ flex: 1, overflowY: "auto", padding: "14px", display: "flex", flexDirection: "column", gap: 10, maxHeight: 320 }}>
+            <div className="cw-msgs" style={{ flex: 1, overflowY: "auto", padding: "14px", display: "flex", flexDirection: "column", gap: 10, maxHeight: 300 }}>
               {msgs.map((m, i) => (
                 <motion.div key={i}
                   initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
