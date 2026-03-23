@@ -160,7 +160,7 @@ function ThreeScene({ isMobile, scrollY, onReady }) {
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.shadowMap.enabled = !isMobile;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     el.appendChild(renderer.domElement);
 
     const scene  = new THREE.Scene();
@@ -383,7 +383,7 @@ function ThreeScene({ isMobile, scrollY, onReady }) {
     let raf;
     let introT = 0;
     let readyFired = false;
-    const clock = new THREE.Clock();
+    const startTime = performance.now();
     const camT = new THREE.Vector3();
 
     const fadeTo = (mat, target, spd = 0.035) => {
@@ -392,7 +392,7 @@ function ThreeScene({ isMobile, scrollY, onReady }) {
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
+      const t = (performance.now() - startTime) / 1000;
       introT = Math.min(introT + 0.007, 1);
       const eased = 1 - Math.pow(1 - introT, 4);
 

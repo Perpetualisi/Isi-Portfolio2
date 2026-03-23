@@ -5,6 +5,9 @@ import * as THREE from "three";
 import Navbar      from "./Components/Navbar/Navbar";
 import Footer      from "./Components/Footer/Footer";
 import ScrollToTop from "./Components/ScrollToTop";
+import SkillGraph   from "./Components/SkillGraph";
+import HireMeWidget from "./Components/HireMeWidget";
+import ChatWidget from "./Components/ChatWidget"
 
 const Hero      = lazy(() => import("./Components/Hero/Hero"));
 const About     = lazy(() => import("./Components/About/About"));
@@ -95,7 +98,7 @@ const NotFound = () => (
       </h1>
       <p style={{ fontFamily:"'Space Mono',monospace", fontSize:"clamp(0.62rem,2.5vw,0.72rem)",
         color:"rgba(242,238,248,0.4)", lineHeight:1.9, maxWidth:360, margin:0 }}>
-        The page you're looking for doesn't exist or has been moved.
+        The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
       <a href="/" style={{
         display:"inline-flex", alignItems:"center", gap:"0.55rem", marginTop:"0.4rem",
@@ -115,8 +118,6 @@ const NotFound = () => (
 );
 
 // ─── GLOBAL THREE.JS BACKGROUND ───────────────────────────────────────────────
-// Single canvas, fixed, behind everything. Never remounts on route change.
-// Responds to scroll for subtle parallax across all sections.
 function GlobalThreeBackground() {
   const mountRef = useRef(null);
   const [isMobile, setIsMobile] = useState(
@@ -135,7 +136,6 @@ function GlobalThreeBackground() {
 
     const mob = isMobile;
 
-    // ── Renderer ──────────────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ antialias: !mob, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, mob ? 1.4 : 1.8));
     renderer.setSize(el.clientWidth, el.clientHeight);
@@ -146,19 +146,14 @@ function GlobalThreeBackground() {
     const camera = new THREE.PerspectiveCamera(52, el.clientWidth / el.clientHeight, 0.1, 300);
     camera.position.set(0, 0, 9);
 
-    // Subtle fog — keeps edges from looking hard
     scene.fog = new THREE.FogExp2(0x010103, 0.026);
 
-    // ── Lights ────────────────────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 0.04));
     const keyL  = new THREE.PointLight(0xe8622a, 7,  24); keyL.position.set(5, 4, 6);   scene.add(keyL);
     const fillL = new THREE.PointLight(0xd4923a, 4,  18); fillL.position.set(-6,-2, 3); scene.add(fillL);
     const rimL  = new THREE.PointLight(0xff4400, 2.5,14); rimL.position.set(0, 6,-4);   scene.add(rimL);
     const coolL = new THREE.PointLight(0x1a0aff, 1.2,12); coolL.position.set(-4, 3, 2); scene.add(coolL);
 
-    // ── Central torus knot ────────────────────────────────────────────────────
-    // Sits right-of-centre so it doesn't block text on the left.
-    // Kept at ~50% opacity — atmospheric, not a feature.
     const knotGeo = new THREE.TorusKnotGeometry(1.5, 0.44, mob ? 100 : 200, 22, 3, 5);
     const knotMat = new THREE.MeshPhysicalMaterial({
       color: 0xe8622a, metalness: 1.0, roughness: 0.04,
@@ -176,7 +171,6 @@ function GlobalThreeBackground() {
     wire.scale.copy(knot.scale);
     scene.add(wire);
 
-    // Inner ghost knot (different params)
     const innerGeo = new THREE.TorusKnotGeometry(1.0, 0.18, mob ? 70 : 130, 14, 2, 3);
     const innerMat = new THREE.MeshBasicMaterial({ color: 0xd4923a, wireframe: true, transparent: true, opacity: 0 });
     const inner = new THREE.Mesh(innerGeo, innerMat);
@@ -184,7 +178,6 @@ function GlobalThreeBackground() {
     inner.scale.copy(knot.scale);
     scene.add(inner);
 
-    // Halo rings
     const haloMat = new THREE.MeshBasicMaterial({ color: 0xe8622a, transparent: true, opacity: 0 });
     const halo = new THREE.Mesh(new THREE.TorusGeometry(2.6, 0.010, 8, 150), haloMat);
     halo.position.copy(knot.position);
@@ -198,7 +191,6 @@ function GlobalThreeBackground() {
     halo2.rotation.z = 0.4;
     scene.add(halo2);
 
-    // ── Floating accent shapes ─────────────────────────────────────────────────
     const floaters = [];
     const addFloater = (geo, color, x, y, z, scale, rotSpeed, targetOp) => {
       const mat = new THREE.MeshPhysicalMaterial({
@@ -233,7 +225,6 @@ function GlobalThreeBackground() {
       addFloater(new THREE.TetrahedronGeometry(0.28),    0xf0845a, -0.6, -2.8, -2.5, 1, 0.014, 0.26);
     }
 
-    // ── Coloured point cloud ──────────────────────────────────────────────────
     const ptCount = mob ? 500 : 1600;
     const ptPos   = new Float32Array(ptCount * 3);
     const ptCol   = new Float32Array(ptCount * 3);
@@ -259,14 +250,12 @@ function GlobalThreeBackground() {
     const points = new THREE.Points(ptGeo, ptMat);
     scene.add(points);
 
-    // ── Holographic grid ──────────────────────────────────────────────────────
     const grid = new THREE.GridHelper(60, 52, 0xe8622a, 0xe8622a);
     grid.material.transparent = true;
     grid.material.opacity = 0;
     grid.position.set(0, -6, -3);
     scene.add(grid);
 
-    // ── Resize ────────────────────────────────────────────────────────────────
     const onResize = () => {
       if (!el) return;
       camera.aspect = el.clientWidth / el.clientHeight;
@@ -275,7 +264,6 @@ function GlobalThreeBackground() {
     };
     window.addEventListener("resize", onResize);
 
-    // ── Mouse ─────────────────────────────────────────────────────────────────
     const mouse = { x: 0, y: 0 };
     const onMouse = (e) => {
       mouse.x = (e.clientX / window.innerWidth  - 0.5) * 2;
@@ -283,9 +271,8 @@ function GlobalThreeBackground() {
     };
     window.addEventListener("mousemove", onMouse);
 
-    // ── Animate ───────────────────────────────────────────────────────────────
     let raf;
-    const clock     = new THREE.Clock();
+    const startTime = performance.now();
     const camTarget = new THREE.Vector3();
     let introT = 0;
 
@@ -295,7 +282,7 @@ function GlobalThreeBackground() {
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
+      const t = (performance.now() - startTime) / 1000;
 
       introT = Math.min(introT + 0.0035, 1);
       const eased = 1 - Math.pow(1 - introT, 3);
@@ -303,7 +290,6 @@ function GlobalThreeBackground() {
       const scrollY    = window.scrollY;
       const scrollFrac = Math.min(scrollY / 2400, 1);
 
-      // Torus knot — stays gentle (max 48% opacity)
       knot.rotation.x = t * 0.09;
       knot.rotation.y = t * 0.065;
       knot.rotation.z = t * 0.032;
@@ -320,7 +306,6 @@ function GlobalThreeBackground() {
       inner.scale.copy(knot.scale);
       fadeTo(innerMat, 0.028 * eased);
 
-      // Halo
       halo.rotation.z  =  t * 0.034;
       halo.rotation.y  =  t * 0.012;
       halo2.rotation.z = -t * 0.026;
@@ -328,23 +313,19 @@ function GlobalThreeBackground() {
       fadeTo(haloMat,  0.14 * eased);
       fadeTo(halo2Mat, 0.08 * eased);
 
-      // Floaters
       floaters.forEach(({ mesh, rotSpeed, phase, floatSpeed, floatAmp, axis, originY, targetOp }) => {
         mesh.rotateOnAxis(axis, rotSpeed);
         mesh.position.y = originY + Math.sin(t * floatSpeed + phase) * floatAmp;
         fadeTo(mesh.material, targetOp * eased);
       });
 
-      // Points
       fadeTo(ptMat, 0.45 * eased);
       points.rotation.y = t * 0.007;
       points.rotation.x = t * 0.003;
 
-      // Grid
       fadeTo(grid.material, 0.022 * eased);
       grid.rotation.y = t * 0.005;
 
-      // Lights orbit
       keyL.position.x  = Math.sin(t * 0.30) * 6;
       keyL.position.y  = Math.cos(t * 0.19) * 4 + 2;
       fillL.position.x = Math.cos(t * 0.24) * 7;
@@ -353,8 +334,6 @@ function GlobalThreeBackground() {
       coolL.position.x = Math.cos(t * 0.26 + 0.5) * 5;
       coolL.position.y = Math.sin(t * 0.11) * 4 + 2;
 
-      // Camera — scroll moves it gently downward across all sections
-      // Mouse adds subtle parallax on top
       if (!mob) {
         camTarget.x = mouse.x * 0.38;
         camTarget.y = -mouse.y * 0.24 - scrollFrac * 3.2;
@@ -386,19 +365,14 @@ function GlobalThreeBackground() {
     <div
       ref={mountRef}
       aria-hidden="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 0,          // behind everything — Navbar is z-index 50
-        pointerEvents: "none",
-      }}
+      style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}
     />
   );
 }
 
 // ─── APP ──────────────────────────────────────────────────────────────────────
 const App = () => (
-  <Router>
+  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
     <div style={{
       display: "flex", flexDirection: "column",
       minHeight: "100vh", background: BG,
@@ -406,16 +380,17 @@ const App = () => (
       position: "relative",
     }}>
       <ScrollToTop />
-
-      {/* Single persistent 3D canvas — fixed, behind all sections, never remounts */}
       <GlobalThreeBackground />
-
       <Navbar />
-
       <main style={{ flex: 1, position: "relative", zIndex: 2 }}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/"          element={<Hero />}      />
+            <Route path="/" element={
+              <>
+                <Hero />
+                <SkillGraph />  {/* ← ADD THIS LINE — appears right below Hero */}
+              </>
+            } />
             <Route path="/about"     element={<About />}     />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/contact"   element={<Contact />}   />
@@ -423,8 +398,9 @@ const App = () => (
           </Routes>
         </Suspense>
       </main>
-
       <Footer />
+      <HireMeWidget />
+      <ChatWidget />
     </div>
   </Router>
 );
