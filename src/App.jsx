@@ -6,8 +6,9 @@ import Navbar      from "./Components/Navbar/Navbar";
 import Footer      from "./Components/Footer/Footer";
 import ScrollToTop from "./Components/ScrollToTop";
 import SkillGraph   from "./Components/SkillGraph";
-import HireMeWidget from "./Components/HireMeWidget";
-import ChatWidget from "./Components/ChatWidget"
+// import HireMeWidget from "./Components/HireMeWidget";
+// import ChatWidget from "./Components/ChatWidget"
+import AIWidget from "./Components/AIWidget"
 
 const Hero      = lazy(() => import("./Components/Hero/Hero"));
 const About     = lazy(() => import("./Components/About/About"));
@@ -399,8 +400,9 @@ const App = () => (
         </Suspense>
       </main>
       <Footer />
-      <HireMeWidget />
-      <ChatWidget />
+      {/* <HireMeWidget /> */}
+      <AIWidget />
+      {/* <ChatWidget /> */}
     </div>
   </Router>
 );
