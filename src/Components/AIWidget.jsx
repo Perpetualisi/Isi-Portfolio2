@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGroq } from "./hooks/useGroq";
+import { useGroq } from "./hooks/Usegroq"; // FIXED: Correct path
 
 /* ═══════════════════════════════════════════════════════════════
    THEME  (matches App.jsx / ChatWidget palette exactly)

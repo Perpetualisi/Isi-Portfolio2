@@ -29,7 +29,6 @@ const RATE_LIMIT = { requestsPerMinute: 28, tokensPerMinute: 5800 };
 export const estimateTokens = (text = "") => Math.ceil((text || "").length / 4);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 /* ═══════════════════════════════════════════════════════════════
    GLOBAL RATE LIMITER  (shared across all hook instances)
 ═══════════════════════════════════════════════════════════════ */

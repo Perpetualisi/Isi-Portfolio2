@@ -3,8 +3,7 @@ import {
   motion, AnimatePresence, useInView,
   useMotionValue, useSpring, useTransform,
 } from "framer-motion";
-import { useGroq } from "../hooks/useGroq";
-
+import { useGroq } from "../hooks/Usegroq";
 // ─── THEME ──────────────────────────────────────────────────────────────────
 const T = {
   bg: "#020204", surface: "#07070b", orange: "#F97316", orangeD: "#C2410C",
