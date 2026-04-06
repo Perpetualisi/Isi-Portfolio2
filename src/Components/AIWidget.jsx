@@ -177,7 +177,6 @@ function ChatPanel({ onClose }) {
   // Detect keyboard on mobile
   useEffect(() => {
     const handleResize = () => {
-      // On mobile, keyboard causes viewport height to change
       const isOpen = window.innerHeight < (window.originalInnerHeight || window.innerHeight);
       setIsKeyboardOpen(isOpen);
     };
@@ -244,11 +243,9 @@ function ChatPanel({ onClose }) {
         flexDirection: "column", 
         height: "100%", 
         overflow: "hidden",
-        // Prevent body scroll when keyboard is open
         position: "relative",
       }}
     >
-      {/* Sub-header */}
       <div style={{
         padding: "8px 14px",
         borderBottom: `1px solid ${T.border}`,
@@ -274,7 +271,6 @@ function ChatPanel({ onClose }) {
         </button>
       </div>
 
-      {/* Messages */}
       <div
         className="ai-msgs"
         style={{
@@ -284,7 +280,6 @@ function ChatPanel({ onClose }) {
           display: "flex", 
           flexDirection: "column", 
           gap: 10,
-          // Better touch scrolling on mobile
           WebkitOverflowScrolling: "touch",
         }}
       >
@@ -341,7 +336,6 @@ function ChatPanel({ onClose }) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Suggestions - Hide when keyboard is open */}
       <AnimatePresence>
         {showSugg && msgs.length <= 1 && !isKeyboardOpen && (
           <motion.div
@@ -370,7 +364,6 @@ function ChatPanel({ onClose }) {
         )}
       </AnimatePresence>
 
-      {/* Input row - Stays at bottom */}
       <div style={{
         padding: "10px 14px",
         borderTop: `1px solid ${T.border}`,
@@ -388,7 +381,7 @@ function ChatPanel({ onClose }) {
           disabled={loading}
           aria-label="Chat input"
           style={{
-            fontSize: window.innerWidth < 768 ? "14px" : "11px", // Prevent zoom on iOS
+            fontSize: window.innerWidth < 768 ? "16px" : "11px",
           }}
         />
         {loading ? (
@@ -535,7 +528,7 @@ function PitchPanel() {
                 onChange={e => { setCompany(e.target.value); setFieldErr(""); }}
                 onKeyDown={handleKey}
                 placeholder="e.g. Google, Shopify…"
-                style={{ fontSize: window.innerWidth < 768 ? "14px" : "11px" }}
+                style={{ fontSize: window.innerWidth < 768 ? "16px" : "11px" }}
               />
             </div>
 
@@ -547,7 +540,7 @@ function PitchPanel() {
                 onChange={e => { setRole(e.target.value); setFieldErr(""); }}
                 onKeyDown={handleKey}
                 placeholder="e.g. Senior Frontend Engineer…"
-                style={{ fontSize: window.innerWidth < 768 ? "14px" : "11px" }}
+                style={{ fontSize: window.innerWidth < 768 ? "16px" : "11px" }}
               />
             </div>
 
@@ -765,7 +758,7 @@ function PanelHeader({ activeTab, onClose }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MAIN WIDGET - Mobile Optimized
+   MAIN WIDGET - Mobile Optimized (Single FAB with fan menu)
 ═══════════════════════════════════════════════════════════════ */
 export default function AIWidget() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -914,27 +907,36 @@ export default function AIWidget() {
         @keyframes ai-spin { to { transform: rotate(360deg); } }
       `}</style>
 
-      {/* Fan menu buttons - hidden on mobile to prevent crowding */}
+      {/* Fan menu buttons - shown on both desktop and mobile */}
       <AnimatePresence>
-        {!isMobile && menuOpen && (
+        {menuOpen && (
           <>
+            {/* Ask Me button */}
             <motion.button
               initial={{ opacity: 0, y: 0, scale: 0.75 }}
-              animate={{ opacity: 1, y: -118, scale: 1 }}
+              animate={{ opacity: 1, y: -70, scale: 1 }}
               exit={{ opacity: 0, y: 0, scale: 0.75 }}
-              transition={{ duration: 0.24 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
               onClick={() => openTab("chat")}
-              whileHover={{ scale: 1.06 }}
+              whileHover={!isMobile ? { scale: 1.06 } : {}}
+              whileTap={{ scale: 0.94 }}
               style={{
                 position: "fixed", bottom: 28, right: 28, zIndex: 1001,
                 display: "flex", alignItems: "center", gap: 8,
-                padding: "0 18px", height: 44, borderRadius: 100,
+                padding: isMobile ? "0 16px" : "0 18px",
+                height: isMobile ? 48 : 44,
+                borderRadius: 100,
                 border: `1px solid rgba(232,98,42,0.32)`,
-                background: T.card, cursor: "pointer",
+                background: T.card,
+                cursor: "pointer",
                 boxShadow: "0 8px 26px rgba(0,0,0,0.6)",
-                color: T.text, fontFamily: "'Space Mono',monospace",
-                fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
+                color: T.text,
+                fontFamily: "'Space Mono',monospace",
+                fontSize: isMobile ? 11 : 10,
+                fontWeight: 700,
+                letterSpacing: "0.14em",
                 whiteSpace: "nowrap",
+                touchAction: "manipulation",
               }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
@@ -942,26 +944,35 @@ export default function AIWidget() {
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
               Ask Me
-              <span style={{ fontSize: 8, color: "rgba(242,238,248,0.3)" }}>⌘K</span>
+              {!isMobile && <span style={{ fontSize: 8, color: "rgba(242,238,248,0.3)" }}>⌘K</span>}
             </motion.button>
 
+            {/* Hire Me button */}
             <motion.button
               initial={{ opacity: 0, y: 0, scale: 0.75 }}
-              animate={{ opacity: 1, y: -66, scale: 1 }}
+              animate={{ opacity: 1, y: -124, scale: 1 }}
               exit={{ opacity: 0, y: 0, scale: 0.75 }}
-              transition={{ duration: 0.18 }}
+              transition={{ duration: 0.24, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
               onClick={() => openTab("pitch")}
-              whileHover={{ scale: 1.06 }}
+              whileHover={!isMobile ? { scale: 1.06 } : {}}
+              whileTap={{ scale: 0.94 }}
               style={{
                 position: "fixed", bottom: 28, right: 28, zIndex: 1001,
                 display: "flex", alignItems: "center", gap: 8,
-                padding: "0 18px", height: 44, borderRadius: 100,
+                padding: isMobile ? "0 16px" : "0 18px",
+                height: isMobile ? 48 : 44,
+                borderRadius: 100,
                 border: `1px solid rgba(232,98,42,0.32)`,
-                background: T.card, cursor: "pointer",
+                background: T.card,
+                cursor: "pointer",
                 boxShadow: "0 8px 26px rgba(0,0,0,0.6)",
-                color: T.text, fontFamily: "'Space Mono',monospace",
-                fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
+                color: T.text,
+                fontFamily: "'Space Mono',monospace",
+                fontSize: isMobile ? 11 : 10,
+                fontWeight: 700,
+                letterSpacing: "0.14em",
                 whiteSpace: "nowrap",
+                touchAction: "manipulation",
               }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
@@ -974,109 +985,75 @@ export default function AIWidget() {
         )}
       </AnimatePresence>
 
-      {/* Mobile: Single button that toggles between chat and pitch */}
-      {isMobile && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, zIndex: 1001, display: "flex", gap: 12 }}>
-          <motion.button
-            onClick={() => openTab("chat")}
-            whileTap={{ scale: 0.94 }}
+      {/* Main FAB */}
+      <motion.button
+        onClick={() => {
+          if (activeTab) { closeAll(); return; }
+          setMenuOpen(o => !o);
+        }}
+        whileHover={!isMobile ? { scale: 1.08 } : {}}
+        whileTap={{ scale: 0.93 }}
+        style={{
+          position: "fixed", bottom: 28, right: 28, zIndex: 1002,
+          width: isMobile ? 56 : 54,
+          height: isMobile ? 56 : 54,
+          borderRadius: "50%",
+          border: `1px solid rgba(232,98,42,0.38)`,
+          background: `linear-gradient(135deg,${T.orange},${T.orangeD})`,
+          cursor: "pointer",
+          boxShadow: `0 8px 28px rgba(232,98,42,0.40), inset 0 1px 0 rgba(255,255,255,0.18)`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          touchAction: "manipulation",
+        }}
+      >
+        {/* Pulse ring - only when closed */}
+        {!isOpen && (
+          <motion.div
+            animate={{ scale: [1, 1.65], opacity: [0.45, 0] }}
+            transition={{ duration: 1.9, repeat: Infinity }}
             style={{
-              width: 50, height: 50, borderRadius: "50%",
-              border: `1px solid rgba(232,98,42,0.38)`,
-              background: `linear-gradient(135deg,${T.orange},${T.orangeD})`,
-              cursor: "pointer",
-              boxShadow: `0 8px 28px rgba(232,98,42,0.40)`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              touchAction: "manipulation",
+              position: "absolute", inset: -7, borderRadius: "50%",
+              border: `1.5px solid ${T.orange}`, pointerEvents: "none",
             }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-          </motion.button>
+          />
+        )}
 
-          <motion.button
-            onClick={() => openTab("pitch")}
-            whileTap={{ scale: 0.94 }}
-            style={{
-              width: 50, height: 50, borderRadius: "50%",
-              border: `1px solid rgba(232,98,42,0.38)`,
-              background: `linear-gradient(135deg,${T.orange},${T.orangeD})`,
-              cursor: "pointer",
-              boxShadow: `0 8px 28px rgba(232,98,42,0.40)`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              touchAction: "manipulation",
-            }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </motion.button>
-        </div>
-      )}
-
-      {/* Desktop FAB */}
-      {!isMobile && (
-        <motion.button
-          onClick={() => {
-            if (activeTab) { closeAll(); return; }
-            setMenuOpen(o => !o);
-          }}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.93 }}
-          style={{
-            position: "fixed", bottom: 28, right: 28, zIndex: 1002,
-            width: 54, height: 54, borderRadius: "50%",
-            border: `1px solid rgba(232,98,42,0.38)`,
-            background: `linear-gradient(135deg,${T.orange},${T.orangeD})`,
-            cursor: "pointer",
-            boxShadow: `0 8px 28px rgba(232,98,42,0.40)`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}
-        >
-          {!isOpen && (
-            <motion.div
-              animate={{ scale: [1, 1.65], opacity: [0.45, 0] }}
-              transition={{ duration: 1.9, repeat: Infinity }}
-              style={{
-                position: "absolute", inset: -7, borderRadius: "50%",
-                border: `1.5px solid ${T.orange}`, pointerEvents: "none",
-              }}
-            />
+        <AnimatePresence mode="wait">
+          {isOpen ? (
+            <motion.svg key="x"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              width="18" height="18" viewBox="0 0 24 24"
+              fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </motion.svg>
+          ) : (
+            <motion.svg key="ai"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              width="22" height="22" viewBox="0 0 24 24"
+              fill="none" stroke="#fff" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round"
+            >
+              <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
+              <circle cx="9" cy="14" r="1" fill="#fff" stroke="none"/>
+              <circle cx="15" cy="14" r="1" fill="#fff" stroke="none"/>
+            </motion.svg>
           )}
-
-          <AnimatePresence mode="wait">
-            {isOpen ? (
-              <motion.svg key="x"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                width="18" height="18" viewBox="0 0 24 24"
-                fill="none" stroke="#fff" strokeWidth="2.5"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </motion.svg>
-            ) : (
-              <motion.svg key="ai"
-                initial={{ scale: 0.6, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.6, opacity: 0 }}
-                width="22" height="22" viewBox="0 0 24 24"
-                fill="none" stroke="#fff" strokeWidth="2"
-              >
-                <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
-                <circle cx="9" cy="14" r="1" fill="#fff" stroke="none"/>
-                <circle cx="15" cy="14" r="1" fill="#fff" stroke="none"/>
-              </motion.svg>
-            )}
-          </AnimatePresence>
-        </motion.button>
-      )}
+        </AnimatePresence>
+      </motion.button>
 
       {/* Backdrop */}
       <AnimatePresence>
-        {menuOpen && !isMobile && (
+        {menuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1099,7 +1076,7 @@ export default function AIWidget() {
             initial={{ opacity: 0, scale: 0.92, y: 18 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 18 }}
-            transition={{ duration: 0.28 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
               bottom: isMobile ? 94 : 94,
@@ -1111,7 +1088,7 @@ export default function AIWidget() {
               borderRadius: 22,
               background: T.card,
               border: `1px solid ${T.border}`,
-              boxShadow: "0 32px 80px rgba(0,0,0,0.78)",
+              boxShadow: "0 32px 80px rgba(0,0,0,0.78), 0 0 0 1px rgba(232,98,42,0.07)",
               overflow: "hidden",
               transformOrigin: "bottom right",
               display: "flex",
