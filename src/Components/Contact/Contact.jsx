@@ -4,6 +4,7 @@ import {
   useMotionValue, useSpring, useTransform,
 } from "framer-motion";
 import { useGroq } from "../hooks/Usegroq";
+
 // ─── THEME ──────────────────────────────────────────────────────────────────
 const T = {
   bg: "#020204", surface: "#07070b", orange: "#F97316", orangeD: "#C2410C",
@@ -62,15 +63,16 @@ const CSS = `
   --bg:#020204;--text:#ffffff;
   --muted:rgba(255,255,255,.40);--faint:rgba(255,255,255,.10);
   --border:rgba(249,115,22,.14);--borderB:rgba(255,255,255,.065);--green:#22c55e;
-  font-family:'Space Mono',monospace;background:var(--bg);color:var(--text);cursor:none;
+  font-family:'Space Mono',monospace;background:var(--bg);color:var(--text);
 }
+/* Hide custom cursor on mobile */
+@media (max-width: 768px) {
+  #ct-root { cursor: auto; }
+  .ctCursorDot, .ctCursorRing { display: none !important; }
+}
+
 #ct-root ::-webkit-scrollbar{width:2px;}
 #ct-root ::-webkit-scrollbar-thumb{background:rgba(249,115,22,.25);border-radius:2px;}
-
-/* Cursor */
-.ctCursorDot{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--orange);pointer-events:none;z-index:99999;transform:translate(-50%,-50%);mix-blend-mode:difference;will-change:transform;}
-.ctCursorRing{position:fixed;width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(249,115,22,.5);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .32s,height .32s,border-color .32s;will-change:transform;}
-.ctCursorRing.big{width:62px;height:62px;border-color:rgba(249,115,22,.9);}
 
 /* Canvas BG */
 .ctCanvasBg{position:absolute;inset:0;pointer-events:none;z-index:0;display:block;}
@@ -110,10 +112,14 @@ const CSS = `
 .ctTwoStat{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;}
 .ctPhotoWrap{position:relative;width:100%;aspect-ratio:3/4;max-height:460px;border-radius:4px;overflow:hidden;flex-shrink:0;}
 
-/* Form */
+/* Form - Mobile optimizations */
 .ctFormGrid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;}
 .ctFormFull{grid-column:1/-1;}
 .ctInput,.ctTextarea{width:100%;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.09);color:#fff;padding:.8rem 0;font-family:'Space Mono',monospace;font-size:.74rem;outline:none;resize:none;transition:border-color .25s;display:block;}
+/* Prevent zoom on mobile */
+@media (max-width: 768px) {
+  .ctInput, .ctTextarea, .ctAiInput { font-size: 16px !important; }
+}
 .ctInput::placeholder,.ctTextarea::placeholder{color:rgba(255,255,255,.13);}
 .ctInput:disabled,.ctTextarea:disabled{opacity:.5;}
 .ctLabel{font-family:'Space Mono',monospace;font-size:.43rem;font-weight:700;text-transform:uppercase;letter-spacing:.32em;display:block;margin-bottom:.5rem;transition:color .25s;}
@@ -145,10 +151,6 @@ const CSS = `
 .holoCard:hover::before{transform:translateX(120%);}
 
 /* Typewriter cursor */
-.twCursor::after{content:'|';color:rgba(249,115,22,.85);animation:twBlink 1.05s step-end infinite;}
-@keyframes twBlink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* Typewriter cursor */
 .typewriter-text{display:inline-block;}
 .typewriter-cursor{display:inline-block;width:2px;height:1em;background:linear-gradient(135deg,#F97316 0%,#fb923c 100%);margin-left:3px;animation:blink 1s step-end infinite;vertical-align:middle;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
@@ -169,7 +171,14 @@ const CSS = `
 
 /* Responsive */
 @media(max-width:1100px){.ctTwoCol{grid-template-columns:1fr;gap:3.5rem;}.ctOuter{padding:9rem 5% 4rem;}}
-@media(max-width:768px){.ctFormGrid{grid-template-columns:1fr;}.ctFormFull{grid-column:1;}.ctTwoStat{grid-template-columns:1fr;}.ctOuter{padding:8rem 5% 3rem;}.ctPhotoWrap{max-height:320px;}}
+@media(max-width:768px){
+  .ctFormGrid{grid-template-columns:1fr;}
+  .ctFormFull{grid-column:1;}
+  .ctTwoStat{grid-template-columns:1fr;}
+  .ctOuter{padding:8rem 5% 3rem;}
+  .ctPhotoWrap{max-height:320px;}
+  .ctSubmit { padding: 12px 20px; font-size: 12px; }
+}
 @media(max-width:480px){.ctOuter{padding:7rem 4% 2.5rem;}.ctPhotoWrap{max-height:240px;}}
 `;
 
@@ -373,67 +382,77 @@ function DataGlyph({ x, y, val, delay }) {
   );
 }
 
-// ─── FULL 3D SCENE ──────────────────────────────────────────────────────────
+// ─── FULL 3D SCENE - Reduced on mobile ──────────────────────────────────────
 function Scene3D() {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   const glyphs = useMemo(()=>{
     const vals=["0xFF","∇·F","1011","π/2","{}=>","∞","async","0x2F","gl_","mat4","vec3","lerp"];
-    return Array.from({length:20},(_,i)=>({x:`${6+(i*4.7)%90}%`,y:`${(i*7.3)%78}%`,val:vals[i%vals.length],delay:i*.65}));
-  },[]);
+    // Reduce number of glyphs on mobile
+    const count = isMobile ? 8 : 20;
+    return Array.from({length:count},(_,i)=>({x:`${6+(i*4.7)%90}%`,y:`${(i*7.3)%78}%`,val:vals[i%vals.length],delay:i*.65}));
+  },[isMobile]);
 
   return (
     <div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none",zIndex:0}}>
-      {/* Particle network canvas */}
       <div style={{position:"absolute",inset:0}}>
         <ParticleCanvas/>
       </div>
 
-      {/* Glow orbs */}
-      <GlowOrb cx="6%"  cy="12%" size={500} color={T.orange}  delay={0}/>
+      {/* Fewer glow orbs on mobile */}
+      {!isMobile && <GlowOrb cx="6%"  cy="12%" size={500} color={T.orange}  delay={0}/>}
       <GlowOrb cx="88%" cy="8%"  size={380} color={T.orangeD} delay={2.5}/>
-      <GlowOrb cx="75%" cy="72%" size={420} color={T.amber}   delay={5}/>
+      {!isMobile && <GlowOrb cx="75%" cy="72%" size={420} color={T.amber}   delay={5}/>}
       <GlowOrb cx="18%" cy="78%" size={300} color={T.orange}  delay={1.5}/>
-      <GlowOrb cx="48%" cy="40%" size={220} color={T.teal}    delay={3.5}/>
+      {!isMobile && <GlowOrb cx="48%" cy="40%" size={220} color={T.teal}    delay={3.5}/>}
 
-      {/* Perspective floor grid */}
       <motion.div className="ctGrid"
         style={{width:"220%",height:"220%",left:"-60%",top:"52%",transform:"rotateX(74deg) rotateZ(2deg)"}}
         animate={{opacity:[.38,.7,.38]}} transition={{duration:5,repeat:Infinity,ease:"easeInOut"}}/>
 
-      {/* Dual scan beams */}
       <div className="ctScan" style={{"--sd":"11s",background:"linear-gradient(90deg,transparent 0%,rgba(249,115,22,.7) 40%,rgba(251,146,60,.85) 60%,transparent 100%)"}}/>
-      <div className="ctScan" style={{"--sd":"17s",animationDelay:"6s",background:"linear-gradient(90deg,transparent 0%,rgba(20,184,166,.45) 40%,rgba(20,184,166,.6) 60%,transparent 100%)"}}/>
+      
+      {!isMobile && (
+        <div className="ctScan" style={{"--sd":"17s",animationDelay:"6s",background:"linear-gradient(90deg,transparent 0%,rgba(20,184,166,.45) 40%,rgba(20,184,166,.6) 60%,transparent 100%)"}}/>
+      )}
 
-      {/* Orbit rings */}
-      {[280,460,640,820].map((r,i)=>(
+      {/* Orbit rings - fewer on mobile */}
+      {[280,460,640,820].slice(0, isMobile ? 2 : 4).map((r,i)=>(
         <div key={i} style={{position:"absolute",left:"50%",top:"30%",width:r*2,height:r*2,borderRadius:"50%",border:`1px dashed rgba(249,115,22,${.055-i*.01})`,animation:`${i%2===0?"spinCW":"spinCCW"} ${22+i*9}s linear infinite`}}>
           {i===0&&<div style={{position:"absolute",top:"3%",left:"50%",width:6,height:6,borderRadius:"50%",background:T.orange,boxShadow:`0 0 14px ${T.orange}`,transform:"translate(-50%,-50%)"}}/>}
-          {i===2&&<div style={{position:"absolute",bottom:"8%",right:"5%",width:4,height:4,borderRadius:"50%",background:T.teal,boxShadow:`0 0 10px ${T.teal}`}}/>}
         </div>
       ))}
 
-      {/* Wireframe cubes */}
-      <WireCube size={88}  style={{left:"9%",  top:"14%"}} opacity={.22} speed={20}/>
+      {/* Wireframe cubes - fewer on mobile */}
+      {!isMobile && <WireCube size={88}  style={{left:"9%",  top:"14%"}} opacity={.22} speed={20}/>}
       <WireCube size={52}  style={{left:"81%", top:"10%"}} opacity={.16} speed={16}/>
-      <WireCube size={128} style={{left:"85%", top:"58%"}} opacity={.11} speed={28}/>
+      {!isMobile && <WireCube size={128} style={{left:"85%", top:"58%"}} opacity={.11} speed={28}/>}
       <WireCube size={38}  style={{left:"3%",  top:"60%"}} opacity={.20} speed={14}/>
-      <WireCube size={64}  style={{left:"46%", top:"88%"}} opacity={.13} speed={22}/>
+      {!isMobile && <WireCube size={64}  style={{left:"46%", top:"88%"}} opacity={.13} speed={22}/>}
 
-      {/* Polygon wireframes */}
-      <WirePoly x="19%" y="68%" size={72} sides={6} speed={18} opacity={.16}/>
+      {/* Polygon wireframes - fewer on mobile */}
+      {!isMobile && <WirePoly x="19%" y="68%" size={72} sides={6} speed={18} opacity={.16}/>}
       <WirePoly x="63%" y="18%" size={54} sides={5} speed={14} opacity={.15}/>
-      <WirePoly x="55%" y="80%" size={92} sides={8} speed={26} opacity={.10}/>
+      {!isMobile && <WirePoly x="55%" y="80%" size={92} sides={8} speed={26} opacity={.10}/>}
       <WirePoly x="3%"  y="28%" size={48} sides={3} speed={12} opacity={.18}/>
 
-      {/* Icosphere ring clusters */}
+      {/* Ring clusters - fewer on mobile */}
       <WireRings cx="14%" cy="44%" radii={[38,62,86]} baseOpacity={.08}/>
-      <WireRings cx="87%" cy="68%" radii={[28,46,66]} baseOpacity={.07}/>
+      {!isMobile && <WireRings cx="87%" cy="68%" radii={[28,46,66]} baseOpacity={.07}/>}
 
-      {/* Neon burst lines */}
+      {/* Neon burst lines - fewer on mobile */}
       {[
         {x:"0%",  y:"24%", w:180, angle:12,  delay:0},
-        {x:"62%", y:"6%",  w:220, angle:-9,  delay:1.4},
+        ...(isMobile ? [] : [{x:"62%", y:"6%",  w:220, angle:-9,  delay:1.4}]),
         {x:"38%", y:"88%", w:160, angle:20,  delay:2.8},
-        {x:"78%", y:"44%", w:190, angle:-16, delay:.7},
+        ...(isMobile ? [] : [{x:"78%", y:"44%", w:190, angle:-16, delay:.7}]),
       ].map((l,i)=>(
         <motion.div key={i}
           style={{position:"absolute",left:l.x,top:l.y,width:l.w,height:1,background:"linear-gradient(90deg,transparent,rgba(249,115,22,.45),transparent)",transform:`rotate(${l.angle}deg)`,transformOrigin:"left center"}}
@@ -444,33 +463,49 @@ function Scene3D() {
       {/* Floating code glyphs */}
       {glyphs.map((g,i)=><DataGlyph key={i} {...g}/>)}
 
-      {/* Depth fog */}
       <div className="ctFog"/>
 
-      {/* Film grain */}
-      <svg aria-hidden="true" style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:6,opacity:.022,mixBlendMode:"overlay"}}>
+      {/* Film grain - reduced opacity on mobile */}
+      <svg aria-hidden="true" style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:6,opacity:isMobile ? 0.01 : 0.022,mixBlendMode:"overlay"}}>
         <filter id="ctGrain"><feTurbulence type="fractalNoise" baseFrequency=".74" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
         <rect width="100%" height="100%" filter="url(#ctGrain)"/>
       </svg>
 
-      {/* CRT scanlines */}
-      <div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:7,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.005) 3px,rgba(255,255,255,.005) 4px)"}}/>
+      {/* CRT scanlines - removed on mobile */}
+      {!isMobile && (
+        <div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:7,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.005) 3px,rgba(255,255,255,.005) 4px)"}}/>
+      )}
     </div>
   );
 }
 
-// ─── CUSTOM CURSOR ──────────────────────────────────────────────────────────
+// ─── CUSTOM CURSOR - Disabled on mobile ──────────────────────────────────────
 function CustomCursor() {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   const pos = useMousePos();
   const [big,setBig] = useState(false);
   const sc = {stiffness:900,damping:38}, rc = {stiffness:180,damping:28};
   const dotX = useSpring(pos.x,sc), dotY = useSpring(pos.y,sc);
   const ringX = useSpring(pos.x,rc), ringY = useSpring(pos.y,rc);
+  
   useEffect(()=>{
+    if (isMobile) return;
     const ov=()=>setBig(true), ou=()=>setBig(false);
     document.querySelectorAll("a,button").forEach(el=>{el.addEventListener("mouseenter",ov);el.addEventListener("mouseleave",ou);});
     return ()=>document.querySelectorAll("a,button").forEach(el=>{el.removeEventListener("mouseenter",ov);el.removeEventListener("mouseleave",ou);});
-  },[]);
+  },[isMobile]);
+  
+  // Don't render custom cursor on mobile
+  if (isMobile) return null;
+  
   return (<>
     <motion.div className="ctCursorDot" style={{left:dotX,top:dotY}}/>
     <motion.div className={`ctCursorRing${big?" big":""}`} style={{left:ringX,top:ringY}}/>
@@ -737,11 +772,17 @@ export default function Contact() {
   const [focused,setFocused] = useState(null);
   const [autoReply,setAutoReply] = useState("");
   const [aiReplying,setAiReplying] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const {ask:getAutoReply} = useGroq(AUTO_REPLY_PROMPT,{maxTokens:140,temperature:.65});
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const headerRef = useRef(null), formRef = useRef(null), formEl = useRef(null);
-  // amount:0 means "trigger as soon as even 1px is visible" — fixes the
-  // issue where content is already on screen on mount and never scrolls in.
   const headerInView = useInView(headerRef,{once:true,amount:0});
   const formInView = useInView(formRef,{once:true,amount:0});
 
@@ -891,8 +932,9 @@ export default function Contact() {
                       </div>
                       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingTop:".4rem",flexWrap:"wrap",gap:"1rem"}}>
                         <motion.button type="submit" disabled={submitting||status==="success"} className="ctSubmit"
-                          whileHover={{scale:1.04,boxShadow:`0 18px 48px rgba(249,115,22,.44)`}} whileTap={{scale:.96}}
-                          onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty("--mx",`${((e.clientX-r.left)/r.width)*100}%`);e.currentTarget.style.setProperty("--my",`${((e.clientY-r.top)/r.height)*100}%`);}}
+                          whileHover={!isMobile ? {scale:1.04,boxShadow:`0 18px 48px rgba(249,115,22,.44)`} : {}}
+                          whileTap={!isMobile ? {scale:.96} : {scale:.98}}
+                          onMouseMove={!isMobile ? (e=>{const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty("--mx",`${((e.clientX-r.left)/r.width)*100}%`);e.currentTarget.style.setProperty("--my",`${((e.clientY-r.top)/r.height)*100}%`);}) : undefined}
                           style={{background:status==="success"?"rgba(34,197,94,.14)":`linear-gradient(135deg,${T.orange},${T.orangeD})`,border:status==="success"?"1px solid rgba(34,197,94,.38)":"1px solid transparent",color:"#fff",boxShadow:status==="success"?"none":`0 8px 28px rgba(249,115,22,.3),inset 0 1px 0 rgba(255,255,255,.14)`}}>
                           {submitting?(<><motion.span animate={{rotate:360}} transition={{duration:.85,repeat:Infinity,ease:"linear"}} style={{display:"inline-flex"}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></motion.span>Sending…</>):status==="success"?(<><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sent!</>):(<><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</>)}
                         </motion.button>
@@ -919,7 +961,8 @@ export default function Contact() {
               {/* WhatsApp */}
               <motion.a href="https://wa.me/2348103558837" target="_blank" rel="noopener noreferrer"
                 initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:.7,delay:.8}}
-                whileHover={{x:6,boxShadow:"0 10px 36px rgba(37,211,102,.18)"}} whileTap={{scale:.97}}
+                whileHover={!isMobile ? {x:6,boxShadow:"0 10px 36px rgba(37,211,102,.18)"} : {}}
+                whileTap={!isMobile ? {scale:.97} : {scale:.98}}
                 className="holoCard"
                 style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:"1rem",padding:"1rem 1.4rem",borderRadius:14,background:"rgba(37,211,102,.045)",border:"1px solid rgba(37,211,102,.18)",textDecoration:"none",color:T.text,backdropFilter:"blur(12px)",transition:"box-shadow .3s"}}>
                 <div style={{display:"flex",alignItems:"center",gap:".8rem"}}>
@@ -947,7 +990,7 @@ export default function Contact() {
                 {href:"#",label:"Twitter",icon:<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>},
               ].map(s=>(
                 <motion.a key={s.label} href={s.href} aria-label={s.label}
-                  whileHover={{scale:1.15,color:T.orange}}
+                  whileHover={!isMobile ? {scale:1.15,color:T.orange} : {}}
                   style={{color:"rgba(255,255,255,.22)",transition:"color .22s",display:"flex",textDecoration:"none"}}>
                   {s.icon}
                 </motion.a>
