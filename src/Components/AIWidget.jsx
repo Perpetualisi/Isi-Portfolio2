@@ -2,51 +2,45 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // PERPETUAL OKAN · AI ASSISTANT + PITCH GENERATOR
 // Powered by Groq · Llama 3.3-70b (free tier)
-// MOBILE-OPTIMIZED · PREMIUM EDITION
+// PREMIUM EDITION · FULLY MOBILE RESPONSIVE
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { motion, AnimatePresence, useSpring, useTransform } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════════════════
-   GROQ HOOK — Direct Groq API integration (free)
+   GROQ HOOK
 ═══════════════════════════════════════════════════════════════ */
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_MODEL   = "llama-3.3-70b-versatile";
 
 function useGroq(systemPrompt, opts = {}) {
   const { maxTokens = 400, temperature = 0.72 } = opts;
-  const [loading, setLoading]   = useState(false);
-  const abortRef                = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const abortRef = useRef(null);
 
   const ask = useCallback(async (userMessage, history = []) => {
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
     setLoading(true);
-
     try {
-      const messages = [
-        ...history.map(({ role, content }) => ({ role, content })),
-        { role: "user", content: userMessage },
-      ];
-
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method:  "POST",
-        signal:  controller.signal,
-        headers: {
-          "Content-Type":  "application/json",
-          Authorization:   `Bearer ${GROQ_API_KEY}`,
-        },
+        method: "POST",
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${GROQ_API_KEY}` },
         body: JSON.stringify({
-          model:       GROQ_MODEL,
-          max_tokens:  maxTokens,
+          model: GROQ_MODEL,
+          max_tokens: maxTokens,
           temperature,
-          messages:    [{ role: "system", content: systemPrompt }, ...messages],
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...history.map(({ role, content }) => ({ role, content })),
+            { role: "user", content: userMessage },
+          ],
         }),
       });
-
-      if (!res.ok) throw new Error(`Groq API error: ${res.status}`);
+      if (!res.ok) throw new Error(`Groq error: ${res.status}`);
       const data = await res.json();
       return data.choices?.[0]?.message?.content ?? null;
     } catch (err) {
@@ -57,11 +51,7 @@ function useGroq(systemPrompt, opts = {}) {
     }
   }, [systemPrompt, maxTokens, temperature]);
 
-  const cancel = useCallback(() => {
-    abortRef.current?.abort();
-    setLoading(false);
-  }, []);
-
+  const cancel = useCallback(() => { abortRef.current?.abort(); setLoading(false); }, []);
   return { ask, loading, cancel };
 }
 
@@ -69,20 +59,24 @@ function useGroq(systemPrompt, opts = {}) {
    THEME
 ═══════════════════════════════════════════════════════════════ */
 const T = {
-  bg:      "#010103",
-  card:    "#080810",
-  orange:  "#E8622A",
-  orangeD: "#C94E1A",
-  orangeG: "#F0845A",
-  gold:    "#D4923A",
-  text:    "#F2EEF8",
-  muted:   "rgba(242,238,248,0.40)",
-  faint:   "rgba(242,238,248,0.06)",
-  border:  "rgba(232,98,42,0.18)",
-  borderB: "rgba(255,255,255,0.06)",
-  green:   "#22c55e",
-  red:     "#ef4444",
-  glass:   "rgba(255,255,255,0.025)",
+  bg:       "#010103",
+  card:     "#07070f",
+  cardAlt:  "#0b0b18",
+  orange:   "#E8622A",
+  orangeD:  "#C94E1A",
+  orangeG:  "#F0845A",
+  orangeXL: "#F5A07A",
+  gold:     "#D4923A",
+  text:     "#F2EEF8",
+  textSub:  "rgba(242,238,248,0.55)",
+  muted:    "rgba(242,238,248,0.35)",
+  faint:    "rgba(242,238,248,0.06)",
+  border:   "rgba(232,98,42,0.16)",
+  borderB:  "rgba(255,255,255,0.055)",
+  green:    "#22c55e",
+  red:      "#ef4444",
+  glass:    "rgba(255,255,255,0.022)",
+  glassHov: "rgba(255,255,255,0.04)",
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -101,20 +95,31 @@ LinkedIn: linkedin.com/in/perpetual-okan
 Technical Skills:
   Frontend: React, Next.js, TypeScript, Tailwind CSS, Framer Motion
   3D / WebGL: Three.js, React Three Fiber, WebGL, GLSL Shaders
-  Backend: Node.js, Express, PostgreSQL, MongoDB, Firebase
+  Backend: Node.js, Express, PostgreSQL, MongoDB, Firebase, Supabase
+  API Work: REST API design and integration, third-party API connections (Stripe, Google Maps, auth, social feeds, etc.)
+  AI & Chatbots: builds AI-powered chatbots and virtual assistants using LLM APIs
   Tools: Git, Docker, Vercel, AWS
 
-Featured Projects:
-1. ConotexTech (conotextech.com) — Full website for a US-based IT company in Richmond, TX. Clean, fast, professional.
-2. WearEiko (weareiko.com) — Fashion house website for bespoke & bridal attire. Elegant animations and strong brand identity.
-3. 3D eCommerce Store (my-ecommerce-nine-iota.vercel.app) — Multi-product store with Three.js 3D interactive hero.
-4. Verra Perfume (verra-mu.vercel.app) — Luxury perfume brand. Rich visuals, atmospheric dark theme, smooth scroll.
-5. Ice Cream Brand (ice-cream-iota-peach.vercel.app) — Playful animated brand site showing range across brand personalities.
-6. Custom 3D Portfolio — Interactive personal portfolio with live Three.js WebGL background.
-Total: 15+ shipped projects across fashion, tech, eCommerce, and luxury sectors.
+Backend services she provides:
+- Connects apps to third-party APIs (Stripe, Google Maps, social login, data feeds, etc.)
+- Builds AI chatbots and virtual assistants that help users get real things done
+- Uses Firebase for real-time data, user auth, and cloud hosting
+- Uses Supabase as a modern backend — database, auth, and file storage all in one
+- Designs and builds REST APIs with Node.js and Express
+- Handles auth flows, file uploads, cloud storage, and live data syncing
 
-Availability & Rates:
-  Freelance: open, from $50/hr, typical turnaround 2–4 weeks
+Featured Projects (live):
+1. ConotexTech — conotextech.com — Website for a US tech company in Richmond, TX. Fast, clean, professional.
+2. WearEiko — weareiko.com — Fashion and bridal brand site. Smooth animations, strong visual identity.
+3. 3D eCommerce Store — my-ecommerce-nine-iota.vercel.app — Online shop with a Three.js 3D hero. Real products, real cart.
+4. Verra Perfume — verra-mu.vercel.app — Luxury perfume brand. Dark, atmospheric, smooth scroll animations.
+5. Ice Cream Brand Site — ice-cream-iota-peach.vercel.app — Fun, playful, animated brand site.
+6. Custom 3D Portfolio — Live Three.js background, interactive and immersive.
+
+Total shipped: 15+ projects across fashion, tech, eCommerce, and luxury.
+
+Rates & Availability:
+  Freelance: open — from $50/hr, 2-4 week turnaround
   Full-time remote: open
   Contact: Perpetualokan0@gmail.com
 `.trim();
@@ -122,53 +127,55 @@ Availability & Rates:
 /* ═══════════════════════════════════════════════════════════════
    SYSTEM PROMPTS
 ═══════════════════════════════════════════════════════════════ */
-const CHAT_SYSTEM = `You are Perpetual Okan's AI assistant on her portfolio website. You speak AS her representative — knowledgeable, warm, and genuinely excited about her work.
+const CHAT_SYSTEM = `You are Perpetual Okan's AI assistant on her portfolio website.
 
 PROFILE:
 ${PROFILE}
 
-RULES:
+HOW TO RESPOND:
 - Always use she/her for Perpetual.
-- Keep responses concise: 2–4 sentences max. Be informative but don't ramble.
-- Write in flowing prose — no bullet points, no markdown headers, no bold text.
-- Sound like a real person: warm, confident, occasionally enthusiastic. Light emojis are fine.
-- When mentioning projects, include the live URL naturally in the sentence.
-- For hiring/rates: freelance from $50/hr, full-time remote available, contact Perpetualokan0@gmail.com.
-- Never invent details not in the profile. If unsure, say so honestly.
-- Don't repeat yourself across messages in the same conversation.`;
+- Keep replies short — 2 to 3 sentences max. Never ramble.
+- Use simple, everyday words. Skip jargon unless someone asks for it.
+- Sound like a warm, real person — friendly and genuinely excited about her work.
+- One emoji per reply if it feels natural. Don't force it.
+- When mentioning a project, include the live link.
+- Rates: freelance from $50/hr, full-time remote open, contact Perpetualokan0@gmail.com.
+- Never make up info not in the profile. Just say you're not sure if needed.
+- No bullet points, no bold text, no headers. Plain conversational sentences only.`;
 
-const PITCH_SYSTEM = (tone, company, role) => `You are writing a "hire me" pitch for Perpetual Okan. Write in FIRST PERSON — as if Perpetual herself is writing it.
+const PITCH_SYSTEM = (tone, company, role) => `Write a "hire me" pitch for Perpetual Okan in first person (as Perpetual writing to a client or employer).
 
 Profile: ${PROFILE}
-Target company: ${company || "the company"}
-Target role: ${role || "the position"}
+Company: ${company || "the company"}
+Role: ${role || "the position"}
 Tone: ${tone}
 
-STRICT REQUIREMENTS:
-- Single paragraph, 100–140 words exactly.
-- No bullet points, no markdown, no formatting whatsoever.
-- Open with a hook that immediately establishes value for THIS specific role.
-- Name 1–2 real projects with context relevant to the role.
-- Mention specific tech skills that match what ${company} would need.
-- Close with a confident, direct call to action.
-- Sound human-written, not AI-templated.
-- OUTPUT ONLY THE PITCH. No intro, no "Here is:", no quotation marks. Just the pitch text.`;
+Rules:
+- One paragraph, 100-130 words. Short and punchy.
+- Plain prose — no bullet points, no markdown.
+- Open with something that grabs attention right away.
+- Mention 1-2 real projects with a quick note on what she built.
+- Include a backend or AI skill if it fits the role (API integration, chatbot, Firebase, Supabase, etc.).
+- End with a clear, confident call to action.
+- Sound like a real human wrote it — not a template.
+- Output ONLY the pitch text. No intro, no labels. Just the pitch.`;
 
 /* ═══════════════════════════════════════════════════════════════
    STATIC DATA
 ═══════════════════════════════════════════════════════════════ */
 const SUGGESTIONS = [
   "What kind of work does she do?",
-  "Show me her best projects 🚀",
-  "Is she available to hire? 💼",
+  "Tell me about her best projects 🚀",
+  "Can she build chatbots? 🤖",
+  "Does she work with APIs?",
   "What's her Three.js experience?",
-  "What's her rate? 💰",
+  "Firebase or Supabase?",
+  "Is she available for hire? 💼",
+  "What's her hourly rate? 💰",
   "Can she build full-stack apps?",
-  "What's her design style like?",
-  "How fast can she deliver?",
 ];
 
-const PITCH_SUGGESTIONS = [
+const PITCH_QUICK = [
   { company: "Shopify",  role: "Senior Frontend Engineer" },
   { company: "Stripe",   role: "Frontend Developer" },
   { company: "Figma",    role: "Creative Technologist" },
@@ -185,13 +192,12 @@ const TONES = [
 ];
 
 const QUICK_LINKS = [
-  { label: "GitHub",   url: "https://github.com/Perpetualisi",              icon: "⌥" },
-  { label: "LinkedIn", url: "https://linkedin.com/in/perpetual-okan",       icon: "in" },
-  { label: "Email",    url: "mailto:Perpetualokan0@gmail.com",               icon: "✉" },
+  { label: "GitHub",   href: "https://github.com/Perpetualisi",        icon: "⌥", title: "GitHub" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/perpetual-okan", icon: "in", title: "LinkedIn" },
+  { label: "Email",    href: "mailto:Perpetualokan0@gmail.com",         icon: "✉",  title: "Email" },
 ];
 
-const timestamp = () =>
-  new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const ts = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
 /* ═══════════════════════════════════════════════════════════════
    UTILITIES
@@ -199,65 +205,196 @@ const timestamp = () =>
 function useCopy() {
   const [copied, setCopied] = useState(false);
   const copy = useCallback((text) => {
-    const attempt = () => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    };
-    navigator.clipboard?.writeText(text).then(attempt).catch(() => {
+    const done = () => { setCopied(true); setTimeout(() => setCopied(false), 2200); };
+    navigator.clipboard?.writeText(text).then(done).catch(() => {
       const el = Object.assign(document.createElement("textarea"), { value: text });
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-      attempt();
+      document.body.appendChild(el); el.select();
+      document.execCommand("copy"); document.body.removeChild(el); done();
     });
   }, []);
   return { copied, copy };
 }
 
+function useIsMobile() {
+  const [mob, setMob] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const fn = () => setMob(window.innerWidth < 768);
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
+  }, []);
+  return mob;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MICRO COMPONENTS
+═══════════════════════════════════════════════════════════════ */
 function TypingDots() {
   return (
-    <div style={{ display: "flex", gap: 4, alignItems: "center", padding: "8px 12px" }}>
+    <div style={{ display: "flex", gap: 4, alignItems: "center", padding: "9px 13px" }}>
       {[0, 0.18, 0.36].map((d, i) => (
-        <motion.span
-          key={i}
+        <motion.span key={i}
           animate={{ y: [0, -5, 0], opacity: [0.3, 1, 0.3] }}
           transition={{ duration: 0.9, delay: d, repeat: Infinity }}
-          style={{
-            width: 5, height: 5, borderRadius: "50%",
-            background: T.orange, display: "inline-block",
-          }}
+          style={{ width: 5, height: 5, borderRadius: "50%", background: T.orange, display: "inline-block" }}
         />
       ))}
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   STATUS BADGE — Live online indicator
-═══════════════════════════════════════════════════════════════ */
-function StatusBadge() {
+function StatusPill() {
   return (
     <div style={{
       display: "inline-flex", alignItems: "center", gap: 5,
-      padding: "3px 9px", borderRadius: 100,
-      background: "rgba(34,197,94,0.1)",
-      border: "1px solid rgba(34,197,94,0.2)",
+      padding: "3px 10px", borderRadius: 100,
+      background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.18)",
     }}>
       <motion.span
-        animate={{ opacity: [1, 0.3, 1] }}
-        transition={{ duration: 1.8, repeat: Infinity }}
-        style={{
-          width: 5, height: 5, borderRadius: "50%",
-          background: T.green, display: "inline-block",
-        }}
+        animate={{ opacity: [1, 0.25, 1] }}
+        transition={{ duration: 2, repeat: Infinity }}
+        style={{ width: 5, height: 5, borderRadius: "50%", background: T.green, display: "block" }}
       />
-      <span style={{
-        fontFamily: "'Space Mono',monospace", fontSize: 8,
-        color: T.green, letterSpacing: "0.1em",
-      }}>
+      <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 7.5, color: T.green, letterSpacing: "0.1em" }}>
         AVAILABLE FOR WORK
       </span>
+    </div>
+  );
+}
+
+/* Animated character-by-character text reveal */
+function StreamText({ text }) {
+  const [displayed, setDisplayed] = useState("");
+  useEffect(() => {
+    setDisplayed("");
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(id);
+    }, 8);
+    return () => clearInterval(id);
+  }, [text]);
+  return <>{displayed}</>;
+}
+
+/* Skill badge row */
+function SkillBadges({ skills }) {
+  return (
+    <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 6 }}>
+      {skills.map(s => (
+        <span key={s} style={{
+          fontFamily: "'Space Mono',monospace", fontSize: 8,
+          padding: "3px 8px", borderRadius: 100,
+          background: "rgba(232,98,42,0.07)",
+          border: "1px solid rgba(232,98,42,0.18)",
+          color: T.orangeG, letterSpacing: "0.06em",
+        }}>{s}</span>
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PANEL HEADER
+═══════════════════════════════════════════════════════════════ */
+function PanelHeader({ onClose }) {
+  return (
+    <div style={{
+      padding: "12px 16px",
+      borderBottom: `1px solid ${T.border}`,
+      background: `linear-gradient(180deg, rgba(232,98,42,0.04) 0%, transparent 100%)`,
+      display: "flex", alignItems: "center", gap: 10, flexShrink: 0,
+    }}>
+      {/* Avatar with glow */}
+      <div style={{ position: "relative", flexShrink: 0 }}>
+        <div style={{
+          position: "absolute", inset: -3, borderRadius: "50%",
+          background: `radial-gradient(circle, rgba(232,98,42,0.3) 0%, transparent 70%)`,
+        }} />
+        <div style={{
+          width: 36, height: 36, borderRadius: "50%",
+          background: `linear-gradient(135deg, rgba(232,98,42,0.22), rgba(201,78,26,0.12))`,
+          border: `1.5px solid rgba(232,98,42,0.38)`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 15, position: "relative",
+        }}>
+          🧑‍💻
+        </div>
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontFamily: "'Space Mono',monospace", fontSize: 11.5,
+          fontWeight: 700, color: T.text, letterSpacing: "0.06em",
+        }}>
+          PERPETUAL <span style={{ color: T.orange }}>·</span> AI
+        </div>
+        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 7.5, color: T.muted, marginTop: 2, letterSpacing: "0.1em" }}>
+          Groq · Llama 3.3-70b · Free
+        </div>
+      </div>
+
+      <StatusPill />
+
+      <button onClick={onClose} style={{
+        width: 28, height: 28, borderRadius: "50%",
+        background: "rgba(255,255,255,0.04)", border: `1px solid ${T.borderB}`,
+        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+        transition: "all 0.15s", flexShrink: 0, touchAction: "manipulation",
+      }}
+        onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.15)"; e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = T.borderB; }}
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={T.muted} strokeWidth="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAB BAR
+═══════════════════════════════════════════════════════════════ */
+function TabBar({ activeTab, setActiveTab }) {
+  return (
+    <div style={{
+      display: "flex", gap: 4, padding: "8px 14px",
+      borderBottom: `1px solid ${T.border}`,
+      background: "rgba(0,0,0,0.18)", flexShrink: 0,
+    }}>
+      {[
+        { id: "chat",  icon: "💬", label: "Ask Me"  },
+        { id: "pitch", icon: "⚡", label: "Hire Me" },
+      ].map(t => (
+        <button key={t.id} onClick={() => setActiveTab(t.id)}
+          style={{
+            flex: 1, padding: "8px 0", borderRadius: 9, cursor: "pointer",
+            border: activeTab === t.id ? "1px solid rgba(232,98,42,0.38)" : `1px solid ${T.borderB}`,
+            background: activeTab === t.id
+              ? "linear-gradient(135deg, rgba(232,98,42,0.14), rgba(201,78,26,0.06))"
+              : "transparent",
+            fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
+            letterSpacing: "0.15em", textTransform: "uppercase",
+            color: activeTab === t.id ? T.orangeG : T.muted,
+            transition: "all 0.18s", touchAction: "manipulation",
+            position: "relative", overflow: "hidden",
+          }}
+        >
+          {activeTab === t.id && (
+            <motion.div
+              layoutId="tabActive"
+              style={{
+                position: "absolute", inset: 0,
+                background: "linear-gradient(135deg, rgba(232,98,42,0.08), transparent)",
+                borderRadius: 9,
+              }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+          <span style={{ position: "relative" }}>{t.icon} {t.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -269,14 +406,16 @@ function ChatPanel() {
   const [msgs, setMsgs] = useState([{
     role: "assistant",
     content: "Hey! 👋 I'm Perpetual's AI assistant — I know her work inside out. Ask me anything about her projects, skills, or availability.",
-    ts: timestamp(),
+    ts: ts(), id: 0,
   }]);
-  const [input, setInput]     = useState("");
+  const [input, setInput]       = useState("");
   const [showSugg, setShowSugg] = useState(true);
   const [reactions, setReactions] = useState({});
+  const [copied, setCopied]     = useState(null);
 
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
+  const isMobile  = useIsMobile();
 
   const { ask, loading, cancel } = useGroq(CHAT_SYSTEM, { maxTokens: 320, temperature: 0.7 });
 
@@ -285,7 +424,7 @@ function ChatPanel() {
   }, [msgs, loading]);
 
   useEffect(() => {
-    const t = setTimeout(() => inputRef.current?.focus(), 300);
+    const t = setTimeout(() => inputRef.current?.focus(), 320);
     return () => clearTimeout(t);
   }, []);
 
@@ -295,32 +434,25 @@ function ChatPanel() {
     setShowSugg(false);
     setInput("");
     const history = msgs.slice(1).map(({ role, content }) => ({ role, content }));
-    setMsgs(prev => [...prev, { role: "user", content: msg, ts: timestamp() }]);
+    const uid = Date.now();
+    setMsgs(prev => [...prev, { role: "user", content: msg, ts: ts(), id: uid }]);
     const reply = await ask(msg, history);
-    if (reply) setMsgs(prev => [...prev, { role: "assistant", content: reply.trim(), ts: timestamp() }]);
+    if (reply) setMsgs(prev => [...prev, { role: "assistant", content: reply.trim(), ts: ts(), id: uid + 1 }]);
   }, [input, loading, msgs, ask]);
 
   const clearChat = useCallback(() => {
-    setMsgs([{
-      role: "assistant",
-      content: "Fresh start! ✨ What would you like to know about Perpetual?",
-      ts: timestamp(),
-    }]);
-    setShowSugg(true);
-    setInput("");
-    setReactions({});
+    setMsgs([{ role: "assistant", content: "Fresh start! ✨ What would you like to know about Perpetual?", ts: ts(), id: 0 }]);
+    setShowSugg(true); setInput(""); setReactions({});
   }, []);
 
-  const toggleReaction = useCallback((i, emoji) => {
-    setReactions(prev => ({
-      ...prev,
-      [i]: prev[i] === emoji ? null : emoji,
-    }));
+  const copyMsg = useCallback((id, text) => {
+    navigator.clipboard?.writeText(text).catch(() => {});
+    setCopied(id); setTimeout(() => setCopied(null), 1800);
   }, []);
 
-  const handleKey = (e) => {
-    if (e.key === "Enter" && !e.shiftKey && !loading) { e.preventDefault(); send(); }
-  };
+  const toggleReaction = useCallback((id, emoji) => {
+    setReactions(prev => ({ ...prev, [id]: prev[id] === emoji ? null : emoji }));
+  }, []);
 
   const userCount = msgs.filter(m => m.role === "user").length;
 
@@ -328,192 +460,218 @@ function ChatPanel() {
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
       {/* Toolbar */}
       <div style={{
-        padding: "8px 14px", borderBottom: `1px solid ${T.border}`,
+        padding: "7px 14px", borderBottom: `1px solid ${T.border}`,
         display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexShrink: 0, background: "rgba(0,0,0,0.2)",
+        flexShrink: 0, background: "rgba(0,0,0,0.15)",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <StatusBadge />
-          <span style={{
-            fontFamily: "'Space Mono',monospace", fontSize: 8,
-            color: "rgba(242,238,248,0.2)",
-          }}>
-            {userCount} msg{userCount !== 1 ? "s" : ""}
-          </span>
-        </div>
-        <div style={{ display: "flex", gap: 6 }}>
-          {QUICK_LINKS.map(({ label, url, icon }) => (
-            <a key={label} href={url} target="_blank" rel="noreferrer"
-              title={label}
+        <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 8, color: "rgba(242,238,248,0.2)" }}>
+          {userCount} msg{userCount !== 1 ? "s" : ""}
+        </span>
+        <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+          {QUICK_LINKS.map(({ label, href, icon }) => (
+            <a key={label} href={href} target="_blank" rel="noreferrer" title={label}
               style={{
                 background: "transparent", border: `1px solid ${T.borderB}`,
-                borderRadius: 6, padding: "3px 7px", cursor: "pointer",
+                borderRadius: 6, padding: "3px 8px", cursor: "pointer",
                 fontFamily: "'Space Mono',monospace", fontSize: 8,
-                color: T.muted, textDecoration: "none",
-                transition: "all 0.15s",
+                color: T.muted, textDecoration: "none", transition: "all 0.15s",
               }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(232,98,42,0.3)"}
-              onMouseLeave={e => e.currentTarget.style.borderColor = T.borderB}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(232,98,42,0.35)"; e.currentTarget.style.color = T.orangeG; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = T.borderB; e.currentTarget.style.color = T.muted; }}
             >
               {icon}
             </a>
           ))}
           <button onClick={clearChat} style={{
             background: "transparent", border: `1px solid ${T.borderB}`,
-            borderRadius: 6, padding: "3px 8px", cursor: "pointer",
+            borderRadius: 6, padding: "3px 9px", cursor: "pointer",
             fontFamily: "'Space Mono',monospace", fontSize: 8, color: T.muted,
-          }}>
+            transition: "all 0.15s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.color = T.red; e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = T.muted; e.currentTarget.style.borderColor = T.borderB; }}
+          >
             Clear
           </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="ai-msgs" style={{
-        flex: 1, overflowY: "auto", padding: "14px",
-        display: "flex", flexDirection: "column", gap: 10,
+      <div className="pmsg-scroll" style={{
+        flex: 1, overflowY: "auto", padding: "14px 12px",
+        display: "flex", flexDirection: "column", gap: 12,
         WebkitOverflowScrolling: "touch",
       }}>
-        {msgs.map((m, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+        {msgs.map((m) => (
+          <motion.div key={m.id}
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{
               display: "flex", flexDirection: "column",
               alignSelf: m.role === "user" ? "flex-end" : "flex-start",
               alignItems: m.role === "user" ? "flex-end" : "flex-start",
-              maxWidth: "88%", gap: 4, position: "relative",
+              maxWidth: "86%", gap: 5,
             }}
           >
-            <div style={{
-              padding: "9px 13px",
-              borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-              background: m.role === "user"
-                ? `linear-gradient(135deg,${T.orange},${T.orangeD})`
-                : T.glass,
-              border: m.role === "user" ? "none" : `1px solid ${T.borderB}`,
-              color: m.role === "user" ? "#fff" : T.text,
-              fontFamily: "'Space Mono',monospace",
-              fontSize: 11, lineHeight: 1.85, wordBreak: "break-word",
-            }}>
-              {m.content}
+            {/* Bubble */}
+            <div style={{ position: "relative" }}>
+              <div style={{
+                padding: "10px 14px",
+                borderRadius: m.role === "user" ? "18px 18px 5px 18px" : "18px 18px 18px 5px",
+                background: m.role === "user"
+                  ? `linear-gradient(135deg, ${T.orange}, ${T.orangeD})`
+                  : T.glass,
+                border: m.role === "user" ? "none" : `1px solid ${T.borderB}`,
+                boxShadow: m.role === "user"
+                  ? "0 4px 16px rgba(232,98,42,0.22)"
+                  : "0 2px 8px rgba(0,0,0,0.2)",
+                color: m.role === "user" ? "#fff" : T.text,
+                fontFamily: "'Space Mono',monospace",
+                fontSize: isMobile ? 12 : 11, lineHeight: 1.85,
+                wordBreak: "break-word",
+              }}>
+                {m.role === "assistant" ? <StreamText text={m.content} /> : m.content}
+              </div>
             </div>
 
-            {/* Reactions for assistant messages */}
-            {m.role === "assistant" && (
-              <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                {["👍", "❤️"].map(emoji => (
-                  <button
-                    key={emoji}
-                    onClick={() => toggleReaction(i, emoji)}
-                    style={{
-                      background: reactions[i] === emoji
-                        ? "rgba(232,98,42,0.15)"
-                        : "transparent",
-                      border: `1px solid ${reactions[i] === emoji ? "rgba(232,98,42,0.3)" : T.borderB}`,
-                      borderRadius: 6, padding: "2px 6px",
-                      cursor: "pointer", fontSize: 9,
-                      transition: "all 0.15s",
-                    }}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-                <span style={{
-                  fontFamily: "'Space Mono',monospace",
-                  fontSize: 8, color: "rgba(242,238,248,0.15)", marginLeft: 2,
-                }}>
-                  {m.ts}
-                </span>
-              </div>
-            )}
-            {m.role === "user" && (
-              <span style={{
-                fontFamily: "'Space Mono',monospace",
-                fontSize: 8, color: "rgba(242,238,248,0.15)",
-              }}>
+            {/* Meta row */}
+            <div style={{
+              display: "flex", gap: 5, alignItems: "center",
+              flexDirection: m.role === "user" ? "row-reverse" : "row",
+            }}>
+              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 7.5, color: "rgba(242,238,248,0.15)" }}>
                 {m.ts}
               </span>
-            )}
+              {m.role === "assistant" && (
+                <>
+                  {["👍", "❤️"].map(emoji => (
+                    <button key={emoji} onClick={() => toggleReaction(m.id, emoji)} style={{
+                      background: reactions[m.id] === emoji ? "rgba(232,98,42,0.15)" : "transparent",
+                      border: `1px solid ${reactions[m.id] === emoji ? "rgba(232,98,42,0.3)" : T.borderB}`,
+                      borderRadius: 6, padding: "2px 6px", cursor: "pointer", fontSize: 9,
+                      transition: "all 0.15s", lineHeight: 1,
+                    }}>
+                      {emoji}
+                    </button>
+                  ))}
+                  <button onClick={() => copyMsg(m.id, m.content)} style={{
+                    background: "transparent", border: `1px solid ${T.borderB}`,
+                    borderRadius: 6, padding: "2px 7px", cursor: "pointer",
+                    fontFamily: "'Space Mono',monospace", fontSize: 7.5, color: T.muted,
+                    transition: "all 0.15s",
+                  }}>
+                    {copied === m.id ? "✓" : "copy"}
+                  </button>
+                </>
+              )}
+            </div>
           </motion.div>
         ))}
 
         {loading && (
-          <div style={{ alignSelf: "flex-start" }}>
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+            style={{ alignSelf: "flex-start" }}>
             <div style={{
               background: T.glass, border: `1px solid ${T.borderB}`,
-              borderRadius: "16px 16px 16px 4px",
+              borderRadius: "18px 18px 18px 5px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
             }}>
               <TypingDots />
             </div>
-          </div>
+          </motion.div>
         )}
         <div ref={bottomRef} />
       </div>
 
-      {/* Suggestions */}
+      {/* Suggestion chips */}
       <AnimatePresence>
         {showSugg && msgs.length <= 1 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            style={{ padding: "0 14px 10px", flexShrink: 0 }}
+            transition={{ duration: 0.22 }}
+            style={{ padding: "0 12px 10px", flexShrink: 0 }}
           >
-            <div style={{
-              display: "flex", gap: 6, flexWrap: "wrap",
-              maxHeight: 90, overflow: "hidden",
-            }}>
-              {SUGGESTIONS.map(s => (
-                <button key={s} className="ai-sugg" onClick={() => send(s)} disabled={loading}
-                  style={{ touchAction: "manipulation" }}>
+            <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+              {SUGGESTIONS.map((s, i) => (
+                <motion.button
+                  key={s}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.035 }}
+                  className="psugg"
+                  onClick={() => send(s)}
+                  disabled={loading}
+                  style={{ touchAction: "manipulation" }}
+                >
                   {s}
-                </button>
+                </motion.button>
               ))}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Input */}
+      {/* Input bar */}
       <div style={{
-        padding: "10px 14px", borderTop: `1px solid ${T.border}`,
+        padding: "10px 12px", borderTop: `1px solid ${T.border}`,
         display: "flex", gap: 8, alignItems: "center",
-        background: "rgba(0,0,0,0.3)", flexShrink: 0,
+        background: "rgba(0,0,0,0.28)", flexShrink: 0,
       }}>
-        <input
-          ref={inputRef}
-          className="ai-input"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKey}
-          placeholder="Ask me anything…"
-          disabled={loading}
-          aria-label="Chat input"
-          style={{ fontSize: window.innerWidth < 768 ? "16px" : "11px" }}
-        />
+        <div style={{ flex: 1, position: "relative" }}>
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey && !loading) { e.preventDefault(); send(); } }}
+            placeholder="Ask anything about Perpetual…"
+            disabled={loading}
+            aria-label="Chat input"
+            style={{
+              width: "100%", boxSizing: "border-box",
+              background: "rgba(255,255,255,0.03)",
+              border: `1px solid ${input ? "rgba(232,98,42,0.35)" : "rgba(255,255,255,0.07)"}`,
+              borderRadius: 100, padding: "10px 16px",
+              fontFamily: "'Space Mono',monospace",
+              fontSize: isMobile ? 16 : 11,
+              color: T.text, outline: "none", transition: "all 0.2s",
+            }}
+          />
+        </div>
         {loading ? (
-          <button onClick={cancel} className="ai-send-btn"
-            style={{ background: "rgba(239,68,68,0.2)", touchAction: "manipulation" }}>
+          <button onClick={cancel} style={{
+            width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+            border: "none", cursor: "pointer", background: "rgba(239,68,68,0.18)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            touchAction: "manipulation",
+          }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff">
               <rect x="6" y="6" width="12" height="12" rx="2"/>
             </svg>
           </button>
         ) : (
-          <button onClick={() => send()} className="ai-send-btn" disabled={!input.trim()}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            onClick={() => send()}
+            disabled={!input.trim()}
             style={{
+              width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+              border: "none", cursor: input.trim() ? "pointer" : "default",
               background: input.trim()
-                ? `linear-gradient(135deg,${T.orange},${T.orangeD})`
+                ? `linear-gradient(135deg, ${T.orange}, ${T.orangeD})`
                 : "rgba(255,255,255,0.05)",
-              opacity: input.trim() ? 1 : 0.45,
+              boxShadow: input.trim() ? "0 4px 14px rgba(232,98,42,0.3)" : "none",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              opacity: input.trim() ? 1 : 0.4, transition: "all 0.2s",
               touchAction: "manipulation",
-            }}>
+            }}
+          >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff">
               <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
             </svg>
-          </button>
+          </motion.button>
         )}
       </div>
     </div>
@@ -524,48 +682,43 @@ function ChatPanel() {
    PITCH PANEL
 ═══════════════════════════════════════════════════════════════ */
 function PitchPanel() {
-  const [step, setStep]     = useState("form");
-  const [company, setCompany] = useState("");
-  const [role, setRole]     = useState("");
-  const [tone, setTone]     = useState("professional");
-  const [pitch, setPitch]   = useState("");
+  const [step, setStep]         = useState("form");
+  const [company, setCompany]   = useState("");
+  const [role, setRole]         = useState("");
+  const [tone, setTone]         = useState("professional");
+  const [pitch, setPitch]       = useState("");
   const [fieldErr, setFieldErr] = useState("");
   const [genCount, setGenCount] = useState(0);
-  const [wordCount, setWordCount] = useState(0);
 
   const resultRef = useRef(null);
+  const isMobile  = useIsMobile();
   const { copied, copy } = useCopy();
 
   const { ask, loading } = useGroq(
     "You are a pitch-writing assistant for Perpetual Okan. Write exactly as instructed — output only the pitch text, nothing else.",
-    { maxTokens: 320, temperature: 0.85 }
+    { maxTokens: 340, temperature: 0.85 }
   );
+
+  const wordCount = useMemo(() =>
+    pitch.trim().split(/\s+/).filter(Boolean).length, [pitch]);
 
   useEffect(() => {
     if (step === "result") setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
   }, [step]);
 
-  useEffect(() => {
-    setWordCount(pitch.trim().split(/\s+/).filter(Boolean).length);
-  }, [pitch]);
-
   const buildPrompt = useCallback((variant = "") =>
     PITCH_SYSTEM(tone, company.trim(), role.trim()) +
-    (variant ? `\n\nWrite a FRESH version — different opening, different projects highlighted, different closing. ${variant}` : "\n\nNow write the pitch."),
+    (variant ? `\n\nWrite a FRESH version — different opening, different projects, different closing. ${variant}` : "\n\nNow write the pitch."),
   [tone, company, role]);
 
   const generate = useCallback(async () => {
     if (!company.trim() || !role.trim()) { setFieldErr("Please fill in both fields."); return; }
-    setFieldErr("");
-    setStep("loading");
+    setFieldErr(""); setStep("loading");
     const result = await ask(buildPrompt());
     if (result?.trim().length > 20) {
-      setPitch(result.trim());
-      setGenCount(n => n + 1);
-      setStep("result");
+      setPitch(result.trim()); setGenCount(n => n + 1); setStep("result");
     } else {
-      setFieldErr("Generation failed — please try again.");
-      setStep("form");
+      setFieldErr("Generation failed — please try again."); setStep("form");
     }
   }, [company, role, ask, buildPrompt]);
 
@@ -581,50 +734,48 @@ function PitchPanel() {
     setCompany(""); setRole(""); setTone("professional"); setGenCount(0);
   }, []);
 
-  const autofill = useCallback(({ company: c, role: r }) => {
-    setCompany(c); setRole(r); setFieldErr("");
-  }, []);
-
-  const shareViaEmail = useCallback(() => {
-    const subject = encodeURIComponent(`Application — ${role} at ${company}`);
-    const body    = encodeURIComponent(pitch);
-    window.open(`mailto:?subject=${subject}&body=${body}`);
+  const shareEmail = useCallback(() => {
+    window.open(`mailto:?subject=${encodeURIComponent(`Application — ${role} at ${company}`)}&body=${encodeURIComponent(pitch)}`);
   }, [pitch, role, company]);
 
   return (
-    <div style={{ overflowY: "auto", maxHeight: "100%", padding: "16px", WebkitOverflowScrolling: "touch" }}>
+    <div style={{ overflowY: "auto", maxHeight: "100%", padding: "16px 14px", WebkitOverflowScrolling: "touch" }}>
       <AnimatePresence mode="wait">
 
-        {/* ── FORM ── */}
+        {/* FORM */}
         {step === "form" && (
           <motion.div key="form"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             style={{ display: "flex", flexDirection: "column", gap: 14 }}
           >
+            {/* Info card */}
             <div style={{
-              padding: "10px 14px", background: "rgba(232,98,42,0.05)",
+              padding: "10px 14px", background: "rgba(232,98,42,0.04)",
               borderRadius: 10, border: `1px solid ${T.border}`,
             }}>
-              <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, color: T.muted, lineHeight: 1.65, margin: 0 }}>
+              <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, color: T.muted, lineHeight: 1.7, margin: 0 }}>
                 ✨ Generate a personalised pitch in Perpetual's voice — tailored to the role and company.
               </p>
+              <SkillBadges skills={["API", "Firebase", "Supabase", "Chatbots", "Three.js", "React"]} />
             </div>
 
-            {/* Quick-fill suggestions */}
+            {/* Quick fill */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <span className="ai-label">⚡ Quick fill</span>
+              <span style={{
+                fontFamily: "'Space Mono',monospace", fontSize: 8, fontWeight: 700,
+                letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(232,98,42,0.6)",
+              }}>⚡ Quick fill</span>
               <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                {PITCH_SUGGESTIONS.map(s => (
+                {PITCH_QUICK.map(s => (
                   <button key={s.company}
-                    onClick={() => autofill(s)}
-                    className="ai-sugg"
+                    onClick={() => { setCompany(s.company); setRole(s.role); setFieldErr(""); }}
                     style={{
-                      fontSize: 8,
-                      background: company === s.company && role === s.role
-                        ? "rgba(232,98,42,0.15)" : "rgba(232,98,42,0.04)",
-                      borderColor: company === s.company && role === s.role
-                        ? "rgba(232,98,42,0.4)" : "rgba(232,98,42,0.15)",
-                      touchAction: "manipulation",
+                      fontFamily: "'Space Mono',monospace", fontSize: 8,
+                      padding: "4px 10px", borderRadius: 100, cursor: "pointer",
+                      border: `1px solid ${company === s.company && role === s.role ? "rgba(232,98,42,0.4)" : "rgba(232,98,42,0.15)"}`,
+                      background: company === s.company && role === s.role ? "rgba(232,98,42,0.12)" : "rgba(232,98,42,0.03)",
+                      color: company === s.company && role === s.role ? T.orangeG : "rgba(242,238,248,0.38)",
+                      transition: "all 0.15s", touchAction: "manipulation",
                     }}
                   >
                     {s.company}
@@ -633,65 +784,109 @@ function PitchPanel() {
               </div>
             </div>
 
+            {/* Company */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label className="ai-label">🏢 Company name</label>
-              <input className="ai-input ai-input-box" value={company}
+              <label style={{
+                fontFamily: "'Space Mono',monospace", fontSize: 8, fontWeight: 700,
+                letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(232,98,42,0.6)",
+              }}>🏢 Company name</label>
+              <input
+                value={company}
                 onChange={e => { setCompany(e.target.value); setFieldErr(""); }}
                 onKeyDown={e => e.key === "Enter" && company.trim() && role.trim() && generate()}
                 placeholder="e.g. Google, Shopify, Stripe…"
-                style={{ fontSize: window.innerWidth < 768 ? "16px" : "11px" }}
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: `1px solid ${company ? "rgba(232,98,42,0.3)" : "rgba(255,255,255,0.07)"}`,
+                  borderRadius: 10, padding: "10px 14px", width: "100%", boxSizing: "border-box",
+                  fontFamily: "'Space Mono',monospace", fontSize: isMobile ? 16 : 11,
+                  color: T.text, outline: "none", transition: "border-color 0.2s",
+                }}
               />
             </div>
 
+            {/* Role */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label className="ai-label">💼 Role / position</label>
-              <input className="ai-input ai-input-box" value={role}
+              <label style={{
+                fontFamily: "'Space Mono',monospace", fontSize: 8, fontWeight: 700,
+                letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(232,98,42,0.6)",
+              }}>💼 Role / position</label>
+              <input
+                value={role}
                 onChange={e => { setRole(e.target.value); setFieldErr(""); }}
                 onKeyDown={e => e.key === "Enter" && company.trim() && role.trim() && generate()}
                 placeholder="e.g. Senior Frontend Engineer…"
-                style={{ fontSize: window.innerWidth < 768 ? "16px" : "11px" }}
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: `1px solid ${role ? "rgba(232,98,42,0.3)" : "rgba(255,255,255,0.07)"}`,
+                  borderRadius: 10, padding: "10px 14px", width: "100%", boxSizing: "border-box",
+                  fontFamily: "'Space Mono',monospace", fontSize: isMobile ? 16 : 11,
+                  color: T.text, outline: "none", transition: "border-color 0.2s",
+                }}
               />
             </div>
 
+            {/* Tone */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label className="ai-label">🎨 Tone & style</label>
+              <label style={{
+                fontFamily: "'Space Mono',monospace", fontSize: 8, fontWeight: 700,
+                letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(232,98,42,0.6)",
+              }}>🎨 Tone & style</label>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
                 {TONES.map(t => (
-                  <button key={t.id}
-                    className={`ai-tone${tone === t.id ? " active" : ""}`}
+                  <motion.button key={t.id} whileTap={{ scale: 0.96 }}
                     onClick={() => setTone(t.id)}
-                    style={{ touchAction: "manipulation" }}
+                    style={{
+                      padding: "10px 8px", borderRadius: 10, cursor: "pointer",
+                      border: `1px solid ${tone === t.id ? "rgba(232,98,42,0.45)" : "rgba(255,255,255,0.06)"}`,
+                      background: tone === t.id
+                        ? "linear-gradient(135deg, rgba(232,98,42,0.14), rgba(201,78,26,0.06))"
+                        : "transparent",
+                      color: tone === t.id ? T.orangeG : "rgba(242,238,248,0.3)",
+                      transition: "all 0.18s", textAlign: "center", touchAction: "manipulation",
+                    }}
                   >
-                    <span style={{ fontSize: 15 }}>{t.icon}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, display: "block", marginTop: 2 }}>{t.label}</span>
-                    <span style={{ fontSize: 8, opacity: 0.5, display: "block" }}>{t.desc}</span>
-                  </button>
+                    <span style={{ fontSize: 16, display: "block" }}>{t.icon}</span>
+                    <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, fontWeight: 700, display: "block", marginTop: 3 }}>{t.label}</span>
+                    <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 8, opacity: 0.5, display: "block" }}>{t.desc}</span>
+                  </motion.button>
                 ))}
               </div>
             </div>
 
             {fieldErr && (
-              <div style={{
-                padding: "9px 12px", background: "rgba(239,68,68,0.08)",
-                border: "1px solid rgba(239,68,68,0.25)", borderRadius: 8,
-                fontFamily: "'Space Mono',monospace", fontSize: 10, color: T.red,
-              }}>
+              <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                style={{
+                  padding: "9px 12px", background: "rgba(239,68,68,0.07)",
+                  border: "1px solid rgba(239,68,68,0.22)", borderRadius: 8,
+                  fontFamily: "'Space Mono',monospace", fontSize: 10, color: T.red,
+                }}>
                 {fieldErr}
-              </div>
+              </motion.div>
             )}
 
-            <button
-              className={`ai-generate${company.trim() && role.trim() ? " ready" : " disabled"}`}
+            <motion.button whileTap={{ scale: 0.97 }}
               onClick={generate}
               disabled={!company.trim() || !role.trim() || loading}
-              style={{ touchAction: "manipulation" }}
+              style={{
+                width: "100%", padding: "13px 0", borderRadius: 10, border: "none",
+                cursor: company.trim() && role.trim() ? "pointer" : "not-allowed",
+                fontFamily: "'Space Mono',monospace", fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.22em", textTransform: "uppercase", transition: "all 0.2s",
+                background: company.trim() && role.trim()
+                  ? `linear-gradient(135deg, ${T.orange}, ${T.orangeD})`
+                  : "rgba(255,255,255,0.04)",
+                color: company.trim() && role.trim() ? "#fff" : "rgba(242,238,248,0.2)",
+                boxShadow: company.trim() && role.trim() ? "0 8px 26px rgba(232,98,42,0.26)" : "none",
+                touchAction: "manipulation",
+              }}
             >
               {company.trim() && role.trim() ? "✨ Generate Pitch" : "📝 Fill both fields first"}
-            </button>
+            </motion.button>
           </motion.div>
         )}
 
-        {/* ── LOADING ── */}
+        {/* LOADING */}
         {step === "loading" && (
           <motion.div key="loading"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -699,9 +894,9 @@ function PitchPanel() {
           >
             <div style={{
               width: 44, height: 44, borderRadius: "50%",
-              border: `2px solid rgba(232,98,42,0.12)`,
+              border: "2px solid rgba(232,98,42,0.1)",
               borderTop: `2px solid ${T.orange}`,
-              animation: "ai-spin 0.8s linear infinite",
+              animation: "pspin 0.8s linear infinite",
             }} />
             <TypingDots />
             <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 9, color: T.muted, margin: 0 }}>
@@ -710,30 +905,26 @@ function PitchPanel() {
           </motion.div>
         )}
 
-        {/* ── RESULT ── */}
+        {/* RESULT */}
         {step === "result" && (
           <motion.div key="result" ref={resultRef}
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             style={{ display: "flex", flexDirection: "column", gap: 14 }}
           >
-            <div style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              flexWrap: "wrap", gap: 6,
-            }}>
+            {/* Label row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 6 }}>
               <div style={{
                 padding: "4px 12px", borderRadius: 100,
-                background: "rgba(232,98,42,0.1)",
-                border: "1px solid rgba(232,98,42,0.22)",
+                background: "rgba(232,98,42,0.1)", border: "1px solid rgba(232,98,42,0.22)",
               }}>
                 <span style={{
                   fontFamily: "'Space Mono',monospace", fontSize: 9,
-                  fontWeight: 700, letterSpacing: "0.14em", color: T.orangeG,
-                  textTransform: "uppercase",
+                  fontWeight: 700, letterSpacing: "0.13em", color: T.orangeG, textTransform: "uppercase",
                 }}>
                   {company} · {role}
                 </span>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", gap: 8 }}>
                 <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 8, color: "rgba(242,238,248,0.2)" }}>
                   {wordCount}w
                 </span>
@@ -745,6 +936,7 @@ function PitchPanel() {
               </div>
             </div>
 
+            {/* Pitch text */}
             <div style={{
               background: T.glass,
               border: "1px solid rgba(232,98,42,0.12)",
@@ -755,33 +947,65 @@ function PitchPanel() {
             }}>
               <p style={{
                 fontFamily: "'Space Mono',monospace",
-                fontSize: 11, lineHeight: 1.95,
+                fontSize: isMobile ? 12 : 11, lineHeight: 1.95,
                 color: T.text, margin: 0, whiteSpace: "pre-wrap",
               }}>
-                {pitch}
+                <StreamText text={pitch} />
               </p>
             </div>
 
-            {/* Actions */}
+            {/* Action grid */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-              <button className="ai-action" onClick={() => copy(pitch)} style={{ touchAction: "manipulation" }}>
+              <motion.button whileTap={{ scale: 0.96 }} onClick={() => copy(pitch)}
+                style={{
+                  padding: "11px 0", borderRadius: 10, border: "none", cursor: "pointer",
+                  fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
+                  letterSpacing: "0.16em", textTransform: "uppercase",
+                  background: `linear-gradient(135deg, ${T.orange}, ${T.orangeD})`,
+                  color: "#fff", transition: "all 0.15s", touchAction: "manipulation",
+                  boxShadow: "0 4px 14px rgba(232,98,42,0.22)",
+                }}
+              >
                 {copied ? "✓ Copied!" : "📋 Copy"}
-              </button>
-              <button className="ai-action" onClick={regenerate} disabled={loading}
-                style={{ opacity: loading ? 0.5 : 1, touchAction: "manipulation" }}>
+              </motion.button>
+              <motion.button whileTap={{ scale: 0.96 }} onClick={regenerate} disabled={loading}
+                style={{
+                  padding: "11px 0", borderRadius: 10, border: "none", cursor: loading ? "wait" : "pointer",
+                  fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
+                  letterSpacing: "0.16em", textTransform: "uppercase",
+                  background: `linear-gradient(135deg, ${T.orange}, ${T.orangeD})`,
+                  color: "#fff", opacity: loading ? 0.5 : 1, transition: "all 0.15s",
+                  touchAction: "manipulation", boxShadow: "0 4px 14px rgba(232,98,42,0.22)",
+                }}
+              >
                 🔄 New Version
-              </button>
+              </motion.button>
             </div>
 
-            <button className="ai-action-secondary" onClick={shareViaEmail} style={{ touchAction: "manipulation" }}>
+            <motion.button whileTap={{ scale: 0.97 }} onClick={shareEmail}
+              style={{
+                width: "100%", padding: "10px 0", borderRadius: 10, cursor: "pointer",
+                fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
+                letterSpacing: "0.16em", textTransform: "uppercase",
+                background: "transparent", border: "1px solid rgba(232,98,42,0.28)",
+                color: "rgba(232,98,42,0.75)", transition: "all 0.15s",
+                touchAction: "manipulation",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(232,98,42,0.07)"; e.currentTarget.style.color = T.orangeG; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(232,98,42,0.75)"; }}
+            >
               ✉ Send via Email
-            </button>
+            </motion.button>
 
             <button onClick={reset} style={{
               background: "transparent", border: "none",
               fontFamily: "'Space Mono',monospace", fontSize: 9,
-              color: "rgba(242,238,248,0.22)", cursor: "pointer", padding: 0, alignSelf: "center",
-            }}>
+              color: "rgba(242,238,248,0.2)", cursor: "pointer", padding: 0, alignSelf: "center",
+              transition: "color 0.15s",
+            }}
+              onMouseEnter={e => e.currentTarget.style.color = T.muted}
+              onMouseLeave={e => e.currentTarget.style.color = "rgba(242,238,248,0.2)"}
+            >
               ← Start over
             </button>
           </motion.div>
@@ -792,319 +1016,137 @@ function PitchPanel() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TAB BAR
-═══════════════════════════════════════════════════════════════ */
-function TabBar({ activeTab, setActiveTab }) {
-  const tabs = [
-    { id: "chat",  label: "Ask Me",  icon: "💬" },
-    { id: "pitch", label: "Hire Me", icon: "⚡" },
-  ];
-  return (
-    <div style={{
-      display: "flex", gap: 4, padding: "8px 14px",
-      borderBottom: `1px solid ${T.border}`,
-      background: "rgba(0,0,0,0.25)", flexShrink: 0,
-    }}>
-      {tabs.map(t => (
-        <button
-          key={t.id}
-          onClick={() => setActiveTab(t.id)}
-          style={{
-            flex: 1, padding: "7px 0",
-            border: activeTab === t.id ? `1px solid rgba(232,98,42,0.35)` : `1px solid ${T.borderB}`,
-            borderRadius: 8, cursor: "pointer",
-            background: activeTab === t.id ? "rgba(232,98,42,0.1)" : "transparent",
-            fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
-            letterSpacing: "0.16em", textTransform: "uppercase",
-            color: activeTab === t.id ? T.orangeG : T.muted,
-            transition: "all 0.18s", touchAction: "manipulation",
-          }}
-        >
-          {t.icon} {t.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   PANEL HEADER
-═══════════════════════════════════════════════════════════════ */
-function PanelHeader({ onClose }) {
-  return (
-    <div style={{
-      padding: "12px 16px", borderBottom: `1px solid ${T.border}`,
-      background: "rgba(232,98,42,0.03)",
-      display: "flex", alignItems: "center", gap: 10, flexShrink: 0,
-    }}>
-      {/* Avatar */}
-      <div style={{
-        width: 34, height: 34, borderRadius: "50%", flexShrink: 0,
-        background: `linear-gradient(135deg, rgba(232,98,42,0.25), rgba(201,78,26,0.15))`,
-        border: `1.5px solid rgba(232,98,42,0.35)`,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 14,
-      }}>
-        🧑‍💻
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontFamily: "'Space Mono',monospace", fontSize: 11,
-          fontWeight: 700, color: T.text, letterSpacing: "0.04em",
-        }}>
-          PERPETUAL · AI
-        </div>
-        <div style={{
-          fontFamily: "'Space Mono',monospace", fontSize: 7,
-          color: T.muted, marginTop: 1, letterSpacing: "0.1em",
-        }}>
-          Groq · Llama 3.3-70b · Free
-        </div>
-      </div>
-
-      <button onClick={onClose} style={{
-        width: 26, height: 26, borderRadius: "50%",
-        background: "rgba(255,255,255,0.04)", border: `1px solid ${T.borderB}`,
-        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-        touchAction: "manipulation",
-      }}>
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={T.muted} strokeWidth="2.5">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
    MAIN WIDGET
 ═══════════════════════════════════════════════════════════════ */
 export default function AIWidget() {
   const [isOpen, setIsOpen]       = useState(false);
-  const [activeTab, setActiveTab] = useState("chat");
   const [menuOpen, setMenuOpen]   = useState(false);
-  const [isMobile, setIsMobile]   = useState(false);
-  const [pulse, setPulse]         = useState(true);
+  const [activeTab, setActiveTab] = useState("chat");
+  const [hasPulsed, setHasPulsed] = useState(false);
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  // Stop pulsing after first open
   const handleOpen = useCallback((tab = "chat") => {
-    setActiveTab(tab);
-    setIsOpen(true);
-    setMenuOpen(false);
-    setPulse(false);
+    setActiveTab(tab); setIsOpen(true); setMenuOpen(false); setHasPulsed(true);
   }, []);
+  const handleClose = useCallback(() => { setIsOpen(false); setMenuOpen(false); }, []);
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-    setMenuOpen(false);
-  }, []);
-
-  // Keyboard shortcuts
   useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        isOpen ? handleClose() : handleOpen("chat");
-      }
+    const fn = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); isOpen ? handleClose() : handleOpen("chat"); }
       if (e.key === "Escape" && (isOpen || menuOpen)) handleClose();
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
   }, [isOpen, menuOpen, handleOpen, handleClose]);
+
+  const panelW = isMobile ? "calc(100vw - 24px)" : "min(410px, calc(100vw - 32px))";
+  const panelH = isMobile ? "calc(100dvh - 110px)" : "min(590px, calc(100dvh - 110px))";
 
   return (
     <>
+      {/* ── Global styles ── */}
       <style>{`
-        .ai-input {
-          flex: 1;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 100px;
-          padding: 9px 16px;
+        .pmsg-scroll::-webkit-scrollbar { width: 2px; }
+        .pmsg-scroll::-webkit-scrollbar-thumb { background: rgba(232,98,42,0.18); border-radius: 4px; }
+
+        .psugg {
           font-family: 'Space Mono', monospace;
-          font-size: 11px;
-          color: ${T.text};
-          outline: none;
-          transition: border-color 0.2s, background 0.2s;
+          font-size: 9px; padding: 5px 12px; border-radius: 100px;
+          cursor: pointer; border: 1px solid rgba(232,98,42,0.18);
+          background: rgba(232,98,42,0.04); color: rgba(242,238,248,0.38);
+          transition: all 0.15s; white-space: nowrap; line-height: 1.4;
+          touch-action: manipulation;
         }
-        .ai-input:focus { border-color: rgba(232,98,42,0.45); background: rgba(255,255,255,0.05); }
-        .ai-input::placeholder { color: rgba(242,238,248,0.16); }
-        .ai-input:disabled { opacity: 0.4; }
-        .ai-input-box { border-radius: 10px; width: 100%; box-sizing: border-box; }
+        .psugg:hover { background: rgba(232,98,42,0.1); color: rgba(242,238,248,0.7); border-color: rgba(232,98,42,0.32); }
+        .psugg:active { transform: scale(0.95); }
+        .psugg:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .ai-label {
-          font-family: 'Space Mono', monospace;
-          font-size: 8px; font-weight: 700;
-          letter-spacing: 0.24em; text-transform: uppercase;
-          color: rgba(232,98,42,0.65);
-        }
-
-        .ai-sugg {
-          font-family: 'Space Mono', monospace;
-          font-size: 9px; padding: 5px 11px; border-radius: 100px;
-          cursor: pointer;
-          border: 1px solid rgba(232,98,42,0.18);
-          background: rgba(232,98,42,0.04);
-          color: rgba(242,238,248,0.38);
-          transition: all 0.15s; white-space: nowrap;
-        }
-        .ai-sugg:hover { background: rgba(232,98,42,0.1); color: rgba(242,238,248,0.65); border-color: rgba(232,98,42,0.3); }
-        .ai-sugg:active { transform: scale(0.96); }
-
-        .ai-tone {
-          font-family: 'Space Mono', monospace;
-          padding: 10px 8px; border-radius: 10px; cursor: pointer;
-          border: 1px solid rgba(255,255,255,0.06);
-          background: transparent;
-          color: rgba(242,238,248,0.3);
-          transition: all 0.18s; width: 100%; text-align: center;
-        }
-        .ai-tone:hover { background: rgba(232,98,42,0.06); border-color: rgba(232,98,42,0.2); color: rgba(242,238,248,0.5); }
-        .ai-tone.active { background: rgba(232,98,42,0.12); border-color: rgba(232,98,42,0.42); color: ${T.orangeG}; }
-        .ai-tone:active { transform: scale(0.97); }
-
-        .ai-generate {
-          width: 100%; padding: 12px 0; border-radius: 10px;
-          border: none; cursor: pointer;
-          font-family: 'Space Mono', monospace;
-          font-size: 10px; font-weight: 700;
-          letter-spacing: 0.2em; text-transform: uppercase;
-          transition: all 0.2s;
-        }
-        .ai-generate.ready {
-          background: linear-gradient(135deg, ${T.orange}, ${T.orangeD});
-          color: #fff; box-shadow: 0 8px 24px rgba(232,98,42,0.26);
-        }
-        .ai-generate.ready:hover { box-shadow: 0 12px 32px rgba(232,98,42,0.36); transform: translateY(-1px); }
-        .ai-generate.disabled { background: rgba(255,255,255,0.04); color: rgba(242,238,248,0.2); cursor: not-allowed; }
-        .ai-generate:active { transform: scale(0.97) !important; }
-
-        .ai-action {
-          flex: 1; padding: 10px 0; border-radius: 10px; cursor: pointer;
-          font-family: 'Space Mono', monospace;
-          font-size: 9px; font-weight: 700;
-          letter-spacing: 0.16em; text-transform: uppercase;
-          background: linear-gradient(135deg, ${T.orange}, ${T.orangeD});
-          color: #fff; border: none; transition: all 0.15s;
-        }
-        .ai-action:hover { box-shadow: 0 6px 18px rgba(232,98,42,0.28); transform: translateY(-1px); }
-        .ai-action:active { transform: scale(0.97); }
-
-        .ai-action-secondary {
-          width: 100%; padding: 9px 0; border-radius: 10px; cursor: pointer;
-          font-family: 'Space Mono', monospace;
-          font-size: 9px; font-weight: 700;
-          letter-spacing: 0.16em; text-transform: uppercase;
-          background: transparent;
-          border: 1px solid rgba(232,98,42,0.25);
-          color: rgba(232,98,42,0.7);
-          transition: all 0.15s;
-        }
-        .ai-action-secondary:hover { background: rgba(232,98,42,0.06); border-color: rgba(232,98,42,0.4); color: ${T.orangeG}; }
-        .ai-action-secondary:active { transform: scale(0.97); }
-
-        .ai-send-btn {
-          width: 36px; height: 36px; border-radius: 50%;
-          flex-shrink: 0; border: none; cursor: pointer;
-          display: flex; align-items: center; justify-content: center;
-          transition: transform 0.15s;
-        }
-        .ai-send-btn:active { transform: scale(0.93); }
-
-        .ai-msgs::-webkit-scrollbar { width: 2px; }
-        .ai-msgs::-webkit-scrollbar-thumb { background: rgba(232,98,42,0.2); border-radius: 4px; }
-
-        @keyframes ai-spin { to { transform: rotate(360deg); } }
+        @keyframes pspin { to { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
-          .ai-input { font-size: 16px !important; padding: 12px 16px; }
-          .ai-sugg { font-size: 10px; padding: 8px 13px; }
-          .ai-tone { padding: 12px 8px; }
-          .ai-generate { padding: 14px 0; font-size: 11px; }
+          .psugg { font-size: 10.5px; padding: 7px 14px; }
         }
       `}</style>
 
-      {/* ── FAB menu ── */}
+      {/* ── Fan menu ── */}
       <AnimatePresence>
         {menuOpen && !isOpen && (
           <>
-            {[
-              { label: "Ask Me",  tab: "chat",  icon: "💬", y: -72 },
-              { label: "Hire Me", tab: "pitch", icon: "⚡", y: -130 },
-            ].map(({ label, tab, icon, y }) => (
-              <motion.button
-                key={tab}
-                initial={{ opacity: 0, y: 0, scale: 0.8 }}
-                animate={{ opacity: 1, y, scale: 1 }}
-                exit={{ opacity: 0, y: 0, scale: 0.8 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                onClick={() => handleOpen(tab)}
-                whileTap={{ scale: 0.93 }}
-                style={{
-                  position: "fixed", bottom: 28, right: 28, zIndex: 1001,
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "0 18px",
-                  height: isMobile ? 48 : 44, borderRadius: 100,
-                  border: "1px solid rgba(232,98,42,0.3)",
-                  background: T.card, cursor: "pointer",
-                  boxShadow: "0 8px 28px rgba(0,0,0,0.6)",
-                  color: T.text, fontFamily: "'Space Mono',monospace",
-                  fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
-                  touchAction: "manipulation",
-                }}
-              >
-                <span style={{ fontSize: 12 }}>{icon}</span>
-                {label}
-              </motion.button>
-            ))}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
               style={{
                 position: "fixed", inset: 0, zIndex: 999,
-                background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)",
+                background: "rgba(0,0,0,0.45)", backdropFilter: "blur(5px)",
               }}
             />
+            {[
+              { label: "Ask Me",  tab: "chat",  icon: "💬", y: -76  },
+              { label: "Hire Me", tab: "pitch", icon: "⚡", y: -136 },
+            ].map(({ label, tab, icon, y }, i) => (
+              <motion.button
+                key={tab}
+                initial={{ opacity: 0, y: 0, scale: 0.78 }}
+                animate={{ opacity: 1, y, scale: 1 }}
+                exit={{ opacity: 0, y: 0, scale: 0.78 }}
+                transition={{ duration: 0.24, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                onClick={() => handleOpen(tab)}
+                whileTap={{ scale: 0.93 }}
+                style={{
+                  position: "fixed", bottom: 28, right: 28, zIndex: 1001,
+                  display: "flex", alignItems: "center", gap: 9,
+                  padding: "0 20px", height: isMobile ? 50 : 46, borderRadius: 100,
+                  border: "1px solid rgba(232,98,42,0.28)",
+                  background: T.card, cursor: "pointer",
+                  boxShadow: "0 10px 32px rgba(0,0,0,0.65), 0 0 0 1px rgba(232,98,42,0.05)",
+                  color: T.text, fontFamily: "'Space Mono',monospace",
+                  fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
+                  touchAction: "manipulation", whiteSpace: "nowrap",
+                }}
+              >
+                <span style={{ fontSize: 13 }}>{icon}</span>
+                {label}
+              </motion.button>
+            ))}
           </>
         )}
       </AnimatePresence>
 
       {/* ── Main FAB ── */}
       <motion.button
-        onClick={() => {
-          if (isOpen) { handleClose(); return; }
-          setMenuOpen(o => !o);
-        }}
-        whileTap={{ scale: 0.92 }}
+        whileTap={{ scale: 0.91 }}
+        onClick={() => { if (isOpen) { handleClose(); return; } setMenuOpen(o => !o); }}
         style={{
           position: "fixed", bottom: 28, right: 28, zIndex: 1002,
-          width: isMobile ? 56 : 52, height: isMobile ? 56 : 52,
+          width: isMobile ? 58 : 54, height: isMobile ? 58 : 54,
           borderRadius: "50%",
-          border: "1px solid rgba(232,98,42,0.4)",
-          background: `linear-gradient(135deg,${T.orange},${T.orangeD})`,
+          border: "1px solid rgba(232,98,42,0.42)",
+          background: `linear-gradient(145deg, ${T.orange}, ${T.orangeD})`,
           cursor: "pointer",
-          boxShadow: `0 8px 28px rgba(232,98,42,0.38), inset 0 1px 0 rgba(255,255,255,0.2)`,
+          boxShadow: `0 8px 32px rgba(232,98,42,0.42), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.22)`,
           display: "flex", alignItems: "center", justifyContent: "center",
           touchAction: "manipulation",
         }}
       >
         {/* Pulse ring */}
-        {pulse && !isOpen && (
+        {!hasPulsed && !isOpen && (
           <motion.div
-            animate={{ scale: [1, 1.7], opacity: [0.5, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={{ scale: [1, 1.75], opacity: [0.55, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
             style={{
-              position: "absolute", inset: -6, borderRadius: "50%",
+              position: "absolute", inset: -7, borderRadius: "50%",
               border: `1.5px solid ${T.orange}`, pointerEvents: "none",
+            }}
+          />
+        )}
+        {/* Second ring */}
+        {!hasPulsed && !isOpen && (
+          <motion.div
+            animate={{ scale: [1, 1.45], opacity: [0.35, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, delay: 0.5, ease: "easeOut" }}
+            style={{
+              position: "absolute", inset: -3, borderRadius: "50%",
+              border: `1px solid rgba(232,98,42,0.5)`, pointerEvents: "none",
             }}
           />
         )}
@@ -1115,8 +1157,7 @@ export default function AIWidget() {
               initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}
               transition={{ duration: 0.18 }}
               width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </motion.svg>
           ) : (
             <motion.svg key="ai"
@@ -1136,36 +1177,45 @@ export default function AIWidget() {
         {isOpen && (
           <motion.div
             key="panel"
-            initial={{ opacity: 0, scale: 0.92, y: 16 }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 16 }}
-            transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
-              bottom: isMobile ? 92 : 90,
-              right: 28,
-              left: isMobile ? 16 : "auto",
+              bottom: isMobile ? 100 : 96,
+              right: isMobile ? 12 : 28,
+              left: isMobile ? 12 : "auto",
               zIndex: 1001,
-              width: isMobile ? "calc(100% - 32px)" : "min(400px, calc(100vw - 32px))",
-              maxHeight: isMobile ? "calc(100vh - 116px)" : "min(580px, calc(100vh - 114px))",
-              borderRadius: 20,
-              background: T.card,
+              width: panelW,
+              maxHeight: panelH,
+              borderRadius: 22,
+              background: `linear-gradient(180deg, ${T.cardAlt} 0%, ${T.card} 100%)`,
               border: `1px solid ${T.border}`,
-              boxShadow: "0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(232,98,42,0.06)",
+              boxShadow: `0 40px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(232,98,42,0.05), inset 0 1px 0 rgba(255,255,255,0.04)`,
               overflow: "hidden",
-              transformOrigin: "bottom right",
+              transformOrigin: isMobile ? "bottom center" : "bottom right",
               display: "flex", flexDirection: "column",
             }}
           >
+            {/* Ambient glow top */}
+            <div style={{
+              position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
+              width: "60%", height: 1,
+              background: `linear-gradient(90deg, transparent, rgba(232,98,42,0.35), transparent)`,
+              pointerEvents: "none",
+            }} />
+
             <PanelHeader onClose={handleClose} />
             <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+
             <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
-                  initial={{ opacity: 0, x: activeTab === "chat" ? -10 : 10 }}
+                  initial={{ opacity: 0, x: activeTab === "chat" ? -12 : 12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
+                  exit={{ opacity: 0, x: activeTab === "chat" ? 12 : -12 }}
                   transition={{ duration: 0.18 }}
                   style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}
                 >
@@ -1173,6 +1223,21 @@ export default function AIWidget() {
                   {activeTab === "pitch" && <PitchPanel />}
                 </motion.div>
               </AnimatePresence>
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              padding: "6px 14px",
+              borderTop: `1px solid rgba(232,98,42,0.08)`,
+              display: "flex", justifyContent: "center", alignItems: "center",
+              background: "rgba(0,0,0,0.2)", flexShrink: 0,
+            }}>
+              <span style={{
+                fontFamily: "'Space Mono',monospace", fontSize: 7.5,
+                color: "rgba(242,238,248,0.14)", letterSpacing: "0.08em",
+              }}>
+                Groq · Llama 3.3-70b · Free tier {!isMobile && "· ⌘K to open"}
+              </span>
             </div>
           </motion.div>
         )}
