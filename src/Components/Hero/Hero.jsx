@@ -36,8 +36,7 @@ const ROLES = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   3D SCENE — morphing orb, spiral particles, orbital rings,
-               volumetric light shafts, nebula clouds, lens flares
+   3D SCENE
 ═══════════════════════════════════════════════════════════════ */
 function Scene({ isMobile, scrollY }) {
   const ref    = useRef(null);
@@ -62,16 +61,16 @@ function Scene({ isMobile, scrollY }) {
     camera.position.set(0, 0, 18);
     scene.fog = new THREE.FogExp2(0x050608, 0.018);
 
-    /* lights */
     scene.add(new THREE.AmbientLight(0x080509, 0.5));
     const L = (c, i, x, y, z) => { const l = new THREE.PointLight(c, i, 42); l.position.set(x,y,z); scene.add(l); return l; };
     const lA = L(0xc8541a, 18,  5,  4,  8);
     const lB = L(0xe06830,  8, -3,  6, -4);
     const lC = L(0x8b3a10,  6,  6, -4,  2);
-    const lD = L(0xff7040,  5, -8,  2,  6); // new rim light
+    const lD = L(0xff7040,  5, -8,  2,  6);
 
-    /* ─ Orb ─ */
     const orbPos = new THREE.Vector3(isMobile ? 0 : 4.2, isMobile ? 0.8 : 0.3, -1);
+
+    /* orb */
     const orbGeo = new THREE.SphereGeometry(2.2, isMobile ? 64 : 128, isMobile ? 64 : 128);
     const orbMat = new THREE.MeshPhysicalMaterial({
       color: 0x1a0c05, metalness: 0.97, roughness: 0.04,
@@ -82,10 +81,9 @@ function Scene({ isMobile, scrollY }) {
     const orb = new THREE.Mesh(orbGeo, orbMat);
     orb.position.copy(orbPos); scene.add(orb);
 
-    /* inner glow sphere */
-    const glowGeo = new THREE.SphereGeometry(2.0, 32, 32);
+    /* inner glow */
     const glowMat = new THREE.MeshBasicMaterial({ color: 0xc8541a, transparent: true, opacity: 0, side: THREE.BackSide });
-    const glowMesh = new THREE.Mesh(glowGeo, glowMat);
+    const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(2.0, 32, 32), glowMat);
     glowMesh.position.copy(orbPos); scene.add(glowMesh);
 
     /* morph wire */
@@ -107,13 +105,12 @@ function Scene({ isMobile, scrollY }) {
       wPos.needsUpdate = true;
     };
 
-    /* ─ Outer energy shell ─ */
-    const shellGeo = new THREE.IcosahedronGeometry(2.8, isMobile ? 2 : 4);
+    /* outer energy shell */
     const shellMat = new THREE.MeshBasicMaterial({ color: 0xff6622, wireframe: true, transparent: true, opacity: 0 });
-    const shell = new THREE.Mesh(shellGeo, shellMat);
+    const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(2.8, isMobile ? 2 : 4), shellMat);
     shell.position.copy(orbPos); scene.add(shell);
 
-    /* ─ Rings ─ */
+    /* rings */
     const mkRing = (r, tube, col, rx, ry, op) => {
       const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0 });
       const mesh = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 6, 220), m);
@@ -124,10 +121,10 @@ function Scene({ isMobile, scrollY }) {
       mkRing(3.0, 0.008, 0xc8541a, Math.PI/2,    0,    0.35),
       mkRing(3.9, 0.005, 0x8b3a10, Math.PI/3,    0.48, 0.18),
       mkRing(4.8, 0.003, 0x5c2208, Math.PI/1.65,-0.28, 0.10),
-      mkRing(5.8, 0.002, 0x3a1405, Math.PI/2.4,  0.90, 0.06), // new outer ring
+      mkRing(5.8, 0.002, 0x3a1405, Math.PI/2.4,  0.90, 0.06),
     ];
 
-    /* ─ Particle spiral ─ */
+    /* spiral particles */
     const N = isMobile ? 2500 : 8000;
     const pp = new Float32Array(N*3), pc = new Float32Array(N*3);
     for (let i = 0; i < N; i++) {
@@ -145,7 +142,7 @@ function Scene({ isMobile, scrollY }) {
     const spMat = new THREE.PointsMaterial({ size: .042, vertexColors: true, transparent: true, opacity: 0, sizeAttenuation: true });
     const spiral = new THREE.Points(spGeo, spMat); scene.add(spiral);
 
-    /* ─ Nebula cloud layer (large soft particles) ─ */
+    /* nebula */
     const nbN = isMobile ? 300 : 900;
     const nbP = new Float32Array(nbN*3), nbC = new Float32Array(nbN*3);
     for (let i = 0; i < nbN; i++) {
@@ -163,7 +160,7 @@ function Scene({ isMobile, scrollY }) {
     const nbMat = new THREE.PointsMaterial({ size: .18, vertexColors: true, transparent: true, opacity: 0, sizeAttenuation: true });
     const nebula = new THREE.Points(nbGeo, nbMat); scene.add(nebula);
 
-    /* ─ Ambient dust ─ */
+    /* dust */
     const dn = isMobile ? 500 : 1800;
     const dp = new Float32Array(dn*3), dc = new Float32Array(dn*3);
     for (let i = 0; i < dn; i++) {
@@ -178,23 +175,18 @@ function Scene({ isMobile, scrollY }) {
     const dMat = new THREE.PointsMaterial({ size: .014, vertexColors: true, transparent: true, opacity: 0, sizeAttenuation: true });
     const dust = new THREE.Points(dGeo, dMat); scene.add(dust);
 
-    /* ─ Volumetric light cone ─ */
-    const coneGeo = new THREE.ConeGeometry(5, 14, 32, 1, true);
-    const coneMat = new THREE.MeshBasicMaterial({
-      color: 0xc84010, transparent: true, opacity: 0, side: THREE.DoubleSide,
-    });
-    const cone = new THREE.Mesh(coneGeo, coneMat);
+    /* volumetric cone */
+    const coneMat = new THREE.MeshBasicMaterial({ color: 0xc84010, transparent: true, opacity: 0, side: THREE.DoubleSide });
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(5, 14, 32, 1, true), coneMat);
     cone.position.set(orbPos.x, orbPos.y + 7, orbPos.z - 1);
     cone.rotation.x = Math.PI; scene.add(cone);
 
-    /* ─ Lens flare billboards ─ */
+    /* lens flares */
     const mkFlare = (size, col, ox, oy, oz) => {
-      const geo = new THREE.PlaneGeometry(size, size);
       const mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
-      const mesh = new THREE.Mesh(geo, mat);
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(size, size), mat);
       mesh.position.set(orbPos.x+ox, orbPos.y+oy, orbPos.z+oz);
-      scene.add(mesh);
-      return { mesh, mat };
+      scene.add(mesh); return { mesh, mat };
     };
     const flares = [
       mkFlare(1.8, 0xff8844, 0, 0, 1.5),
@@ -202,15 +194,15 @@ function Scene({ isMobile, scrollY }) {
       mkFlare(0.4, 0xffcc88, -0.8, -0.3, 2.5),
     ];
 
-    /* ─ Floating polyhedra ─ */
+    /* polyhedra */
     const polys = [
       [new THREE.OctahedronGeometry(.22),    0xc8541a, -5.0,  2.6, -5.0],
       [new THREE.TetrahedronGeometry(.26),   0x8b3a10,  6.8, -1.5, -4.0],
       [new THREE.IcosahedronGeometry(.24,0), 0xc8541a, -2.8, -3.8, -3.0],
       [new THREE.OctahedronGeometry(.18),    0xd96028,  7.5,  2.8, -5.5],
       [new THREE.TetrahedronGeometry(.20),   0x8b3a10, -6.5, -0.8, -4.5],
-      [new THREE.DodecahedronGeometry(.18),  0xff6030,  3.2,  4.8, -6.0], // new
-      [new THREE.OctahedronGeometry(.14),    0xc86030, -4.2,  1.2, -7.0], // new
+      [new THREE.DodecahedronGeometry(.18),  0xff6030,  3.2,  4.8, -6.0],
+      [new THREE.OctahedronGeometry(.14),    0xc86030, -4.2,  1.2, -7.0],
     ].map(([g, c, x, y, z]) => {
       const mat  = new THREE.MeshBasicMaterial({ color: c, wireframe: true, transparent: true, opacity: 0 });
       const mesh = new THREE.Mesh(g, mat); mesh.position.set(x, y, z); scene.add(mesh);
@@ -219,14 +211,12 @@ function Scene({ isMobile, scrollY }) {
         rs: .004+Math.random()*.009, fs: .12+Math.random()*.3, fa: .05+Math.random()*.12, ph: Math.random()*Math.PI*2 };
     });
 
-    /* ─ Cinematic sweep rings (expand outward) ─ */
+    /* sweep rings */
     const sweepRings = Array.from({ length: 3 }, (_, i) => {
-      const geo = new THREE.TorusGeometry(0.5, 0.006, 4, 160);
       const mat = new THREE.MeshBasicMaterial({ color: 0xc86030, transparent: true, opacity: 0 });
-      const mesh = new THREE.Mesh(geo, mat);
+      const mesh = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.006, 4, 160), mat);
       mesh.position.copy(orbPos); mesh.rotation.x = Math.PI/2;
-      scene.add(mesh);
-      return { mesh, mat, offset: i * 2.2 };
+      scene.add(mesh); return { mesh, mat, offset: i * 2.2 };
     });
 
     const onResize = () => { camera.aspect = el.clientWidth/el.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(el.clientWidth, el.clientHeight); };
@@ -245,16 +235,11 @@ function Scene({ isMobile, scrollY }) {
       const e = 1-Math.pow(1-intro, 4);
 
       morphWire(t);
-      orb.rotation.x  = t*.038; orb.rotation.y = t*.065;
+      orb.rotation.x = t*.038; orb.rotation.y = t*.065;
       wire.rotation.copy(orb.rotation);
-
-      // outer shell counter-rotates for dynamic energy
       shell.rotation.x = -t*.025; shell.rotation.y = t*.040;
       fd(shellMat, (.012+Math.sin(t*1.2)*.006)*e, .018);
-
       fd(orbMat, .93*e, .026); fd(wMat, (.022+Math.sin(t*.9)*.012)*e, .022);
-
-      // inner glow pulse
       fd(glowMat, (.06+Math.sin(t*1.8)*.04)*e, .030);
 
       rings.forEach(({ mesh, m, op }, i) => {
@@ -262,32 +247,21 @@ function Scene({ isMobile, scrollY }) {
         fd(m, op*e, .020);
       });
 
-      // sweep rings expand like shockwaves
-      sweepRings.forEach(({ mesh, mat, offset }, i) => {
+      sweepRings.forEach(({ mesh, mat, offset }) => {
         const phase = ((t * 0.4 + offset) % 6.6);
         const prog = phase / 6.6;
-        const r = 2.5 + prog * 8;
-        mesh.scale.setScalar(r / 0.5);
-        const op = Math.sin(prog * Math.PI) * 0.18 * e;
-        fd(mat, op, .06);
+        mesh.scale.setScalar((2.5 + prog * 8) / 0.5);
+        fd(mat, Math.sin(prog * Math.PI) * 0.18 * e, .06);
       });
 
       spiral.rotation.y = t*.07; spiral.rotation.z = t*.012; fd(spMat, .70*e, .024);
       dust.rotation.y   = t*.006; dust.rotation.x = t*.003; fd(dMat, .52*e, .016);
+      nebula.rotation.y = t*.008; nebula.rotation.x = Math.sin(t*.04)*.02; fd(nbMat, .28*e, .014);
+      cone.rotation.y = t*.12; fd(coneMat, (.018+Math.sin(t*2.2)*.012)*e, .025);
 
-      // nebula slowly drifts
-      nebula.rotation.y = t*.008; nebula.rotation.x = Math.sin(t*.04)*.02;
-      fd(nbMat, .28*e, .014);
-
-      // volumetric cone pulse
-      cone.rotation.y = t*.12;
-      fd(coneMat, (.018+Math.sin(t*2.2)*.012)*e, .025);
-
-      // lens flares — billboard toward camera + pulse
       flares.forEach(({ mesh, mat }, i) => {
         mesh.lookAt(camera.position);
-        const pulse = Math.sin(t*1.6+i*1.1)*.5+.5;
-        fd(mat, (.14+pulse*.10)*e, .040);
+        fd(mat, (.14+Math.sin(t*1.6+i*1.1)*.5*.10)*e, .040);
       });
 
       polys.forEach(p => {
@@ -296,22 +270,15 @@ function Scene({ isMobile, scrollY }) {
         fd(p.mat, p.op*e, .016);
       });
 
-      // dramatic key light animation — wide sweeping orbit
       lA.position.set(Math.sin(t*.18)*8+4, Math.cos(t*.13)*5+3, 8); lA.intensity = 16+Math.sin(t*.7)*4;
       lB.position.set(Math.sin(t*.10+1)*6, Math.cos(t*.18)*4+4, -4); lB.intensity = 6+Math.sin(t*1.0)*2;
       lC.position.x = Math.cos(t*.28+.8)*6; lC.position.y = Math.sin(t*.22)*3;
       lD.position.set(Math.cos(t*.15)*9-6, Math.sin(t*.19)*4+2, 5); lD.intensity = 4+Math.sin(t*.55)*2;
 
       const sp = Math.min(scroll.current/600, 1);
-      // camera now also has a subtle slow cinematic drift
-      const drift = new THREE.Vector3(
-        Math.sin(t*.06)*0.4,
-        Math.cos(t*.08)*0.25,
-        0
-      );
       cT.set(
-        mouse.current.x*.45 + drift.x,
-        -mouse.current.y*.30+sp*-1.8 + drift.y,
+        mouse.current.x*.45 + Math.sin(t*.06)*.4,
+        -mouse.current.y*.30+sp*-1.8 + Math.cos(t*.08)*.25,
         18-e*4.2+sp*2.8
       );
       camera.position.x += (cT.x-camera.position.x)*.032;
@@ -335,6 +302,49 @@ function Scene({ isMobile, scrollY }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   CINEMATIC BG — CSS conic light rays + drifting glows
+═══════════════════════════════════════════════════════════════ */
+function CinematicBg() {
+  return (
+    <>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+        style={{
+          position:"absolute", inset:0, pointerEvents:"none", zIndex:0,
+          background:`conic-gradient(from 0deg at 68% 45%,
+            transparent 0deg, rgba(200,84,26,0.018) 12deg, transparent 22deg,
+            transparent 60deg, rgba(200,84,26,0.012) 72deg, transparent 84deg,
+            transparent 130deg, rgba(200,84,26,0.010) 142deg, transparent 155deg,
+            transparent 220deg, rgba(200,84,26,0.014) 232deg, transparent 246deg,
+            transparent 310deg, rgba(200,84,26,0.016) 322deg, transparent 336deg)`,
+        }}
+      />
+      <motion.div
+        animate={{ scale:[1,1.08,1], opacity:[0.6,1,0.6] }}
+        transition={{ duration:8, repeat:Infinity, ease:"easeInOut" }}
+        style={{
+          position:"absolute", pointerEvents:"none", zIndex:0,
+          right:"-10%", top:"10%", width:"55%", height:"65%",
+          background:`radial-gradient(ellipse at center, rgba(200,84,26,0.055) 0%, transparent 68%)`,
+          filter:"blur(40px)",
+        }}
+      />
+      <motion.div
+        animate={{ x:[0,-30,0], y:[0,20,0] }}
+        transition={{ duration:14, repeat:Infinity, ease:"easeInOut" }}
+        style={{
+          position:"absolute", pointerEvents:"none", zIndex:0,
+          left:"5%", bottom:"15%", width:"30%", height:"40%",
+          background:`radial-gradient(ellipse at center, rgba(80,50,200,0.020) 0%, transparent 70%)`,
+          filter:"blur(50px)",
+        }}
+      />
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    CURSOR
 ═══════════════════════════════════════════════════════════════ */
 function Cursor() {
@@ -344,7 +354,10 @@ function Cursor() {
   const rp   = useRef({ x:0, y:0 });
 
   useEffect(() => {
-    const mv = ({ clientX:x, clientY:y }) => { pos.current={x,y}; if(dot.current) dot.current.style.transform=`translate(${x}px,${y}px)`; };
+    const mv = ({ clientX:x, clientY:y }) => {
+      pos.current={x,y};
+      if(dot.current) dot.current.style.transform=`translate(${x}px,${y}px)`;
+    };
     window.addEventListener("mousemove", mv);
     let raf;
     const tick = () => {
@@ -359,8 +372,18 @@ function Cursor() {
 
   return (
     <>
-      <div ref={dot}  style={{ position:"fixed", top:-4,  left:-4,  width:8,  height:8,  background:T.ember, borderRadius:"50%", boxShadow:`0 0 10px ${T.ember}`, pointerEvents:"none", zIndex:9999, willChange:"transform" }}/>
-      <div ref={ring} style={{ position:"fixed", top:-16, left:-16, width:32, height:32, borderRadius:"50%", border:`1px solid rgba(200,84,26,0.45)`, pointerEvents:"none", zIndex:9998, willChange:"transform" }}/>
+      <div ref={dot} style={{
+        position:"fixed", top:-4, left:-4, width:8, height:8,
+        background:T.ember, borderRadius:"50%",
+        boxShadow:`0 0 12px ${T.ember}, 0 0 24px ${T.ember}66`,
+        pointerEvents:"none", zIndex:9999, willChange:"transform",
+      }}/>
+      <div ref={ring} style={{
+        position:"fixed", top:-16, left:-16, width:32, height:32,
+        borderRadius:"50%", border:`1px solid rgba(200,84,26,0.45)`,
+        pointerEvents:"none", zIndex:9998, willChange:"transform",
+        transition:"width .18s, height .18s",
+      }}/>
     </>
   );
 }
@@ -400,7 +423,7 @@ function Typewriter() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   PROFILE CARD — sharp image, 3D tilt, two clean badges
+   PROFILE CARD
 ═══════════════════════════════════════════════════════════════ */
 function ProfileCard({ time, isMobile }) {
   const cardRef = useRef(null);
@@ -427,13 +450,15 @@ function ProfileCard({ time, isMobile }) {
     tick(); return () => cancelAnimationFrame(raf);
   }, [floatY]);
 
-  const W = isMobile ? "clamp(210px,62vw,270px)" : "clamp(400px,34vw,520px)";
+  /* ── Reduced desktop width ── */
+  const W = isMobile ? "clamp(210px,62vw,270px)" : "clamp(300px,24vw,380px)";
 
   return (
     <div style={{ position:"relative", width:"100%", display:"flex", justifyContent:"center", alignItems:"center", paddingBottom:"2rem" }}>
+      {/* ambient glow */}
       <motion.div
         initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:2.5 }}
-        style={{ position:"absolute", width:"80%", height:"85%",
+        style={{ position:"absolute", width:"85%", height:"90%",
           background:`radial-gradient(ellipse at 50% 55%, rgba(200,84,26,0.18) 0%, transparent 68%)`,
           filter:"blur(55px)", pointerEvents:"none" }}
       />
@@ -447,7 +472,8 @@ function ProfileCard({ time, isMobile }) {
         animate={{ opacity:1, y:0, scale:1 }}
         transition={{ duration:1.1, delay:.4, ease:E }}
         style={{
-          rotateX: isMobile ? 0 : rotX, rotateY: isMobile ? 0 : rotY,
+          rotateX: isMobile ? 0 : rotX,
+          rotateY: isMobile ? 0 : rotY,
           y: isMobile ? 0 : floatY,
           transformStyle:"preserve-3d", perspective:"900px",
           width:W, position:"relative", cursor:"default",
@@ -471,7 +497,7 @@ function ProfileCard({ time, isMobile }) {
           </div>
         ))}
 
-        {/* shell */}
+        {/* card shell */}
         <div style={{
           position:"relative", borderRadius:20, padding:4,
           background:`linear-gradient(148deg, rgba(200,84,26,0.12) 0%, rgba(200,84,26,0.03) 55%, transparent 100%)`,
@@ -483,11 +509,12 @@ function ProfileCard({ time, isMobile }) {
         }}>
           <motion.div style={{ position:"absolute", inset:0, borderRadius:20, background:glareBg, opacity:hov?1:0, transition:"opacity .35s", pointerEvents:"none", zIndex:16 }}/>
 
-          {/* photo */}
+          {/* photo — full color */}
           <div style={{ borderRadius:17, overflow:"hidden", position:"relative" }}>
             <img src="/profile41.jpeg" alt="Perpetual Okan"
               style={{
-                width:"100%", aspectRatio:"4/5", objectFit:"cover", objectPosition:"center top", display:"block",
+                width:"100%", aspectRatio:"2/3", objectFit:"cover",
+                objectPosition:"center top", display:"block",
                 filter: hov
                   ? "saturate(1.18) brightness(1.14) contrast(1.06)"
                   : "saturate(1.10) brightness(1.10) contrast(1.04)",
@@ -495,11 +522,10 @@ function ProfileCard({ time, isMobile }) {
                 transition:"all 1.0s cubic-bezier(0.16,1,0.3,1)",
               }}
             />
-            {/* lighter, shorter gradient so face stays clean */}
             <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom, transparent 65%, rgba(5,6,8,0.38) 100%)", pointerEvents:"none" }}/>
           </div>
 
-          {/* availability */}
+          {/* availability chip */}
           <div style={{
             position:"absolute", top:".65rem", left:".65rem",
             background:"rgba(5,6,8,0.92)", backdropFilter:"blur(18px)",
@@ -627,6 +653,7 @@ function Stat({ icon, value, label, delay }) {
   );
 }
 
+/* icons */
 const Ic = {
   Code:  () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={T.ember} strokeWidth="2" strokeLinecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
   Zap:   () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={T.ember} strokeWidth="2" strokeLinecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
@@ -692,7 +719,7 @@ function CTAButtons({ isMobile }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SCROLL INDICATOR
+   SCROLL HINT
 ═══════════════════════════════════════════════════════════════ */
 function ScrollHint({ opacity }) {
   return (
@@ -712,7 +739,9 @@ function ScrollHint({ opacity }) {
   );
 }
 
-/* name flip char */
+/* ═══════════════════════════════════════════════════════════════
+   FLIP CHAR
+═══════════════════════════════════════════════════════════════ */
 function FC({ ch, delay, accent }) {
   return (
     <motion.span
@@ -753,62 +782,41 @@ function Ticker() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CINEMATIC BG LAYER — CSS animated rays + parallax nebula
+   PROJECT PREVIEW STRIP — premium floating cards (desktop only)
 ═══════════════════════════════════════════════════════════════ */
-function CinematicBg({ isMobile }) {
+const PROJECTS = [
+  { label:"WebGL Fluid Sim",  tag:"Three.js", color:"#C8541A" },
+  { label:"AI Dashboard",     tag:"React",    color:"#7A8A9E" },
+  { label:"3D Portfolio",     tag:"Next.js",  color:"#3DD68C" },
+];
+function ProjectStrip() {
   return (
-    <>
-      {/* Slow rotating conic light rays */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-        style={{
-          position:"absolute", inset:0, pointerEvents:"none", zIndex:0,
-          background:`conic-gradient(from 0deg at 68% 45%,
-            transparent 0deg,
-            rgba(200,84,26,0.018) 12deg,
-            transparent 22deg,
-            transparent 60deg,
-            rgba(200,84,26,0.012) 72deg,
-            transparent 84deg,
-            transparent 130deg,
-            rgba(200,84,26,0.010) 142deg,
-            transparent 155deg,
-            transparent 220deg,
-            rgba(200,84,26,0.014) 232deg,
-            transparent 246deg,
-            transparent 310deg,
-            rgba(200,84,26,0.016) 322deg,
-            transparent 336deg,
-            transparent 360deg
-          )`,
-        }}
-      />
-      {/* Slowly drifting ember vignette */}
-      <motion.div
-        animate={{ scale:[1, 1.08, 1], opacity:[0.6, 1, 0.6] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        style={{
-          position:"absolute", pointerEvents:"none", zIndex:0,
-          right:"-10%", top:"10%",
-          width:"55%", height:"65%",
-          background:`radial-gradient(ellipse at center, rgba(200,84,26,0.055) 0%, transparent 68%)`,
-          filter:"blur(40px)",
-        }}
-      />
-      {/* secondary cool-toned glow for depth contrast */}
-      <motion.div
-        animate={{ x:[0,-30,0], y:[0,20,0] }}
-        transition={{ duration:14, repeat:Infinity, ease:"easeInOut" }}
-        style={{
-          position:"absolute", pointerEvents:"none", zIndex:0,
-          left:"5%", bottom:"15%",
-          width:"30%", height:"40%",
-          background:`radial-gradient(ellipse at center, rgba(80,50,200,0.022) 0%, transparent 70%)`,
-          filter:"blur(50px)",
-        }}
-      />
-    </>
+    <motion.div
+      initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }}
+      transition={{ delay:1.55, duration:.65, ease:E }}
+      style={{ display:"flex", gap:".5rem" }}
+    >
+      <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"clamp(.24rem,.64vw,.28rem)", textTransform:"uppercase", letterSpacing:".18em", color:T.stone, alignSelf:"center", flexShrink:0 }}>Recent —</span>
+      {PROJECTS.map(({ label, tag, color }, i) => (
+        <motion.div
+          key={label}
+          initial={{ opacity:0, x:-8 }} animate={{ opacity:1, x:0 }}
+          transition={{ delay:1.7+i*.1, duration:.45, ease:E }}
+          whileHover={{ y:-2, borderColor:`${color}40` }}
+          style={{
+            display:"flex", alignItems:"center", gap:".36rem",
+            padding:".28rem .60rem", borderRadius:7,
+            background:"rgba(10,12,16,0.7)", backdropFilter:"blur(12px)",
+            border:`1px solid ${T.bN}`, cursor:"default",
+            transition:"border-color .22s, transform .22s",
+          }}
+        >
+          <span style={{ width:5, height:5, borderRadius:"50%", background:color, flexShrink:0, boxShadow:`0 0 6px ${color}88` }}/>
+          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"clamp(.24rem,.62vw,.28rem)", color:T.muted, letterSpacing:".08em", whiteSpace:"nowrap" }}>{label}</span>
+          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"clamp(.20rem,.52vw,.24rem)", color:T.stone, letterSpacing:".10em", textTransform:"uppercase" }}>{tag}</span>
+        </motion.div>
+      ))}
+    </motion.div>
   );
 }
 
@@ -849,11 +857,6 @@ export default function Hero() {
   const clock = useMemo(() =>
     time.toLocaleTimeString("en-US", { hour12:true, hour:"2-digit", minute:"2-digit", second:"2-digit" }), [time]);
 
-  // ── CHANGED: split name to fit shorter ──
-  const fname = "Perp".split("");        // shortened display
-  const fnameFullAttr = "Perpetual";     // kept for semantics / aria
-  const lname = "Okan".split("");
-
   return (
     <>
       {!mobile && <Cursor />}
@@ -865,7 +868,7 @@ export default function Hero() {
 
         .hg {
           display:grid;
-          grid-template-columns: 1fr minmax(0,1.1fr);
+          grid-template-columns: 1fr minmax(0, 0.85fr);
           grid-template-areas: "txt vis";
           align-items:center;
           gap: clamp(2rem,4.5vw,5.5rem);
@@ -875,28 +878,42 @@ export default function Hero() {
         .hg-v { grid-area:vis; display:flex; justify-content:center; align-items:center; }
 
         @media (max-width:1023px) {
-          .hg { grid-template-columns:1fr; grid-template-areas:"vis" "txt"; gap:clamp(1.5rem,5vw,2.2rem); text-align:center; }
-          .eb  { justify-content:center !important; }
-          .div { display:none !important; }
+          .hg {
+            grid-template-columns:1fr;
+            grid-template-areas:"vis" "txt";
+            gap:clamp(1.5rem,5vw,2.2rem);
+            text-align:center;
+          }
+          .desktop-only { display:none !important; }
           .cta-row  { justify-content:center !important; }
           .stats    { justify-content:center !important; }
-          .bio      { border-left:none !important; padding-left:0 !important; border-top:1px solid rgba(200,84,26,.13) !important; padding-top:.85rem !important; text-align:center !important; }
+          .bio      {
+            border-left:none !important;
+            padding-left:0 !important;
+            border-top:1px solid rgba(200,84,26,.13) !important;
+            padding-top:.85rem !important;
+            text-align:center !important;
+          }
         }
         @media (max-width:480px) { .cta-row { flex-direction:column !important; } }
 
-        @keyframes shimmer { from{transform:translateX(-140%) skewX(-14deg)} to{transform:translateX(340%) skewX(-14deg)} }
-        .btn-primary::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent); animation:shimmer 3.4s infinite; }
+        @keyframes shimmer {
+          from { transform:translateX(-140%) skewX(-14deg); }
+          to   { transform:translateX(340%)  skewX(-14deg); }
+        }
+        .btn-primary::after {
+          content:''; position:absolute; inset:0;
+          background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
+          animation:shimmer 3.4s infinite;
+        }
 
-        /* name — two stacked lines, compact */
         .hero-name {
-          font-family: 'Syne', sans-serif;
-          font-weight: 800;
-          font-size: clamp(1.7rem, 4.6vw, 3.4rem);
-          line-height: 0.90;
-          letter-spacing: -0.030em;
-          display: flex;
-          flex-direction: column;
-          gap: 0.06em;
+          font-family:'Syne',sans-serif;
+          font-weight:800;
+          font-size: clamp(1.6rem, 5.0vw, 3.4rem);
+          line-height:0.88;
+          letter-spacing:-0.028em;
+          white-space:nowrap;
         }
       `}</style>
 
@@ -914,8 +931,8 @@ export default function Hero() {
           cursor:        mobile ? "auto" : "none",
         }}
       >
-        {/* cinematic CSS bg layer */}
-        <CinematicBg isMobile={mobile} />
+        {/* ── background layers ── */}
+        <CinematicBg />
 
         {/* dot grid */}
         <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:0,
@@ -960,19 +977,23 @@ export default function Hero() {
         {/* mouse light */}
         <motion.div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:5, background:spotBg }}/>
 
-        {/* top line */}
-        <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:`linear-gradient(90deg, transparent, ${T.ember}38, transparent)`, zIndex:6, pointerEvents:"none" }}/>
+        {/* top accent line */}
+        <div style={{ position:"absolute", top:0, left:0, right:0, height:1,
+          background:`linear-gradient(90deg, transparent, ${T.ember}38, transparent)`, zIndex:6, pointerEvents:"none" }}/>
 
-        {/* content */}
+        {/* ── CONTENT ── */}
         <div style={{ position:"relative", zIndex:10 }}>
           <motion.div style={{ y:yP }} className="hg">
 
+            {/* visual */}
             <motion.div className="hg-v" style={{ y:yL2 }}>
               <ProfileCard time={clock} isMobile={mobile} />
             </motion.div>
 
+            {/* text */}
             <motion.div className="hg-t" style={{ gap: mobile?"clamp(.88rem,2.8vw,1.2rem)":"clamp(1.0rem,1.8vw,1.35rem)", y:yL1 }}>
 
+              {/* available badge — desktop only */}
               {!mobile && (
                 <motion.div
                   initial={{ opacity:0, y:-8 }} animate={{ opacity:1, y:0 }}
@@ -985,27 +1006,28 @@ export default function Hero() {
                 </motion.div>
               )}
 
+              {/* eyebrow — desktop only via className */}
               <motion.div
                 initial={{ opacity:0, x:-16 }} animate={{ opacity:1, x:0 }}
                 transition={{ duration:.70, delay:.46 }}
-                className="eb"
+                className="desktop-only"
                 style={{ display:"flex", alignItems:"center", gap:".65rem" }}
               >
-                <div className="div" style={{ height:1, width:22, background:`linear-gradient(to right, transparent, ${T.ember})`, flexShrink:0 }}/>
+                <div style={{ height:1, width:22, background:`linear-gradient(to right, transparent, ${T.ember})`, flexShrink:0 }}/>
                 <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"clamp(.28rem,.84vw,.38rem)", fontWeight:500, letterSpacing:".22em", textTransform:"uppercase", color:T.stone, whiteSpace:"nowrap" }}>Web · 3D · Code</span>
-                <div className="div" style={{ height:1, flex:1, background:`linear-gradient(to right, ${T.bO}, transparent)` }}/>
+                <div style={{ height:1, flex:1, background:`linear-gradient(to right, ${T.bO}, transparent)` }}/>
               </motion.div>
 
+              {/* name */}
               <div style={{ display:"flex", flexDirection:"column", gap:".05rem" }}>
                 <motion.p
                   initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:.54, duration:.5 }}
                   style={{ fontFamily:"'DM Mono',monospace", fontSize:"clamp(.32rem,.94vw,.46rem)", fontWeight:500, letterSpacing:".26em", textTransform:"uppercase", color:T.stone, marginBottom:".08rem" }}
                 >Hi, I&apos;m</motion.p>
 
-                {/* ── NAME — two stacked lines ── */}
                 <h1 aria-label="Perpetual Okan" className="hero-name">
-                  <div>{"Perpetual".split("").map((ch, i) => <FC key={i} ch={ch} delay={.60+i*.030} />)}</div>
-                  <div>{"Okan".split("").map((ch, i) => <FC key={i} ch={ch} delay={.86+i*.044} accent />)}</div>
+                  <div>{"Perpetual".split("").map((ch,i) => <FC key={i} ch={ch} delay={.60+i*.030} />)}</div>
+                  <div>{"Okan".split("").map((ch,i) => <FC key={i} ch={ch} delay={.86+i*.044} accent />)}</div>
                 </h1>
 
                 <motion.h2
@@ -1014,6 +1036,7 @@ export default function Hero() {
                 ><Typewriter /></motion.h2>
               </div>
 
+              {/* bio */}
               <motion.p
                 initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:.88, duration:.68 }}
                 className="bio"
@@ -1022,8 +1045,13 @@ export default function Hero() {
                 I build{" "}<span style={{ color:T.text }}>fast, beautiful websites</span>{" "}and apps — 3D visuals to solid back-end code. I make things that{" "}<span style={{ color:T.emberLt }}>work well</span>.
               </motion.p>
 
+              {/* skill bars — desktop only */}
               {!mobile && <SkillBars />}
 
+              {/* project strip — desktop only */}
+              {!mobile && <ProjectStrip />}
+
+              {/* stats */}
               <motion.div
                 initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:1.18, duration:.65 }}
                 className="stats"
