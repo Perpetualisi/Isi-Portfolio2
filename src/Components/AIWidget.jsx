@@ -1,7 +1,7 @@
 // src/Components/AIWidget.jsx
 // ─────────────────────────────────────────────────────────────────────────────
-// PERPETUAL OKAN · PREMIUM AI ASSISTANT v4.2
-// Fixed: Close button always visible, headers properly displayed
+// PERPETUAL OKAN · PREMIUM AI ASSISTANT v4.3
+// Fixed: Mobile stability, zoom prevention, responsive design
 // Enterprise-grade features: voice input, markdown rendering, conversation memory
 // Powered by Groq · Llama 3.3-70b
 // ─────────────────────────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ function useGroq(systemPrompt, opts = {}) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS — premium dark theme
+   DESIGN TOKENS — premium dark theme with mobile optimization
 ═══════════════════════════════════════════════════════════════ */
 const C = {
   bg:        "#0A0A0F",
@@ -305,7 +305,7 @@ const MessageBubble = memo(({ message, isUser }) => (
       background: isUser ? C.orange : C.surfaceUp,
       border: isUser ? "none" : `1px solid ${C.border}`,
       color: isUser ? "#fff" : C.text,
-      fontSize: 13.5,
+      fontSize: "clamp(13px, 3.5vw, 13.5px)",
       lineHeight: 1.6,
       wordBreak: "break-word",
       boxShadow: isUser ? "0 2px 8px rgba(232,98,42,0.2)" : "none",
@@ -325,16 +325,16 @@ MessageBubble.displayName = 'MessageBubble';
 // Header Component with close button always visible
 const PanelHeader = ({ title, subtitle, onBack, onClose, showBack = true }) => (
   <div style={{
-    padding: "20px",
+    padding: "16px 20px",
     borderBottom: `1px solid ${C.border}`,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     background: C.bg,
     flexShrink: 0,
-    minHeight: "80px",
+    minHeight: "70px",
   }}>
-    <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
       {showBack && (
         <motion.button 
           whileHover={{ x: -2 }}
@@ -352,20 +352,21 @@ const PanelHeader = ({ title, subtitle, onBack, onClose, showBack = true }) => (
             alignItems: "center", 
             justifyContent: "center",
             minWidth: "40px",
+            flexShrink: 0,
           }}
           aria-label="Go back"
         >
           ←
         </motion.button>
       )}
-      <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600, fontSize: 16, color: C.text, display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 600, fontSize: "clamp(15px, 4vw, 16px)", color: C.text, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           {title}
-          <span style={{ fontSize: 10, background: C.glass, padding: "2px 8px", borderRadius: 12, color: C.orange }}>
+          <span style={{ fontSize: 10, background: C.glass, padding: "2px 8px", borderRadius: 12, color: C.orange, whiteSpace: "nowrap" }}>
             AI
           </span>
         </div>
-        {subtitle && <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>{subtitle}</div>}
+        {subtitle && <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginTop: 4 }}>{subtitle}</div>}
       </div>
     </div>
     <motion.button 
@@ -386,6 +387,7 @@ const PanelHeader = ({ title, subtitle, onBack, onClose, showBack = true }) => (
         alignItems: "center",
         justifyContent: "center",
         transition: "all 0.2s",
+        flexShrink: 0,
       }}
       aria-label="Close"
     >
@@ -468,7 +470,24 @@ function ChatPanel({ onBack, onClose }) {
   }, [history, streamingResponse, loading]);
 
   useEffect(() => {
+    // Prevent zoom on input focus for mobile
+    const handleTouchStart = () => {
+      if (inputRef.current) {
+        inputRef.current.style.fontSize = "16px";
+      }
+    };
+    
+    if (inputRef.current) {
+      inputRef.current.addEventListener('touchstart', handleTouchStart);
+    }
+    
     setTimeout(() => inputRef.current?.focus(), 100);
+    
+    return () => {
+      if (inputRef.current) {
+        inputRef.current.removeEventListener('touchstart', handleTouchStart);
+      }
+    };
   }, []);
 
   const suggestions = [
@@ -494,18 +513,19 @@ function ChatPanel({ onBack, onClose }) {
       <div style={{
         flex: 1, 
         overflowY: "auto", 
-        padding: "20px",
+        padding: "16px",
         display: "flex", 
         flexDirection: "column", 
         gap: 12,
+        WebkitOverflowScrolling: "touch",
       }}>
         {displayMessages.length === 0 && showSuggestions ? (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 20, paddingTop: 40 }}>
             <div style={{ fontSize: 48 }}>💬</div>
-            <div style={{ textAlign: "center", color: C.muted, fontSize: 13 }}>
+            <div style={{ textAlign: "center", color: C.muted, fontSize: "clamp(12px, 3.5vw, 13px)" }}>
               Ask me anything about Perpetual's<br />work, skills, or availability
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", padding: "0 8px" }}>
               {suggestions.map(s => (
                 <motion.button
                   key={s.text}
@@ -515,7 +535,7 @@ function ChatPanel({ onBack, onClose }) {
                   style={{
                     padding: "8px 14px", 
                     borderRadius: 20, 
-                    fontSize: 12,
+                    fontSize: "clamp(11px, 3vw, 12px)",
                     background: C.glass, 
                     border: `1px solid ${C.border}`,
                     color: C.textSub, 
@@ -563,7 +583,7 @@ function ChatPanel({ onBack, onClose }) {
             )}
             {error && (
               <div style={{ textAlign: "center", padding: 12, background: C.glass, borderRadius: 12, marginTop: 12 }}>
-                <span style={{ color: C.red, fontSize: 12 }}>⚠️ {error}</span>
+                <span style={{ color: C.red, fontSize: "clamp(11px, 3vw, 12px)" }}>⚠️ {error}</span>
                 <button onClick={() => sendMessage(input)} style={{ marginLeft: 12, color: C.orange, background: "none", border: "none", cursor: "pointer" }}>
                   Retry
                 </button>
@@ -575,12 +595,12 @@ function ChatPanel({ onBack, onClose }) {
       </div>
 
       <div style={{
-        padding: "16px 20px",
+        padding: "12px 16px",
         borderTop: `1px solid ${C.border}`,
         flexShrink: 0,
         background: C.bg,
       }}>
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
           <div style={{ flex: 1 }}>
             <textarea
               ref={inputRef}
@@ -597,10 +617,11 @@ function ChatPanel({ onBack, onClose }) {
                 background: C.glass,
                 border: `1px solid ${C.border}`,
                 color: C.text,
-                fontSize: 13,
+                fontSize: "16px", // Prevents zoom on mobile
                 outline: "none",
                 fontFamily: font.body,
                 resize: "none",
+                WebkitAppearance: "none",
               }}
             />
           </div>
@@ -618,6 +639,7 @@ function ChatPanel({ onBack, onClose }) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                flexShrink: 0,
               }}
             >
               <span style={{ fontSize: 18 }}>{isListening ? "🔴" : "🎤"}</span>
@@ -640,6 +662,7 @@ function ChatPanel({ onBack, onClose }) {
               alignItems: "center",
               justifyContent: "center",
               opacity: input.trim() && !loading ? 1 : 0.4,
+              flexShrink: 0,
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -650,7 +673,7 @@ function ChatPanel({ onBack, onClose }) {
         </div>
         {history.length > 0 && (
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
-            <div style={{ fontSize: 10, color: C.muted }}>
+            <div style={{ fontSize: "clamp(9px, 2.5vw, 10px)", color: C.muted }}>
               {history.filter(m => m.role === 'user').length} messages
             </div>
             <motion.button
@@ -658,7 +681,7 @@ function ChatPanel({ onBack, onClose }) {
               whileTap={{ scale: 0.98 }}
               onClick={clearAllChat}
               style={{
-                fontSize: 10,
+                fontSize: "clamp(9px, 2.5vw, 10px)",
                 color: C.muted,
                 background: "none",
                 border: "none",
@@ -750,11 +773,11 @@ Requirements:
         showBack={true}
       />
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px", WebkitOverflowScrolling: "touch" }}>
         {!pitch ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <div>
-              <div style={{ fontSize: 11, color: C.muted, marginBottom: 10 }}>⚡ Quick Templates</div>
+              <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 10 }}>⚡ Quick Templates</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {quickOptions.map(q => (
                   <motion.button
@@ -763,7 +786,7 @@ Requirements:
                     whileTap={{ scale: 0.98 }}
                     onClick={() => { setCompany(q.company); setRole(q.role); }}
                     style={{
-                      padding: "8px 14px", borderRadius: 20, fontSize: 12,
+                      padding: "8px 14px", borderRadius: 20, fontSize: "clamp(11px, 3vw, 12px)",
                       background: C.glass, border: `1px solid ${C.border}`,
                       color: C.textSub, cursor: "pointer",
                     }}
@@ -776,7 +799,7 @@ Requirements:
 
             {savedTemplates.length > 0 && (
               <div>
-                <div style={{ fontSize: 11, color: C.muted, marginBottom: 10 }}>📁 Saved Templates</div>
+                <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 10 }}>📁 Saved Templates</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {savedTemplates.map((t, idx) => (
                     <motion.button
@@ -784,7 +807,7 @@ Requirements:
                       whileHover={{ scale: 1.02 }}
                       onClick={() => loadTemplate(t)}
                       style={{
-                        padding: "6px 12px", borderRadius: 16, fontSize: 11,
+                        padding: "6px 12px", borderRadius: 16, fontSize: "clamp(10px, 2.5vw, 11px)",
                         background: C.glass, border: `1px solid ${C.border}`,
                         color: C.orange, cursor: "pointer",
                       }}
@@ -797,7 +820,7 @@ Requirements:
             )}
 
             <div>
-              <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>Company *</div>
+              <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 8 }}>Company *</div>
               <input
                 value={company}
                 onChange={e => setCompany(e.target.value)}
@@ -805,13 +828,14 @@ Requirements:
                 style={{
                   width: "100%", padding: "12px 14px", borderRadius: 12,
                   background: C.glass, border: `1px solid ${C.border}`,
-                  color: C.text, fontSize: 13, outline: "none",
+                  color: C.text, fontSize: "16px", outline: "none",
+                  WebkitAppearance: "none",
                 }}
               />
             </div>
 
             <div>
-              <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>Role *</div>
+              <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 8 }}>Role *</div>
               <input
                 value={role}
                 onChange={e => setRole(e.target.value)}
@@ -819,7 +843,8 @@ Requirements:
                 style={{
                   width: "100%", padding: "12px 14px", borderRadius: 12,
                   background: C.glass, border: `1px solid ${C.border}`,
-                  color: C.text, fontSize: 13, outline: "none",
+                  color: C.text, fontSize: "16px", outline: "none",
+                  WebkitAppearance: "none",
                 }}
               />
             </div>
@@ -834,7 +859,7 @@ Requirements:
                 background: (company.trim() && role.trim()) ? C.orange : C.glass,
                 color: (company.trim() && role.trim()) ? "#fff" : C.muted,
                 cursor: (company.trim() && role.trim()) ? "pointer" : "default",
-                fontSize: 13, fontWeight: 500,
+                fontSize: "clamp(12px, 3.5vw, 13px)", fontWeight: 500,
               }}
             >
               {loading ? "Generating..." : "✨ Generate Pitch"}
@@ -847,7 +872,7 @@ Requirements:
                 style={{
                   padding: "10px", borderRadius: 12,
                   background: C.glass, border: `1px solid ${C.border}`,
-                  color: C.muted, cursor: "pointer", fontSize: 11,
+                  color: C.muted, cursor: "pointer", fontSize: "clamp(10px, 3vw, 11px)",
                 }}
               >
                 Cancel Generation
@@ -861,7 +886,7 @@ Requirements:
               background: C.surfaceUp, border: `1px solid ${C.border}`,
               marginBottom: 16,
             }}>
-              <p style={{ fontSize: 13, lineHeight: 1.7, color: C.text, margin: 0, whiteSpace: "pre-wrap" }}>
+              <p style={{ fontSize: "clamp(12px, 3.5vw, 13px)", lineHeight: 1.7, color: C.text, margin: 0, whiteSpace: "pre-wrap" }}>
                 {pitch}
               </p>
             </div>
@@ -872,7 +897,7 @@ Requirements:
                 onClick={copyPitch}
                 style={{
                   flex: 1, padding: "12px", borderRadius: 12, border: `1px solid ${C.border}`,
-                  background: C.glass, color: C.text, cursor: "pointer", fontSize: 12,
+                  background: C.glass, color: C.text, cursor: "pointer", fontSize: "clamp(11px, 3vw, 12px)",
                 }}
               >
                 {copied ? "✅ Copied!" : "📋 Copy"}
@@ -883,7 +908,7 @@ Requirements:
                 onClick={saveTemplate}
                 style={{
                   flex: 1, padding: "12px", borderRadius: 12, border: `1px solid ${C.border}`,
-                  background: C.glass, color: C.text, cursor: "pointer", fontSize: 12,
+                  background: C.glass, color: C.text, cursor: "pointer", fontSize: "clamp(11px, 3vw, 12px)",
                 }}
               >
                 💾 Save Template
@@ -894,7 +919,7 @@ Requirements:
                 onClick={() => { setPitch(""); setCompany(""); setRole(""); }}
                 style={{
                   flex: 1, padding: "12px", borderRadius: 12, border: "none",
-                  background: C.orange, color: "#fff", cursor: "pointer", fontSize: 12,
+                  background: C.orange, color: "#fff", cursor: "pointer", fontSize: "clamp(11px, 3vw, 12px)",
                 }}
               >
                 New
@@ -939,7 +964,7 @@ function AboutPanel({ onBack, onClose }) {
         showBack={true}
       />
 
-      <div style={{ display: "flex", gap: 4, padding: "12px 20px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+      <div style={{ display: "flex", gap: 4, padding: "12px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         {['bio', 'skills', 'projects'].map(tab => (
           <motion.button
             key={tab}
@@ -954,7 +979,7 @@ function AboutPanel({ onBack, onClose }) {
               border: "none",
               color: activeTab === tab ? "#fff" : C.textSub,
               cursor: "pointer",
-              fontSize: 12,
+              fontSize: "clamp(11px, 3vw, 12px)",
               fontWeight: 500,
             }}
           >
@@ -963,24 +988,24 @@ function AboutPanel({ onBack, onClose }) {
         ))}
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px", WebkitOverflowScrolling: "touch" }}>
         {activeTab === 'bio' && (
           <>
             <div style={{
-              padding: "18px", borderRadius: 16,
+              padding: "16px", borderRadius: 16,
               background: C.surfaceUp, border: `1px solid ${C.border}`,
               marginBottom: 20,
             }}>
-              <p style={{ fontSize: 13, lineHeight: 1.7, color: C.textSub, margin: 0 }}>
+              <p style={{ fontSize: "clamp(12px, 3.5vw, 13px)", lineHeight: 1.7, color: C.textSub, margin: 0 }}>
                 I build immersive 3D experiences for the web — interactive product visualisers, 
                 WebGL environments — and back them with full-stack architecture that actually ships.
               </p>
-              <p style={{ fontSize: 13, lineHeight: 1.7, color: C.orange, marginTop: 12, fontStyle: "italic" }}>
+              <p style={{ fontSize: "clamp(12px, 3.5vw, 13px)", lineHeight: 1.7, color: C.orange, marginTop: 12, fontStyle: "italic" }}>
                 "The web is a 3D canvas. Most developers only use two dimensions — I use all three."
               </p>
             </div>
 
-            <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
               {[
                 { val: "15+", label: "Projects", icon: "🚀" },
                 { val: "4+", label: "Years", icon: "⏱️" },
@@ -988,22 +1013,22 @@ function AboutPanel({ onBack, onClose }) {
                 { val: "100%", label: "Remote", icon: "💻" },
               ].map(s => (
                 <div key={s.label} style={{
-                  flex: 1, padding: "14px 8px", borderRadius: 12, textAlign: "center",
+                  flex: 1, padding: "12px 4px", borderRadius: 12, textAlign: "center",
                   background: C.glass, border: `1px solid ${C.border}`,
                 }}>
-                  <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
-                  <div style={{ fontSize: 18, fontWeight: 600, color: C.orange }}>{s.val}</div>
-                  <div style={{ fontSize: 10, color: C.muted, marginTop: 4 }}>{s.label}</div>
+                  <div style={{ fontSize: "clamp(18px, 5vw, 20px)", marginBottom: 4 }}>{s.icon}</div>
+                  <div style={{ fontSize: "clamp(16px, 4.5vw, 18px)", fontWeight: 600, color: C.orange }}>{s.val}</div>
+                  <div style={{ fontSize: "clamp(9px, 2.5vw, 10px)", color: C.muted, marginTop: 4 }}>{s.label}</div>
                 </div>
               ))}
             </div>
 
             <div style={{
-              padding: "18px", borderRadius: 16,
+              padding: "16px", borderRadius: 16,
               background: C.surfaceUp, border: `1px solid ${C.border}`,
             }}>
-              <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>📧 Contact</div>
-              <div style={{ fontSize: 13, color: C.text, marginBottom: 12, fontFamily: font.mono, wordBreak: "break-all" }}>
+              <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 8 }}>📧 Contact</div>
+              <div style={{ fontSize: "clamp(12px, 3.5vw, 13px)", color: C.text, marginBottom: 12, fontFamily: font.mono, wordBreak: "break-all" }}>
                 Perpetualokan0@gmail.com
               </div>
               <motion.button
@@ -1012,12 +1037,12 @@ function AboutPanel({ onBack, onClose }) {
                 onClick={copyEmail}
                 style={{
                   width: "100%", padding: "12px", borderRadius: 12, border: "none",
-                  background: C.orange, color: "#fff", cursor: "pointer", fontSize: 12,
+                  background: C.orange, color: "#fff", cursor: "pointer", fontSize: "clamp(11px, 3vw, 12px)",
                 }}
               >
                 {copied ? "✅ Copied!" : "📋 Copy Email"}
               </motion.button>
-              <div style={{ fontSize: 11, color: C.muted, marginTop: 12, textAlign: "center" }}>
+              <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginTop: 12, textAlign: "center" }}>
                 💰 Freelance: $50-80/hr · Open to full-time
               </div>
             </div>
@@ -1029,8 +1054,8 @@ function AboutPanel({ onBack, onClose }) {
             {Object.entries(skills).map(([skill, level]) => (
               <div key={skill} style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                  <span style={{ fontSize: 12, color: C.text }}>{skill}</span>
-                  <span style={{ fontSize: 11, color: C.orange }}>{level}%</span>
+                  <span style={{ fontSize: "clamp(11px, 3vw, 12px)", color: C.text }}>{skill}</span>
+                  <span style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.orange }}>{level}%</span>
                 </div>
                 <div style={{
                   height: 6,
@@ -1053,11 +1078,11 @@ function AboutPanel({ onBack, onClose }) {
             ))}
             
             <div style={{ marginTop: 24 }}>
-              <div style={{ fontSize: 11, color: C.muted, marginBottom: 12 }}>🛠️ Tools & Technologies</div>
+              <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 12 }}>🛠️ Tools & Technologies</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {["Three.js", "WebGL", "React Three Fiber", "React", "Next.js", "TypeScript", "Node.js", "Supabase", "Firebase", "Tailwind", "Prisma", "Docker"].map(t => (
                   <span key={t} style={{
-                    padding: "6px 12px", borderRadius: 20, fontSize: 11,
+                    padding: "6px 12px", borderRadius: 20, fontSize: "clamp(10px, 2.5vw, 11px)",
                     background: C.glass, border: `1px solid ${C.border}`,
                     color: C.textSub,
                   }}>{t}</span>
@@ -1087,10 +1112,10 @@ function AboutPanel({ onBack, onClose }) {
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                  <span style={{ fontSize: 14, fontWeight: 500, color: C.text }}>{p.name}</span>
-                  <span style={{ fontSize: 12, color: C.orange }}>↗</span>
+                  <span style={{ fontSize: "clamp(13px, 3.5vw, 14px)", fontWeight: 500, color: C.text }}>{p.name}</span>
+                  <span style={{ fontSize: "clamp(11px, 3vw, 12px)", color: C.orange }}>↗</span>
                 </div>
-                <div style={{ fontSize: 11, color: C.muted }}>{p.desc}</div>
+                <div style={{ fontSize: "clamp(10px, 2.5vw, 11px)", color: C.muted }}>{p.desc}</div>
               </motion.a>
             ))}
           </div>
@@ -1116,6 +1141,25 @@ export default function AIWidget() {
     setIsOpen(false);
     setActivePanel(null);
   };
+
+  // Prevent body scroll when widget is open on mobile
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -1143,12 +1187,17 @@ export default function AIWidget() {
         
         * {
           box-sizing: border-box;
+          -webkit-tap-highlight-color: transparent;
         }
         
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: rgba(232,98,42,0.4); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(232,98,42,0.6); }
+        
+        @media (max-width: 768px) {
+          ::-webkit-scrollbar { width: 3px; }
+        }
       `}</style>
 
       <motion.button
@@ -1158,11 +1207,11 @@ export default function AIWidget() {
         onClick={openWidget}
         style={{
           position: "fixed",
-          bottom: 24,
-          right: 24,
+          bottom: "clamp(16px, 4vw, 24px)",
+          right: "clamp(16px, 4vw, 24px)",
           zIndex: 1000,
-          width: 56,
-          height: 56,
+          width: "clamp(48px, 12vw, 56px)",
+          height: "clamp(48px, 12vw, 56px)",
           borderRadius: "50%",
           background: `linear-gradient(135deg, ${C.orange}, ${C.orangeD})`,
           border: "none",
@@ -1181,125 +1230,145 @@ export default function AIWidget() {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 15 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: "fixed",
-              bottom: 94,
-              right: 24,
-              zIndex: 1001,
-              width: 420,
-              maxWidth: "calc(100vw - 40px)",
-              height: 560,
-              maxHeight: "calc(100vh - 120px)",
-              background: C.bg,
-              borderRadius: 24,
-              border: `1px solid ${C.border}`,
-              boxShadow: "0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,98,42,0.08)",
-              overflow: "hidden",
-              backdropFilter: "blur(24px)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            {activePanel === null ? (
-              <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                <div style={{
-                  padding: "24px",
-                  borderBottom: `1px solid ${C.border}`,
-                  background: `linear-gradient(135deg, ${C.surface}, ${C.bg})`,
-                  flexShrink: 0,
-                }}>
-                  <div style={{ fontSize: 11, color: C.muted, marginBottom: 4, letterSpacing: "0.5px", textTransform: "uppercase" }}>
-                    Perpetual Okan
+          <>
+            {/* Backdrop for mobile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeWidget}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "rgba(0,0,0,0.7)",
+                zIndex: 1000,
+                display: "none",
+                "@media (max-width: 768px)": {
+                  display: "block",
+                },
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                position: "fixed",
+                bottom: "clamp(16px, 4vw, 24px)",
+                right: "clamp(16px, 4vw, 24px)",
+                zIndex: 1001,
+                width: "min(420px, calc(100vw - 32px))",
+                height: "min(600px, calc(100vh - 100px))",
+                background: C.bg,
+                borderRadius: "clamp(20px, 5vw, 24px)",
+                border: `1px solid ${C.border}`,
+                boxShadow: "0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,98,42,0.08)",
+                overflow: "hidden",
+                backdropFilter: "blur(24px)",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {activePanel === null ? (
+                <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                  <div style={{
+                    padding: "clamp(20px, 5vw, 24px)",
+                    borderBottom: `1px solid ${C.border}`,
+                    background: `linear-gradient(135deg, ${C.surface}, ${C.bg})`,
+                    flexShrink: 0,
+                  }}>
+                    <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginBottom: 4, letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                      Perpetual Okan
+                    </div>
+                    <div style={{ fontSize: "clamp(16px, 4.5vw, 18px)", fontWeight: 600, color: C.text }}>
+                      AI Assistant
+                    </div>
+                    <div style={{ fontSize: "clamp(11px, 3vw, 12px)", color: C.muted, marginTop: 6 }}>
+                      Powered by Groq Llama 3.3
+                    </div>
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 600, color: C.text }}>
-                    AI Assistant
+                  <div style={{ flex: 1, overflowY: "auto", padding: "12px" }}>
+                    {menuItems.map(item => (
+                      <motion.button
+                        key={item.id}
+                        whileHover={{ x: 6 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setActivePanel(item.id)}
+                        style={{
+                          width: "100%",
+                          padding: "clamp(14px, 4vw, 16px) clamp(14px, 4vw, 18px)",
+                          marginBottom: 10,
+                          background: C.glass,
+                          border: `1px solid ${C.border}`,
+                          borderRadius: 18,
+                          cursor: "pointer",
+                          textAlign: "left",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 14,
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = C.glassHov;
+                          e.currentTarget.style.borderColor = C.borderHi;
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = C.glass;
+                          e.currentTarget.style.borderColor = C.border;
+                        }}
+                      >
+                        <span style={{ fontSize: "clamp(24px, 6vw, 28px)" }}>{item.icon}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "clamp(14px, 4vw, 15px)", fontWeight: 600, color: C.text }}>{item.label}</div>
+                          <div style={{ fontSize: "clamp(10px, 3vw, 11px)", color: C.muted, marginTop: 3 }}>{item.description}</div>
+                        </div>
+                        <span style={{ color: C.orange, fontSize: "clamp(16px, 4.5vw, 18px)" }}>→</span>
+                      </motion.button>
+                    ))}
                   </div>
-                  <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>
-                    Powered by Groq Llama 3.3
-                  </div>
-                </div>
-                <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
-                  {menuItems.map(item => (
+                  <div style={{
+                    padding: "12px 16px",
+                    borderTop: `1px solid ${C.border}`,
+                    fontSize: "clamp(9px, 2.5vw, 10px)",
+                    color: C.muted,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: C.glass,
+                    flexShrink: 0,
+                  }}>
+                    <span>⌘K · Esc to close</span>
                     <motion.button
-                      key={item.id}
-                      whileHover={{ x: 6 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setActivePanel(item.id)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={closeWidget}
                       style={{
-                        width: "100%",
-                        padding: "16px 18px",
-                        marginBottom: 10,
                         background: C.glass,
                         border: `1px solid ${C.border}`,
-                        borderRadius: 18,
+                        borderRadius: 8,
+                        padding: "4px 12px",
                         cursor: "pointer",
-                        textAlign: "left",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 14,
-                        transition: "all 0.2s",
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.background = C.glassHov;
-                        e.currentTarget.style.borderColor = C.borderHi;
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.background = C.glass;
-                        e.currentTarget.style.borderColor = C.border;
+                        fontSize: "clamp(9px, 2.5vw, 10px)",
+                        color: C.muted,
                       }}
                     >
-                      <span style={{ fontSize: 28 }}>{item.icon}</span>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: C.text }}>{item.label}</div>
-                        <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>{item.description}</div>
-                      </div>
-                      <span style={{ color: C.orange, fontSize: 18 }}>→</span>
+                      Close ✕
                     </motion.button>
-                  ))}
+                  </div>
                 </div>
-                <div style={{
-                  padding: "12px 20px",
-                  borderTop: `1px solid ${C.border}`,
-                  fontSize: 10,
-                  color: C.muted,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  background: C.glass,
-                  flexShrink: 0,
-                }}>
-                  <span>⌘K · Esc to close</span>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={closeWidget}
-                    style={{
-                      background: C.glass,
-                      border: `1px solid ${C.border}`,
-                      borderRadius: 8,
-                      padding: "4px 12px",
-                      cursor: "pointer",
-                      fontSize: 10,
-                      color: C.muted,
-                    }}
-                  >
-                    Close ✕
-                  </motion.button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {activePanel === "chat" && <ChatPanel onBack={() => setActivePanel(null)} onClose={closeWidget} />}
-                {activePanel === "hire" && <HirePanel onBack={() => setActivePanel(null)} onClose={closeWidget} />}
-                {activePanel === "about" && <AboutPanel onBack={() => setActivePanel(null)} onClose={closeWidget} />}
-              </>
-            )}
-          </motion.div>
+              ) : (
+                <>
+                  {activePanel === "chat" && <ChatPanel onBack={() => setActivePanel(null)} onClose={closeWidget} />}
+                  {activePanel === "hire" && <HirePanel onBack={() => setActivePanel(null)} onClose={closeWidget} />}
+                  {activePanel === "about" && <AboutPanel onBack={() => setActivePanel(null)} onClose={closeWidget} />}
+                </>
+              )}
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
