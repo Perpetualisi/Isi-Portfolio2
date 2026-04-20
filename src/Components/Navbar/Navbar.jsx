@@ -1,11 +1,13 @@
 // src/components/Navbar.jsx
 // ─────────────────────────────────────────────────────────────────────────────
-// PERPETUAL OKAN · NAVBAR v3.1
+// PERPETUAL OKAN · NAVBAR v3.2
 //
-// v3.1 CHANGE:
-//   • Sticky navbar — always visible, never hides on scroll down
-//   • Stronger glassmorphism + orange accent border at scroll threshold
-//   • Removed velocity-based hide/show logic entirely
+// v3.2 CHANGES:
+//   • Cleaner mobile menu — removed BuildingTicker, reduced visual noise
+//   • Simplified status chip (smaller, less prominent)
+//   • Better spacing and typography
+//   • Removed excessive decorative elements
+//   • Improved touch targets and readability
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, {
@@ -21,7 +23,7 @@ import {
 import {
   FiGithub, FiLinkedin, FiMenu, FiX,
   FiCommand, FiVolume2, FiVolumeX,
-  FiZap, FiMail, FiExternalLink,
+  FiMail,
 } from "react-icons/fi";
 
 /* ═══════════════════════════════════════════════════════════════
@@ -35,7 +37,6 @@ const GLOBAL_CSS = `
   --nb-orange:    #F97316;
   --nb-orangeD:   #C2410C;
   --nb-orangeL:   #fb923c;
-  --nb-orangeXL:  #fed7aa;
   --nb-text:      #ffffff;
   --nb-muted:     rgba(255,255,255,0.42);
   --nb-faint:     rgba(255,255,255,0.06);
@@ -47,14 +48,14 @@ const GLOBAL_CSS = `
   --nb-ease:      cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Reset ── */
+/* Reset */
 .nb-root *, .nb-root *::before, .nb-root *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 .nb-root { font-family: var(--nb-font-mono); }
 
-/* ── Skip to content ── */
+/* Skip to content */
 .nb-skip {
   position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
   z-index: 9999; padding: 0.6rem 1.2rem; border-radius: 6px;
@@ -65,7 +66,7 @@ const GLOBAL_CSS = `
 }
 .nb-skip:focus { top: 12px; }
 
-/* ── Cursor spotlight on header ── */
+/* Cursor spotlight */
 .nb-spotlight {
   position: absolute; inset: 0; pointer-events: none; overflow: hidden;
   border-radius: inherit;
@@ -80,7 +81,7 @@ const GLOBAL_CSS = `
   will-change: transform;
 }
 
-/* ── Logo ── */
+/* Logo */
 .okan-logo { display:flex; align-items:center; justify-content:center; width:52px; height:52px; perspective:600px; cursor:pointer; position:relative; flex-shrink:0; }
 .okan-box {
   width:52px; height:52px; border-radius:14px;
@@ -110,7 +111,7 @@ const GLOBAL_CSS = `
   50%     { box-shadow:0 0 18px var(--nb-green), 0 0 38px rgba(34,197,94,0.55); }
 }
 
-/* ── Nav pill ── */
+/* Nav pill */
 .nb-pill {
   display:flex; align-items:center; gap:2rem;
   padding:0.65rem 1.9rem; border-radius:100px;
@@ -122,7 +123,6 @@ const GLOBAL_CSS = `
              inset 0 -1px 0 rgba(0,0,0,0.25);
   white-space:nowrap; position:relative; overflow:hidden;
 }
-/* Pill inner shimmer line */
 .nb-pill::after {
   content:''; position:absolute; top:0; left:15%; right:15%;
   height:1px; border-radius:1px;
@@ -130,7 +130,7 @@ const GLOBAL_CSS = `
   pointer-events:none;
 }
 
-/* ── Nav link ── */
+/* Nav link */
 .nb-link {
   font-family:var(--nb-font-mono);
   font-size:0.48rem; font-weight:700;
@@ -140,7 +140,7 @@ const GLOBAL_CSS = `
 }
 .nb-link:focus-visible { outline:2px solid var(--nb-orange); outline-offset:4px; border-radius:3px; }
 
-/* ── CTA button ── */
+/* CTA button */
 .nb-cta {
   display:inline-flex; align-items:center; gap:0.42rem;
   padding:0.58rem 1.4rem; border-radius:5px;
@@ -153,7 +153,7 @@ const GLOBAL_CSS = `
 }
 .nb-cta:focus-visible { outline:2px solid var(--nb-orange); outline-offset:3px; }
 
-/* ── Social icon ── */
+/* Social icon */
 .nb-social {
   width:33px; height:33px; border-radius:9px;
   display:flex; align-items:center; justify-content:center;
@@ -162,39 +162,34 @@ const GLOBAL_CSS = `
 }
 .nb-social:focus-visible { outline:2px solid var(--nb-orange); outline-offset:3px; }
 
-/* ── Mobile overlay ── */
+/* Mobile overlay - cleaner version */
 .nb-mobile-overlay {
   position:fixed; inset:0; z-index:60;
-  background:rgba(2,2,4,0.97); backdrop-filter:blur(44px);
-  display:flex; flex-direction:column; justify-content:center;
-  padding:0 8%; overflow:hidden;
+  background:rgba(2,2,4,0.98); backdrop-filter:blur(44px);
+  display:flex; flex-direction:column;
+  padding:0 6%;
+  overflow-y:auto;
 }
 
-/* ── Mobile close button ── */
+/* Mobile close button */
 .nb-mobile-close {
-  position:absolute; top:24px; right:24px;
-  width:48px; height:48px; border-radius:14px;
-  background:rgba(249,115,22,0.1);
-  border:1px solid rgba(249,115,22,0.3);
+  position:absolute; top:20px; right:20px;
+  width:44px; height:44px; border-radius:12px;
+  background:rgba(249,115,22,0.08);
+  border:1px solid rgba(249,115,22,0.25);
   display:flex; align-items:center; justify-content:center;
   cursor:pointer; color:var(--nb-orange);
   transition:all 0.22s ease; z-index:71;
 }
-.nb-mobile-close:hover { background:rgba(249,115,22,0.2); transform:scale(1.05); }
+.nb-mobile-close:hover { background:rgba(249,115,22,0.15); transform:scale(1.02); }
 
-/* ── Right cluster ── */
+/* Right cluster */
 .nb-desktop-right {
   display:flex; align-items:center; gap:0.55rem;
   flex-shrink:0;
 }
 
-/* ── Ticker ── */
-.nb-ticker-wrap { overflow:hidden; mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent); }
-.nb-ticker { display:inline-flex; gap:3rem; animation:tickerScroll 22s linear infinite; white-space:nowrap; }
-.nb-ticker:hover { animation-play-state:paused; }
-@keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-
-/* ── Command bar ── */
+/* Command bar */
 .nb-cmd-backdrop {
   position:fixed; inset:0; z-index:200;
   background:rgba(2,2,4,0.75); backdrop-filter:blur(12px);
@@ -210,7 +205,7 @@ const GLOBAL_CSS = `
   overflow:hidden;
 }
 
-/* ── Progress bar ── */
+/* Progress bar */
 .nb-progress {
   position:fixed; top:0; left:0; height:2px; z-index:100; pointer-events:none;
   background:linear-gradient(90deg,var(--nb-orange),var(--nb-orangeL),var(--nb-orange));
@@ -218,13 +213,13 @@ const GLOBAL_CSS = `
 }
 @keyframes shimmer { 0%{background-position:0% 0%} 100%{background-position:200% 0%} }
 
-/* ── Page flash transition ── */
+/* Page flash */
 .nb-page-flash {
   position:fixed; inset:0; z-index:500; pointer-events:none;
   background:rgba(249,115,22,0.04);
 }
 
-/* ── Responsive ── */
+/* Responsive */
 .nb-desktop { display:flex !important; }
 .nb-desktop-right { display:flex !important; }
 .nb-mobile-btn { display:none !important; }
@@ -237,7 +232,7 @@ const GLOBAL_CSS = `
   .nb-mobile-btn { display:flex !important; }
 }
 
-/* ── Tooltip ── */
+/* Tooltip */
 .nb-tooltip {
   position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);
   background:rgba(9,9,13,0.97); border:1px solid rgba(249,115,22,0.25);
@@ -247,17 +242,17 @@ const GLOBAL_CSS = `
   pointer-events:none; backdrop-filter:blur(10px);
 }
 
-/* ── Animations ── */
+/* Animations */
 @keyframes nbPing    { 75%,100%{transform:scale(2.2);opacity:0} }
 @keyframes glowPulse { 0%,100%{box-shadow:0 0 10px var(--nb-orange),0 0 24px rgba(249,115,22,0.42)} 50%{box-shadow:0 0 20px var(--nb-orange),0 0 48px rgba(249,115,22,0.65)} }
 @keyframes cmdSlide  { from{opacity:0;transform:translateX(-50%) translateY(-10px) scale(0.97)} to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
 @keyframes breathe   { 0%,100%{opacity:0.42} 50%{opacity:0.58} }
 
-/* ── Scrollbar ── */
+/* Scrollbar */
 .nb-scroll::-webkit-scrollbar { width:3px; }
 .nb-scroll::-webkit-scrollbar-thumb { background:rgba(249,115,22,0.25); border-radius:3px; }
 
-/* ── Reading time badge ── */
+/* Reading badge */
 .nb-reading-badge {
   display:inline-flex; align-items:center; gap:0.3rem;
   padding:0.22rem 0.65rem; border-radius:100px;
@@ -267,12 +262,16 @@ const GLOBAL_CSS = `
   white-space:nowrap; flex-shrink:0;
 }
 
-/* ── Mobile nav link ── */
-.nb-mlink { display:flex; align-items:center; gap:1.2rem; text-decoration:none; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.04); outline:none; }
-.nb-mlink:focus-visible { outline:2px solid var(--nb-orange); outline-offset:4px; }
-.nb-mlink:hover span.nb-ml-name { color:#ffffff !important; -webkit-text-stroke:none !important; font-style:italic; }
+/* Mobile nav link - cleaner */
+.nb-mlink {
+  display:flex; align-items:center; gap:1rem;
+  text-decoration:none; padding:0.8rem 0;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  outline:none;
+}
+.nb-mlink:focus-visible { outline:2px solid var(--nb-orange); outline-offset:4px; border-radius:4px; }
 
-/* ── Command group label ── */
+/* Command group */
 .nb-cmd-group {
   padding:8px 16px 4px;
   font-family:var(--nb-font-mono); font-size:9px;
@@ -281,7 +280,7 @@ const GLOBAL_CSS = `
   border-bottom:1px solid rgba(255,255,255,0.04);
 }
 
-/* ── Kbd badge ── */
+/* Kbd badge */
 .nb-kbd {
   font-family:var(--nb-font-mono); font-size:9px;
   color:rgba(255,255,255,0.25); background:rgba(255,255,255,0.06);
@@ -298,14 +297,6 @@ const NAV_LINKS = [
   { name: "About",     href: "/about",     readingTime: "3 min" },
   { name: "Portfolio", href: "/portfolio", readingTime: "5 min" },
   { name: "Contact",   href: "/contact",   readingTime: null },
-];
-
-const BUILDING_ITEMS = [
-  "Currently building · 3D configurator with Three.js",
-  "WebGL shader experiments",
-  "AI-powered design tool with Groq API",
-  "Supabase real-time collab board",
-  "Open to freelance · $50–80/hr",
 ];
 
 const CMD_GROUPS = [
@@ -335,11 +326,10 @@ const CMD_GROUPS = [
   },
 ];
 
-// Flat list for keyboard nav
 const CMD_ITEMS_FLAT = CMD_GROUPS.flatMap(g => g.items);
 
 /* ═══════════════════════════════════════════════════════════════
-   OVERLAY STATE MACHINE
+   OVERLAY STATE
 ═══════════════════════════════════════════════════════════════ */
 const OVERLAY_INIT = { mobile: false, command: false };
 function overlayReducer(state, action) {
@@ -403,7 +393,7 @@ function useAudioFeedback() {
       gain.gain.setValueAtTime(0.06, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
       osc.start(); osc.stop(ctx.currentTime + 0.06);
-    } catch { /* silently ignore */ }
+    } catch { /* ignore */ }
   }, [enabled]);
   const toggle = useCallback(() => setEnabled(v => !v), []);
   return { enabled, toggle, play };
@@ -449,7 +439,7 @@ const ScrollProgress = memo(() => {
 ScrollProgress.displayName = "ScrollProgress";
 
 /* ═══════════════════════════════════════════════════════════════
-   HEADER CURSOR SPOTLIGHT
+   HEADER SPOTLIGHT
 ═══════════════════════════════════════════════════════════════ */
 const HeaderSpotlight = memo(({ headerRef }) => {
   const [pos, setPos] = useState({ x: -999, y: -999 });
@@ -536,7 +526,7 @@ const OkanLogo = memo(({ onNav }) => {
 OkanLogo.displayName = "OkanLogo";
 
 /* ═══════════════════════════════════════════════════════════════
-   NAV ITEM  (desktop pill) — magnetic hover
+   NAV ITEM
 ═══════════════════════════════════════════════════════════════ */
 const NavItem = memo(({ link, active, onNav, enterDelay = 0 }) => {
   const [hov, setHov] = useState(false);
@@ -635,7 +625,7 @@ const Social = memo(({ href, Icon, label, play }) => {
 Social.displayName = "Social";
 
 /* ═══════════════════════════════════════════════════════════════
-   READING TIME BADGE
+   READING BADGE
 ═══════════════════════════════════════════════════════════════ */
 const ReadingBadge = memo(({ time }) => {
   if (!time) return null;
@@ -649,30 +639,7 @@ const ReadingBadge = memo(({ time }) => {
 ReadingBadge.displayName = "ReadingBadge";
 
 /* ═══════════════════════════════════════════════════════════════
-   MOBILE STATUS CHIP (with flashing colon clock) — mobile only
-═══════════════════════════════════════════════════════════════ */
-const StatusChip = memo(() => {
-  const { h, m, colon } = useLocalTime();
-  return (
-    <div style={{ display:"inline-flex", alignItems:"center", gap:"0.55rem", padding:"0.3rem 0.9rem 0.3rem 0.75rem", borderRadius:100, background:"rgba(34,197,94,0.07)", border:"1px solid rgba(34,197,94,0.22)", backdropFilter:"blur(10px)", flexShrink:0 }}>
-      <span style={{ position:"relative", display:"flex", width:6, height:6 }}>
-        <span style={{ position:"absolute", inset:0, borderRadius:"50%", background:"var(--nb-green)", opacity:0.55, animation:"nbPing 1.5s infinite" }} />
-        <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--nb-green)", boxShadow:"0 0 8px var(--nb-green)", display:"inline-flex" }} />
-      </span>
-      <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.37rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.22em", color:"rgba(34,197,94,0.75)", whiteSpace:"nowrap" }}>
-        Available
-      </span>
-      <span style={{ width:1, height:10, background:"rgba(34,197,94,0.2)" }} />
-      <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.37rem", color:"rgba(34,197,94,0.5)", letterSpacing:"0.08em", whiteSpace:"nowrap" }}>
-        {h}<span style={{ opacity: colon ? 1 : 0, transition:"opacity 0.1s" }}>:</span>{m} WAT
-      </span>
-    </div>
-  );
-});
-StatusChip.displayName = "StatusChip";
-
-/* ═══════════════════════════════════════════════════════════════
-   COMMAND BAR  (grouped sections + recently visited)
+   COMMAND BAR
 ═══════════════════════════════════════════════════════════════ */
 const CommandBar = memo(({ isOpen, onClose, onNav }) => {
   const [q, setQ] = useState("");
@@ -685,7 +652,6 @@ const CommandBar = memo(({ isOpen, onClose, onNav }) => {
     if (isOpen) { setQ(""); setSel(0); setTimeout(() => inputRef.current?.focus(), 60); }
   }, [isOpen]);
 
-  // Filter groups preserving structure
   const filteredGroups = useMemo(() => {
     if (!q) return CMD_GROUPS;
     return CMD_GROUPS.map(g => ({ ...g, items: g.items.filter(it => fuzzyMatch(it.label, q)) }))
@@ -710,7 +676,6 @@ const CommandBar = memo(({ isOpen, onClose, onNav }) => {
     else if (e.key === "Escape") onClose();
   }, [flatFiltered, sel, run, onClose]);
 
-  // Global letter shortcuts (only when command bar is open and no query typed)
   useEffect(() => {
     if (!isOpen) return;
     const h = e => {
@@ -730,7 +695,6 @@ const CommandBar = memo(({ isOpen, onClose, onNav }) => {
       <div className="nb-cmd-panel" role="dialog" aria-modal="true" aria-label="Command bar"
         style={{ animation: reduce ? "none" : "cmdSlide 0.22s var(--nb-ease) forwards" }}>
 
-        {/* Search input */}
         <div style={{ display:"flex", alignItems:"center", gap:10, padding:"13px 16px", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
           <FiCommand size={14} color="rgba(249,115,22,0.7)" />
           <input
@@ -742,7 +706,6 @@ const CommandBar = memo(({ isOpen, onClose, onNav }) => {
           <kbd className="nb-kbd">ESC</kbd>
         </div>
 
-        {/* Results grouped */}
         <div className="nb-scroll" style={{ maxHeight:320, overflowY:"auto" }}>
           {flatFiltered.length === 0 && (
             <div style={{ padding:"20px 16px", textAlign:"center", fontFamily:"var(--nb-font-mono)", fontSize:11, color:"rgba(255,255,255,0.2)" }}>
@@ -771,10 +734,8 @@ const CommandBar = memo(({ isOpen, onClose, onNav }) => {
                     >
                       <span style={{ fontSize:15, width:22, textAlign:"center" }}>{it.icon}</span>
                       <span style={{ flex:1 }}>{it.label}</span>
-                      {it.kbd && !q && (
-                        <kbd className="nb-kbd">{it.kbd}</kbd>
-                      )}
-                      <span style={{ fontSize:9, color:"rgba(249,115,22,0.5)", letterSpacing:"0.15em", textTransform:"uppercase", marginLeft: it.kbd && !q ? 4 : 0 }}>
+                      {it.kbd && !q && <kbd className="nb-kbd">{it.kbd}</kbd>}
+                      <span style={{ fontSize:9, color:"rgba(249,115,22,0.5)", letterSpacing:"0.15em", textTransform:"uppercase" }}>
                         {it.external ? "↗ open" : it.action ? "action" : "→ go"}
                       </span>
                     </button>
@@ -785,7 +746,6 @@ const CommandBar = memo(({ isOpen, onClose, onNav }) => {
           ))}
         </div>
 
-        {/* Footer hints */}
         <div style={{ padding:"8px 16px", borderTop:"1px solid rgba(255,255,255,0.04)", display:"flex", gap:16, flexWrap:"wrap" }}>
           {[["↵","select"],["↑↓","navigate"],["esc","close"]].map(([k,v]) => (
             <span key={k} style={{ fontFamily:"var(--nb-font-mono)", fontSize:9, color:"rgba(255,255,255,0.22)" }}>
@@ -825,7 +785,7 @@ const AudioToggle = memo(({ enabled, toggle }) => {
 AudioToggle.displayName = "AudioToggle";
 
 /* ═══════════════════════════════════════════════════════════════
-   ⌘K BUTTON
+   COMMAND BUTTON
 ═══════════════════════════════════════════════════════════════ */
 const CommandBtn = memo(({ onClick }) => {
   const [hov, setHov] = useState(false);
@@ -853,35 +813,38 @@ const CommandBtn = memo(({ onClick }) => {
 CommandBtn.displayName = "CommandBtn";
 
 /* ═══════════════════════════════════════════════════════════════
-   BUILDING TICKER  (mobile)
+   STATUS CHIP (simplified for mobile)
 ═══════════════════════════════════════════════════════════════ */
-const BuildingTicker = memo(() => {
-  const doubled = useMemo(() => [...BUILDING_ITEMS, ...BUILDING_ITEMS], []);
+const StatusChip = memo(() => {
+  const { h, m, colon } = useLocalTime();
   return (
-    <div style={{ margin:"2rem 0 0", padding:"0.7rem 0", borderTop:"1px solid rgba(255,255,255,0.045)", borderBottom:"1px solid rgba(255,255,255,0.045)" }}>
-      <div className="nb-ticker-wrap">
-        <div className="nb-ticker" aria-hidden="true">
-          {doubled.map((item, i) => (
-            <span key={i} style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.4rem", color:"rgba(255,255,255,0.22)", letterSpacing:"0.18em", textTransform:"uppercase" }}>
-              <span style={{ color:"var(--nb-orange)", marginRight:"0.6rem" }}>▸</span>
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
+    <div style={{
+      display:"inline-flex", alignItems:"center", gap:"0.45rem",
+      padding:"0.35rem 0.9rem", borderRadius:100,
+      background:"rgba(34,197,94,0.06)",
+      border:"1px solid rgba(34,197,94,0.18)",
+      backdropFilter:"blur(8px)",
+    }}>
+      <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--nb-green)", boxShadow:"0 0 6px var(--nb-green)" }} />
+      <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.4rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.18em", color:"rgba(34,197,94,0.7)" }}>
+        Available
+      </span>
+      <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.38rem", color:"rgba(34,197,94,0.45)", letterSpacing:"0.06em" }}>
+        {h}<span style={{ opacity: colon ? 1 : 0.4 }}>:</span>{m}
+      </span>
     </div>
   );
 });
-BuildingTicker.displayName = "BuildingTicker";
+StatusChip.displayName = "StatusChip";
 
 /* ═══════════════════════════════════════════════════════════════
-   MOBILE NAV LINK
+   MOBILE NAV LINK - cleaner
 ═══════════════════════════════════════════════════════════════ */
 const MobileNavLink = memo(({ item, idx, active, onClick, play }) => (
   <motion.div
-    initial={{ opacity:0, x:-50 }}
+    initial={{ opacity:0, x:-30 }}
     animate={{ opacity:1, x:0 }}
-    transition={{ delay: 0.14 + idx * 0.075, duration:0.5, ease:[0.16,1,0.3,1] }}
+    transition={{ delay: 0.1 + idx * 0.05, duration:0.4, ease:[0.16,1,0.3,1] }}
   >
     <Link
       to={item.href}
@@ -889,27 +852,32 @@ const MobileNavLink = memo(({ item, idx, active, onClick, play }) => (
       className="nb-mlink"
       aria-current={active ? "page" : undefined}
     >
-      <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.42rem", fontWeight:700, letterSpacing:"0.2em", color: active ? "var(--nb-orange)" : "rgba(255,255,255,0.16)", minWidth:28, transition:"color 0.2s" }}>
-        {"0"+(idx+1)}
+      <span style={{
+        fontFamily:"var(--nb-font-mono)",
+        fontSize:"0.4rem", fontWeight:700, letterSpacing:"0.18em",
+        color: active ? "var(--nb-orange)" : "rgba(255,255,255,0.2)",
+        minWidth:28,
+      }}>
+        {(idx+1).toString().padStart(2,"0")}
       </span>
-      <span
-        className="nb-ml-name"
-        style={{
-          fontFamily:"var(--nb-font-disp)",
-          fontSize:"clamp(2.2rem,8.5vw,4.2rem)",
-          fontWeight:400, letterSpacing:"-0.02em", lineHeight:1,
-          color: active ? "#ffffff" : "rgba(255,255,255,0.12)",
-          WebkitTextStroke: active ? "none" : "1px rgba(255,255,255,0.11)",
-          transition:"color 0.22s, -webkit-text-stroke 0.22s",
-          fontStyle: active ? "italic" : "normal",
-        }}
-      >
+      <span style={{
+        fontFamily:"var(--nb-font-disp)",
+        fontSize:"clamp(1.6rem,7vw,2.8rem)",
+        fontWeight:400, letterSpacing:"-0.01em", lineHeight:1.2,
+        color: active ? "#ffffff" : "rgba(255,255,255,0.15)",
+        transition:"color 0.2s",
+      }}>
         {item.name}
       </span>
-      {item.readingTime && <ReadingBadge time={item.readingTime} />}
-      {active && (
-        <motion.div initial={{ scale:0 }} animate={{ scale:1 }}
-          style={{ marginLeft:"auto", width:9, height:9, borderRadius:"50%", background:"var(--nb-orange)", animation:"glowPulse 2s infinite", flexShrink:0 }} />
+      {item.readingTime && (
+        <span style={{
+          marginLeft:"auto",
+          fontFamily:"var(--nb-font-mono)", fontSize:"0.35rem",
+          color:"rgba(249,115,22,0.5)", letterSpacing:"0.12em",
+          textTransform:"uppercase",
+        }}>
+          {item.readingTime}
+        </span>
       )}
     </Link>
   </motion.div>
@@ -927,7 +895,6 @@ export default function Navbar() {
   const reduce = useReducedMotion();
   const headerRef = useRef(null);
 
-  // Page flash on route change
   const [flash, setFlash] = useState(false);
   useEffect(() => {
     setFlash(true);
@@ -937,16 +904,13 @@ export default function Navbar() {
 
   const activeLink = useMemo(() => NAV_LINKS.find(l => l.href === pathname), [pathname]);
 
-  // Close on route change
   useEffect(() => { dispatch({ type:"CLOSE_ALL" }); }, [pathname]);
 
-  // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = overlay.mobile ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [overlay.mobile]);
 
-  // Global keyboard shortcuts
   useEffect(() => {
     const handler = (e) => {
       const mod = e.metaKey || e.ctrlKey;
@@ -957,7 +921,6 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", handler);
   }, [overlay.command]);
 
-  // Mobile swipe-down to close
   const swipeStartY = useRef(null);
   const handleTouchStart = useCallback(e => { swipeStartY.current = e.touches[0].clientY; }, []);
   const handleTouchEnd = useCallback(e => {
@@ -979,13 +942,9 @@ export default function Navbar() {
     <div className="nb-root" role="banner">
       <style>{GLOBAL_CSS}</style>
 
-      {/* Skip to content */}
       <a href="#main-content" className="nb-skip">Skip to content</a>
-
-      {/* Scroll progress */}
       <ScrollProgress />
 
-      {/* Page flash */}
       <AnimatePresence>
         {flash && (
           <motion.div className="nb-page-flash"
@@ -994,10 +953,8 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Command bar */}
       <CommandBar isOpen={overlay.command} onClose={() => dispatch({ type:"CLOSE_COMMAND" })} onNav={handleNavCommand} />
 
-      {/* ── HEADER ── */}
       <motion.header
         ref={headerRef}
         initial={{ y:-80, opacity:0 }}
@@ -1016,10 +973,8 @@ export default function Navbar() {
         role="navigation"
         aria-label="Main navigation"
       >
-        {/* Cursor spotlight */}
         <HeaderSpotlight headerRef={headerRef} />
 
-        {/* Top shimmer line on scroll */}
         <AnimatePresence>
           {scrolled && (
             <motion.div
@@ -1034,10 +989,8 @@ export default function Navbar() {
           style={{ maxWidth:1400, margin:"0 auto", padding:"0 5%", display:"flex", alignItems:"center", gap:"1rem", position:"relative" }}
           aria-label="Site navigation"
         >
-          {/* Logo */}
           <OkanLogo onNav={handleNavClick} />
 
-          {/* Desktop pill — absolutely centered in nav */}
           <div style={{ flex:1, display:"flex", justifyContent:"center" }}>
             <div className="nb-pill nb-desktop" role="menubar" aria-label="Page links">
               {NAV_LINKS.slice(0,3).map((link, i) => (
@@ -1046,7 +999,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Right cluster */}
           <div className="nb-desktop-right" style={{ flexShrink:0 }}>
             {activeLink?.readingTime && <ReadingBadge time={activeLink.readingTime} />}
             <div style={{ width:1, height:20, background:"var(--nb-borderB)", flexShrink:0 }} />
@@ -1058,7 +1010,6 @@ export default function Navbar() {
             <ContactBtn active={pathname === "/contact"} onNav={handleNavClick} />
           </div>
 
-          {/* Mobile hamburger */}
           <motion.button
             onClick={toggleMobile}
             whileTap={{ scale:0.85 }}
@@ -1085,52 +1036,37 @@ export default function Navbar() {
         </nav>
       </motion.header>
 
-      {/* ── MOBILE OVERLAY ── */}
+      {/* Cleaner Mobile Overlay */}
       <AnimatePresence>
         {overlay.mobile && (
           <motion.div
             id="mobile-menu"
             role="dialog" aria-modal="true" aria-label="Navigation menu"
-            initial={{ opacity:0, clipPath:"circle(0% at calc(100% - 7%) 3.8%)" }}
-            animate={{ opacity:1, clipPath:"circle(170% at calc(100% - 7%) 3.8%)" }}
-            exit={{ opacity:0, clipPath:"circle(0% at calc(100% - 7%) 3.8%)" }}
-            transition={{ duration: reduce ? 0.2 : 0.65, ease:[0.16,1,0.3,1] }}
+            initial={{ opacity:0, x:"100%" }}
+            animate={{ opacity:1, x:0 }}
+            exit={{ opacity:0, x:"100%" }}
+            transition={{ duration: reduce ? 0.2 : 0.4, ease:[0.16,1,0.3,1] }}
             className="nb-mobile-overlay"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Swipe hint */}
-            <motion.div
-              initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.5 }}
-              style={{ position:"absolute", top:12, left:"50%", transform:"translateX(-50%)", width:36, height:4, borderRadius:2, background:"rgba(255,255,255,0.12)" }}
-              aria-hidden="true"
-            />
-
-            {/* Close button */}
             <motion.button
               initial={{ opacity:0, scale:0.8 }} animate={{ opacity:1, scale:1 }} exit={{ opacity:0, scale:0.8 }}
-              transition={{ delay:0.2, duration:0.2 }}
+              transition={{ delay:0.1, duration:0.2 }}
               onClick={closeMobile} className="nb-mobile-close" aria-label="Close menu"
             >
-              <FiX size={24} />
+              <FiX size={22} />
             </motion.button>
 
-            {/* Grid texture */}
-            <div aria-hidden="true" style={{ position:"absolute", inset:0, pointerEvents:"none", backgroundImage:"linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px)", backgroundSize:"58px 58px" }} />
-
-            {/* Glow blobs */}
-            <div aria-hidden="true" style={{ position:"absolute", top:"8%", right:"-8%", width:380, height:380, borderRadius:"50%", background:"radial-gradient(circle,rgba(249,115,22,0.10) 0%,transparent 65%)", filter:"blur(55px)", pointerEvents:"none" }} />
-            <div aria-hidden="true" style={{ position:"absolute", bottom:"6%", left:"-10%", width:300, height:300, borderRadius:"50%", background:"radial-gradient(circle,rgba(234,88,12,0.07) 0%,transparent 65%)", filter:"blur(55px)", pointerEvents:"none" }} />
-
-            <div style={{ position:"relative", zIndex:10 }}>
+            <div style={{ position:"relative", zIndex:10, marginTop:"12vh" }}>
               {/* Section label */}
               <motion.div
-                initial={{ opacity:0, x:-18 }} animate={{ opacity:1, x:0 }}
-                transition={{ delay:0.1, duration:0.5 }}
-                style={{ display:"flex", alignItems:"center", gap:"0.65rem", marginBottom:"2.2rem" }}
+                initial={{ opacity:0, x:-15 }} animate={{ opacity:1, x:0 }}
+                transition={{ delay:0.05, duration:0.4 }}
+                style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginBottom:"2rem" }}
               >
-                <div style={{ width:3, height:22, borderRadius:2, background:"var(--nb-orange)", boxShadow:"0 0 14px var(--nb-orange)" }} />
-                <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.44rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.55em", color:"var(--nb-orange)" }}>Navigation</span>
+                <div style={{ width:3, height:20, borderRadius:2, background:"var(--nb-orange)", boxShadow:"0 0 10px var(--nb-orange)" }} />
+                <span style={{ fontFamily:"var(--nb-font-mono)", fontSize:"0.42rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.45em", color:"var(--nb-orange)" }}>Menu</span>
               </motion.div>
 
               {/* Nav items */}
@@ -1140,35 +1076,49 @@ export default function Navbar() {
                 ))}
               </div>
 
-              <BuildingTicker />
-
-              {/* Bottom row */}
+              {/* Bottom actions - simplified */}
               <motion.div
-                initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}
-                transition={{ delay:0.55, duration:0.5 }}
-                style={{ display:"flex", alignItems:"center", flexWrap:"wrap", gap:"0.75rem", marginTop:"1.8rem" }}
+                initial={{ opacity:0, y:15 }} animate={{ opacity:1, y:0 }}
+                transition={{ delay:0.35, duration:0.4 }}
+                style={{ marginTop:"2.5rem", paddingTop:"1.5rem", borderTop:"1px solid rgba(255,255,255,0.05)" }}
               >
-                <StatusChip />
-                <div style={{ display:"flex", gap:"0.55rem", alignItems:"center", flexWrap:"wrap" }}>
-                  {[
-                    { href:"https://github.com/Perpetualisi/", Icon:FiGithub, label:"GitHub" },
-                    { href:"https://linkedin.com/in/perpetual-okan", Icon:FiLinkedin, label:"LinkedIn" },
-                    { href:"mailto:Perpetualokan0@gmail.com", Icon:FiMail, label:"Email" },
-                  ].map(s => (
-                    <a key={s.label} href={s.href} target={s.href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer" aria-label={s.label}
-                      style={{ display:"flex", alignItems:"center", gap:"0.45rem", textDecoration:"none", padding:"0.55rem 1rem", borderRadius:100, background:"rgba(255,255,255,0.04)", border:"1px solid var(--nb-borderB)", color:"var(--nb-muted)", fontFamily:"var(--nb-font-mono)", fontSize:"0.44rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", transition:"all 0.22s" }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor="rgba(249,115,22,0.35)"; e.currentTarget.style.color="var(--nb-orange)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor="var(--nb-borderB)"; e.currentTarget.style.color="var(--nb-muted)"; }}
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.8rem" }}>
+                  <StatusChip />
+                  <div style={{ display:"flex", gap:"0.5rem" }}>
+                    {[
+                      { href:"https://github.com/Perpetualisi/", Icon:FiGithub, label:"GitHub" },
+                      { href:"https://linkedin.com/in/perpetual-okan", Icon:FiLinkedin, label:"LinkedIn" },
+                      { href:"mailto:Perpetualokan0@gmail.com", Icon:FiMail, label:"Email" },
+                    ].map(s => (
+                      <a key={s.label} href={s.href} target={s.href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer" aria-label={s.label}
+                        style={{
+                          display:"flex", alignItems:"center", justifyContent:"center",
+                          width:42, height:42, borderRadius:10,
+                          background:"rgba(255,255,255,0.04)",
+                          border:"1px solid var(--nb-borderB)",
+                          color:"var(--nb-muted)",
+                          transition:"all 0.2s",
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor="rgba(249,115,22,0.4)"; e.currentTarget.style.color="var(--nb-orange)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor="var(--nb-borderB)"; e.currentTarget.style.color="var(--nb-muted)"; }}
+                      >
+                        <s.Icon size={15} />
+                      </a>
+                    ))}
+                    <button
+                      onClick={() => { closeMobile(); setTimeout(() => dispatch({ type:"OPEN_COMMAND" }), 280); }}
+                      style={{
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        width:42, height:42, borderRadius:10,
+                        background:"rgba(249,115,22,0.08)",
+                        border:"1px solid rgba(249,115,22,0.25)",
+                        color:"rgba(249,115,22,0.7)",
+                        cursor:"pointer",
+                      }}
                     >
-                      <s.Icon size={12} /> {s.label}
-                    </a>
-                  ))}
-                  <button
-                    onClick={() => { closeMobile(); setTimeout(() => dispatch({ type:"OPEN_COMMAND" }), 280); }}
-                    style={{ display:"flex", alignItems:"center", gap:"0.45rem", padding:"0.55rem 1rem", borderRadius:100, background:"rgba(249,115,22,0.06)", border:"1px solid rgba(249,115,22,0.2)", color:"rgba(249,115,22,0.6)", fontFamily:"var(--nb-font-mono)", fontSize:"0.44rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer", transition:"all 0.22s" }}
-                  >
-                    <FiCommand size={12} /> Command
-                  </button>
+                      <FiCommand size={14} />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             </div>
