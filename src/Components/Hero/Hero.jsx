@@ -667,7 +667,7 @@ const Ic = {
 ═══════════════════════════════════════════════════════════════ */
 function CTAButtons({ isMobile }) {
   const dlResume = () => {
-    const a = document.createElement("a"); a.href = "/Perpetuual-cv.pdf"; a.download = "Perpetual_Okan_Resume.pdf";
+    const a = document.createElement("a"); a.href = "/indeed.new.pdf"; a.download = "/indeed.new.pdf";
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   };
   return (
